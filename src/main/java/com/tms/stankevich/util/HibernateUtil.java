@@ -4,7 +4,7 @@ import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Seance;
 import com.tms.stankevich.domain.movie.Ticket;
-import com.tms.stankevich.domain.user.Authority;
+import com.tms.stankevich.domain.user.Role;
 import com.tms.stankevich.domain.user.User;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
@@ -43,7 +43,7 @@ public class HibernateUtil {
 
                 MetadataSources sources = new MetadataSources(registry)
                         .addAnnotatedClass(User.class)
-                        .addAnnotatedClass(Authority.class)
+                        .addAnnotatedClass(Role.class)
                         .addAnnotatedClass(Hall.class)
                         .addAnnotatedClass(Movie.class)
                         .addAnnotatedClass(Seance.class)

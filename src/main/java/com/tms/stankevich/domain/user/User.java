@@ -1,13 +1,18 @@
 package com.tms.stankevich.domain.user;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User implements Serializable {
+public class User implements UserDetails {
   private static final long serialVersionUID = 42L;
 
   @Id
@@ -16,16 +21,21 @@ public class User implements Serializable {
   private long id;
 
   @Column(nullable = false, unique = true)
-  private String email;
+  @Size(min=5, message = "Не меньше 5 знаков")
+  private String username;
 
   @Column(name = "password")
+  @Size(min=5, message = "Не меньше 5 знаков")
   private String password;
 
+  @Transient
+  private String passwordConfirm;
+
   @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinTable(name = "user_authority",
+  @JoinTable(name = "user_role",
           joinColumns = {@JoinColumn(name = "user_id")},
-          inverseJoinColumns = {@JoinColumn(name = "authority_id")})
-  private List<Authority> authorities;
+          inverseJoinColumns = {@JoinColumn(name = "role_id")})
+  private Set<Role> roles;
 
   @ManyToMany
   @JoinTable(name = "user_friends",
@@ -43,41 +53,81 @@ public class User implements Serializable {
     return id;
   }
 
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return getRoles();
   }
 
   public String getPassword() {
     return password;
   }
 
+  @Override
+  public String getUsername() {
+    return this.username;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
+
   public void setPassword(String password) {
     this.password = password;
   }
 
-  public List<Authority> getRoles() {
-    return authorities;
+  public Set<Role> getRoles() {
+    return roles;
   }
 
-  public void setRoles(List<Authority> authorities) {
-    this.authorities = authorities;
+  public void setRoles(Set<Role> authorities) {
+    this.roles = authorities;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    User user = (User) o;
-    return Objects.equals(email, user.email) &&
-            Objects.equals(password, user.password);
+  public void setId(long id) {
+    this.id = id;
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(email, password);
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public List<User> getFriends() {
+    return friends;
+  }
+
+  public void setFriends(List<User> friends) {
+    this.friends = friends;
+  }
+
+  public List<User> getBefriended() {
+    return befriended;
+  }
+
+  public void setBefriended(List<User> befriended) {
+    this.befriended = befriended;
+  }
+
+  public String getPasswordConfirm() {
+    return passwordConfirm;
+  }
+
+  public void setPasswordConfirm(String passwordConfirm) {
+    this.passwordConfirm = passwordConfirm;
   }
 }

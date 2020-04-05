@@ -22,7 +22,7 @@ public class Seance implements Serializable {
     private LocalDateTime dateTime;
 
     @ManyToOne
-    @Column(name = "hall_id", nullable=false)
+    @JoinColumn(name = "hall_id", nullable=false)
     private Hall hall;
 
     @Column(name = "price")
