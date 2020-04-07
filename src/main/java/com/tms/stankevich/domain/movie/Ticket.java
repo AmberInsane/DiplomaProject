@@ -25,8 +25,4 @@ public class Ticket implements Serializable {
     @ManyToOne
     @JoinColumn(name="user_for_id", nullable=false)
     private User userFor;
-
-
-
-
 }

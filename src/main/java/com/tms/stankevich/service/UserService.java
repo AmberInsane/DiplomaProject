@@ -2,6 +2,7 @@ package com.tms.stankevich.service;
 
 import com.tms.stankevich.dao.RoleRepository;
 import com.tms.stankevich.dao.UserRepository;
+import com.tms.stankevich.dao.UserRepositoryJpa;
 import com.tms.stankevich.domain.user.Role;
 import com.tms.stankevich.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +14,15 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
     @PersistenceContext
     private EntityManager em;
     @Autowired
-    UserRepository userRepository;
+    UserRepositoryJpa userRepository;
+
     @Autowired
     RoleRepository roleRepository;
     @Autowired
@@ -72,5 +72,9 @@ public class UserService implements UserDetailsService {
     public List<User> usergtList(Long idMin) {
         return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
                 .setParameter("paramId", idMin).getResultList();
+    }
+
+    public List<User> getUsersByRole(String roleName) {
+        return userRepository.findUsersByRoles(roleRepository.findByName(roleName));
     }
 }

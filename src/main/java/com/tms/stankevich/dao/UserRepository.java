@@ -1,8 +1,20 @@
 package com.tms.stankevich.dao;
 
 import com.tms.stankevich.domain.user.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository {
+    List<User> findAllUsersByRole(String role);
+
     User findByUsername(String username);
+
+    Optional<User> findById(Long userId);
+
+    List<User> findAll();
+
+    void save(User user);
 }
