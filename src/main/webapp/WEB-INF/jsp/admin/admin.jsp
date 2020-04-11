@@ -29,6 +29,7 @@
     <a href="/admin/all_info"><spring:message code="admin.menu.all_info"/></a>
     <br>
 </div>
+oloo
 </body>
 </html>
 
