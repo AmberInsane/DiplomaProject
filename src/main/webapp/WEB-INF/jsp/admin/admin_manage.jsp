@@ -7,53 +7,55 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
-<h2>Администраторы</h2>
-<table bgcolor="#ff85f0" border="1">
-    <tr>
-        <th>ID</th>
-        <th>UserName</th>
-        <th>Action</th>
-    </tr>
-    <c:forEach items="${adminUsers}" var="user">
+<jsp:include page="../parts/header.jsp"/>
+<div class="container">
+    <h1>Администаторы</h1>
+    <table class="table table-striped">
         <tr>
-            <td>${user.id}</td>
-            <td>${user.username}</td>
-            <td>
-                <form action="manage" method="post">
-                    <input type="hidden" name="userId" value="${user.id}"/>
-                    <input type="hidden" name="action" value="delete"/>
-                    <button type="submit">Исключить из администраторов</button>
-                </form>
-            </td>
+            <th>User Name</th>
+            <th>Action</th>
         </tr>
-    </c:forEach>
-</table>
-<h2>Пользователи</h2>
-<table bgcolor="#ff85f0" border="1">
-    <tr>
-        <th>ID</th>
-        <th>UserName</th>
-        <th>Action</th>
-    </tr>
-    <c:forEach items="${users}" var="user">
+        <c:forEach items="${adminUsers}" var="user">
+            <tr>
+                <td>${user.username}</td>
+                <td>
+                        <c:if test="${!pageContext.request.userPrincipal.name.equals(user.username)}">
+                            <a href="/admin/manage/delete_admin/${user.id}">Снять полномочия администратора</a>
+                        </c:if>
+                        <c:if test="${pageContext.request.userPrincipal.name.equals(user.username)}">
+                            <label>Это Вы</label>
+                        </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+    <h1>Пользователи</h1>
+    <table class="table table-striped">
         <tr>
-            <td>${user.id}</td>
-            <td>${user.username}</td>
-            <td>
-                <form action="manage" method="post">
-                    <input type="hidden" name="userId" value="${user.id}"/>
-                    <input type="hidden" name="action" value="add"/>
-                    <button type="submit">Добавить как администратора</button>
-                </form>
-            </td>
+            <th>User Name</th>
+            <th>Action</th>
         </tr>
-    </c:forEach>
-</table>
-<a href="/">Назад</a>
+        <c:forEach items="${users}" var="user">
+            <tr>
+                <td>${user.username}</td>
+                <td>
+                    <a href="/admin/manage/add_admin/${user.id}">Добавить как администратора</a>
+                    <%--<spring:url value="/admin/manage/add_admin/${user.id}" var="Добавить как администратора" />--%>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+    <a href="${pageContext.request.contextPath}/">Назад</a>
+</div>
+
+<jsp:include page="../parts/footer.jsp"/>
 </body>
 </html>
