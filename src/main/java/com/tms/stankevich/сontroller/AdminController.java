@@ -4,13 +4,18 @@ import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.service.MovieServiceImpl;
 import com.tms.stankevich.service.UserServiceImpl;
+import com.tms.stankevich.validator.MovieFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import org.apache.log4j.Logger;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -20,9 +25,6 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private UserServiceImpl userService;
-
-    @Autowired
-    private MovieServiceImpl movieService;
 
     final static Logger logger = Logger.getLogger(AdminController.class);
 
@@ -78,24 +80,7 @@ public class AdminController {
     }
 
     @GetMapping("/movies")
-    public String manageMovies(Model model) {
-        List<Movie> movies = movieService.getAllMovies();
-        model.addAttribute("movies", movies);
-        return "admin/admin_movies";
-    }
-
-    @GetMapping("/add_movie")
-    public String addMovie(Model model) {
-        model.addAttribute("movieForm", new Movie());
-        model.addAttribute("action", "add");
-        return "admin/movie";
-    }
-
-    @GetMapping("/update_movie/{id}")
-    public String addMovie(@PathVariable Long id, Model model) {
-        model.addAttribute("movieForm", movieService.getAllMovies());
-        model.addAttribute("action", "add");
-        logger.debug("movie update id");
-        return "admin/movie";
+    public String manageMovies() {
+        return "redirect:/movie";
     }
 }

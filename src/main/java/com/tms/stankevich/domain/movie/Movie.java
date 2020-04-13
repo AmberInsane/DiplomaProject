@@ -47,4 +47,8 @@ public class Movie implements Serializable {
     @Column(name = "time_length")
     @NotNull
     private @Valid Short timeLength;
+
+    public boolean isNew() {
+        return (this.id == null);
+    }
 }

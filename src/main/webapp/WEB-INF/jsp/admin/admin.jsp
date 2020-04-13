@@ -18,17 +18,18 @@
 <body>
 <div class="component">
     <h4><spring:message code="admin.menu"/></h4>
-    <a href="/admin/manage"><spring:message code="admin.menu.manage"/></a>
+    <a href="${pageContext.request.contextPath}/admin/manage"><spring:message code="admin.menu.manage"/></a>
     <br>
-    <a href="/admin/movies"><spring:message code="admin.menu.movies"/></a>
+    <a href="${pageContext.request.contextPath}/admin/movies"><spring:message code="admin.menu.movies"/></a>
     <br>
-    <a href="/admin/seance"><spring:message code="admin.menu.seance"/></a>
+    <a href="${pageContext.request.contextPath}/admin/seance"><spring:message code="admin.menu.seance"/></a>
     <br>
-    <a href="/admin/hall"><spring:message code="admin.menu.hall"/></a>
+    <a href="${pageContext.request.contextPath}/admin/hall"><spring:message code="admin.menu.hall"/></a>
     <br>
-    <a href="/admin/all_info"><spring:message code="admin.menu.all_info"/></a>
+    <a href="${pageContext.request.contextPath}/admin/all_info"><spring:message code="admin.menu.all_info"/></a>
     <br>
 </div>
+
 </body>
 </html>
 
