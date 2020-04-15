@@ -1,7 +1,17 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <div class="container">
 	<hr>
 	<footer>
+		<security:authorize access="isAuthenticated()">
+			<spring:url value="${header.referer}" var="backUrl"/>
+			<button class="btn left" onclick="location.href='${backUrl}'">Назад</button>
+
+			<spring:url value="/logout" var="logoutUrl"/>
+			<button class="btn right" onclick="location.href='${logoutUrl}'"><spring:message code="home.log_out"/></button>
+		</security:authorize>
+
 		<p>&copy; AmberInsane 2020</p>
 	</footer>
 </div>

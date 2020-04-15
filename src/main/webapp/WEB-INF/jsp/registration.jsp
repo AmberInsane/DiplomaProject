@@ -21,12 +21,12 @@
 <div class="container">
     <form:form method="POST" modelAttribute="userForm">
         <h2>Регистрация</h2>
-        <div>
+        <div class="col-sm-5">
             <form:input type="text" path="username" placeholder="Username" autofocus="true"/>
             <form:errors path="username"/>
                 ${usernameError}
         </div>
-        <div>
+        <div class="col-sm-5">
             <form:input type="password" path="password" placeholder="Password"/>
         </div>
         <div>

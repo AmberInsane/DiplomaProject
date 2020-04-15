@@ -25,17 +25,7 @@ public class RegistrationController {
     @Autowired
     private UserServiceImpl userService;
 
-
-    @Autowired
-    RegistrationFormValidator userFormValidator;
-
     Logger logger = Logger.getLogger(RegistrationController.class);
-
-
-    @InitBinder
-    protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(userFormValidator);
-    }
 
     @GetMapping("/registration")
     public String registration(Model model) {

@@ -35,7 +35,7 @@
         <div>
             <spring:bind path="title">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Titile</label>
+                    <label class="col-sm-2 control-label">Title</label>
                     <div class="col-sm-10">
                         <form:input path="title" type="text" class="form-control " id="title" placeholder="Title"/>
                         <form:errors path="title" class="control-label"/>
@@ -67,18 +67,22 @@
             <spring:bind path="genre">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
                     <label class="col-sm-2 control-label">Genre</label>
-                    <div class="col-sm-10">
-                        <form:select path="genre" items="${genreList}" multiple="true" size="5" class="form-control" />
+                    <div class="col-sm-5">
+                        <form:select path="genre" multiple="true" size="5" class="form-control">
+                            <form:options items="${genreList}" itemValue="id" itemLabel="name"/>
+                        </form:select>
                         <form:errors path="genre" class="control-label"/>
                     </div>
+                    <div class="col-sm-5"></div>
                 </div>
             </spring:bind>
 
             <spring:bind path="timeLength">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Genre</label>
+                    <label class="col-sm-2 control-label">TimeLength</label>
                     <div class="col-sm-10">
-                        <form:input path="timeLength" cols="4" class="form-control" id="timeLength" placeholder="TimeLength"/>
+                        <form:input path="timeLength" cols="4" class="form-control" id="timeLength"
+                                    placeholder="TimeLength"/>
                         <form:errors path="timeLength" class="control-label"/>
                     </div>
                 </div>
@@ -96,10 +100,7 @@
                 </c:choose>
             </div>
         </div>
-
-
     </form:form>
-    <a href="${pageContext.request.contextPath}/">Назад</a>
 </div>
 <jsp:include page="../parts/footer.jsp"/>
 </body>

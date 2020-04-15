@@ -1,5 +1,6 @@
 package com.tms.stankevich.service;
 
+import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Movie;
 
 import java.util.List;
@@ -11,4 +12,14 @@ interface MovieService {
     void saveOrUpdate(Movie user);
 
     Optional<Movie> findById(Long id);
+
+    void saveOrUpdateGenre(Genre genre);
+
+    List<Genre> getAllGenres();
+
+    Optional<Genre> findGenreById(Long id);
+
+    void deleteGenre(Genre genre);
+
+    void deleteMovie(Movie movie);
 }

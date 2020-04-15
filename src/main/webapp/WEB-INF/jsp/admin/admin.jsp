@@ -29,7 +29,6 @@
     <a href="${pageContext.request.contextPath}/admin/all_info"><spring:message code="admin.menu.all_info"/></a>
     <br>
 </div>
-
 </body>
 </html>
 

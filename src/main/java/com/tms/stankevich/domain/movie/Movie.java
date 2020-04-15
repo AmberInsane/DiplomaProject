@@ -3,12 +3,14 @@ package com.tms.stankevich.domain.movie;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,9 +36,11 @@ public class Movie implements Serializable {
     @NotNull
     private @Valid Short year;
 
-    @Column
-    @NotNull
-    private String genre;
+    @ManyToMany
+    @JoinTable(name = "movie_genre",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private List<Genre> genre;
 
     @Column(name = "rating_sum")
     private BigDecimal ratingSum;

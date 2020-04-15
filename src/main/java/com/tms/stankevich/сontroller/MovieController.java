@@ -1,6 +1,8 @@
 package com.tms.stankevich.сontroller;
 
+import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Movie;
+import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.service.MovieServiceImpl;
 import com.tms.stankevich.validator.MovieFormValidator;
 import org.apache.log4j.Logger;
@@ -13,10 +15,9 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/movie")
@@ -27,7 +28,7 @@ public class MovieController {
     @Autowired
     MovieFormValidator movieFormValidator;
 
-    @InitBinder
+    @InitBinder("movieForm")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(movieFormValidator);
     }
@@ -44,7 +45,8 @@ public class MovieController {
 
     @GetMapping("/add_movie")
     public String addMovie(Model model) {
-        model.addAttribute("movieForm", new Movie());
+        Movie movie = new Movie();
+        model.addAttribute("movieForm",movie);
         populateDefaultModel(model);
         return "movie/movie";
     }
@@ -52,14 +54,10 @@ public class MovieController {
     @PostMapping(value = "/add_movie")
     public String saveOrUpdateMovie(@ModelAttribute("movieForm") @Validated Movie movie,
                                     BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
-
-        logger.debug("saveOrUpdateMovie() : {}" + movie);
-
         if (result.hasErrors()) {
             populateDefaultModel(model);
             return "movie/movie";
         } else {
-
             redirectAttributes.addFlashAttribute("css", "success");
             if (movie.isNew()) {
                 redirectAttributes.addFlashAttribute("msg", "User added successfully!");
@@ -67,45 +65,74 @@ public class MovieController {
                 redirectAttributes.addFlashAttribute("msg", "User updated successfully!");
             }
             movieService.saveOrUpdate(movie);
-            //return "redirect:/users/" + user.getId();
             return "redirect:/movie";
         }
-
     }
 
+    @GetMapping("/update_movie/{id}")
+    public String updateMovie(@PathVariable("id") Long id, Model model) {
+        Optional<Movie> movie = movieService.findById(id);
+
+        if (movie.isPresent()) {
+            model.addAttribute("movieForm", movie.get());
+            populateDefaultModel(model);
+            return "movie/movie";
+        } else {
+            return "users/userform";
+        }
+    }
+
+    @PostMapping("/delete_movie/{id}")
+    public String deleteMovie(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        Optional<Movie> movie = movieService.findById(id);
+        if (movie.isPresent()) {
+            String movieName = movie.get().getTitle();
+            movieService.deleteMovie(movie.get());
+            redirectAttributes.addFlashAttribute("css", "success");
+            redirectAttributes.addFlashAttribute("msg", movieName + " удалено");
+        }
+        return "redirect:/movie";
+    }
+
+
+
     private void populateDefaultModel(Model model) {
-
-        List<String> genresList = new ArrayList<String>();
-        genresList.add("Comedy");
-        genresList.add("Drama");
-        genresList.add("Horror");
-        genresList.add("Romantic");
-        genresList.add("Cartoon");
-        genresList.add("Arthouse");
+        List<Genre> genresList = movieService.getAllGenres();
         model.addAttribute("genreList", genresList);
+    }
 
-/*        Map<String, String> skill = new LinkedHashMap<String, String>();
-        skill.put("Hibernate", "Hibernate");
-        skill.put("Spring", "Spring");
-        skill.put("Struts", "Struts");
-        skill.put("Groovy", "Groovy");
-        skill.put("Grails", "Grails");
-        model.addAttribute("javaSkillList", skill);
+    @GetMapping("/genre")
+    public String showAllGenres(Model model) {
+        model.addAttribute("genreForm", new Genre());
+        model.addAttribute("genres", movieService.getAllGenres());
+        populateDefaultModel(model);
+        return "movie/genre";
+    }
 
-        List<Integer> numbers = new ArrayList<Integer>();
-        numbers.add(1);
-        numbers.add(2);
-        numbers.add(3);
-        numbers.add(4);
-        numbers.add(5);
-        model.addAttribute("numberList", numbers);
+    @PostMapping(value = "/genre")
+    public String saveOrUpdateGenre(@ModelAttribute("genreForm") Genre genre,
+                                    BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
+        if (genre.getName().length() < 3) {
+            redirectAttributes.addFlashAttribute("css", "has-error");
+            redirectAttributes.addFlashAttribute("msg", "не добавлено");
+        } else {
+            redirectAttributes.addFlashAttribute("css", "success");
+            redirectAttributes.addFlashAttribute("msg", genre.getName() + " добавлено");
+            movieService.saveOrUpdateGenre(genre);
+        }
 
-        Map<String, String> country = new LinkedHashMap<String, String>();
-        country.put("US", "United Stated");
-        country.put("CN", "China");
-        country.put("SG", "Singapore");
-        country.put("MY", "Malaysia");
-        model.addAttribute("countryList", country);*/
+        return "redirect:/movie/genre";
+    }
 
+    @PostMapping("/delete_genre/{id}")
+    public String deleteGenre(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        Optional<Genre> genre = movieService.findGenreById(id);
+        if (genre.isPresent()) {
+            String genreName = genre.get().getName();
+          movieService.deleteGenre(genre.get());
+            redirectAttributes.addFlashAttribute("css", "success");
+            redirectAttributes.addFlashAttribute("msg", genreName + " удалено");
+        }
+       return  "redirect:/movie/genre";
     }
 }

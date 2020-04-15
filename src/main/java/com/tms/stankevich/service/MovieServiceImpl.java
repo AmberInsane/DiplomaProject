@@ -1,6 +1,8 @@
 package com.tms.stankevich.service;
 
+import com.tms.stankevich.dao.GenreRepository;
 import com.tms.stankevich.dao.MovieRepository;
+import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private GenreRepository genreRepository;
 
     @Override
     public List<Movie> getAllMovies() {
@@ -30,5 +35,28 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findById(id);
     }
 
+    @Override
+    public void saveOrUpdateGenre(Genre genre) {
+        genreRepository.save(genre);
+    }
 
+    @Override
+    public List<Genre> getAllGenres() {
+        return genreRepository.findAll();
+    }
+
+    @Override
+    public Optional<Genre> findGenreById(Long id) {
+        return genreRepository.findById(id);
+    }
+
+    @Override
+    public void deleteGenre(Genre genre) {
+        genreRepository.delete(genre);
+    }
+
+    @Override
+    public void deleteMovie(Movie movie) {
+        movieRepository.delete(movie);
+    }
 }

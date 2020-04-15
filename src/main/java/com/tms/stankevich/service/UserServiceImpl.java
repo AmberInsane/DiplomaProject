@@ -1,23 +1,17 @@
 package com.tms.stankevich.service;
 
-import com.tms.stankevich.dao.MovieRepository;
 import com.tms.stankevich.dao.RoleRepository;
 import com.tms.stankevich.dao.UserRepository;
-import com.tms.stankevich.domain.movie.Movie;
-import com.tms.stankevich.domain.movie.Seance;
 import com.tms.stankevich.domain.user.Role;
 import com.tms.stankevich.domain.user.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 
 @Service

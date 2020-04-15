@@ -6,10 +6,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 
 <!DOCTYPE HTML>
 <html>
@@ -22,13 +21,17 @@
 
 <jsp:include page="parts/header.jsp"/>
 <div class="container">
-    <sec:authorize access="!isAuthenticated()">
-        <h3><spring:message code="home.title"/></h3>
-        <h2><spring:message code="home.info"/></h2>
-        <a href="${pageContext.request.contextPath}/login"><spring:message code="home.log_in"/></a>
-        <a href="${pageContext.request.contextPath}/registration"><spring:message code="home.registration"/></a>
-    </sec:authorize>
-    <sec:authorize access="isAuthenticated()">
+    <security:authorize access="!isAuthenticated()">
+        <div class="container small">
+            <h3><spring:message code="home.title"/></h3>
+            <h2><spring:message code="home.info"/></h2>
+            <spring:url value="/login" var="loginUrl"/>
+            <button class="btn left" onclick="location.href='${loginUrl}'"><spring:message code="home.log_in"/></button>
+            <spring:url value="/registration" var="registrationUrl"/>
+            <button class="btn left" onclick="location.href='${registrationUrl}'"><spring:message code="home.registration"/></button>
+        </div>
+    </security:authorize>
+    <security:authorize access="isAuthenticated()">
         <h3>Welcome ${pageContext.request.userPrincipal.name}</h3>
         <security:authorize access="hasRole('USER')">
             <jsp:include page="user/user.jsp"/>
@@ -36,8 +39,7 @@
         <security:authorize access="hasRole('ADMIN')">
             <jsp:include page="admin/admin.jsp"/>
         </security:authorize>
-        <h4><a href="${pageContext.request.contextPath}/logout"><spring:message code="home.log_out"/></a></h4>
-    </sec:authorize>
+    </security:authorize>
 </div>
 <jsp:include page="parts/footer.jsp"/>
 </body>

@@ -16,7 +16,7 @@ public class Ticket implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="seance_id", nullable=false)
-    private Seance seance;
+    private Session session;
 
     @ManyToOne
     @JoinColumn(name="user_by_id", nullable=false)

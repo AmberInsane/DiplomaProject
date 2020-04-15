@@ -34,22 +34,6 @@ public class AdminController {
         return "admin/admin";
     }
 
-//    @PostMapping("/")
-//    public String deleteUser(@RequestParam(required = true, defaultValue = "") Long userId,
-//                             @RequestParam(required = true, defaultValue = "") String action,
-//                             Model model) {
-//        if (action.equals("delete")) {
-//            userService.deleteUser(userId);
-//        }
-//        return "redirect:/admin";
-//    }
-
-//    @GetMapping("/gt/{userId}")
-//    public String gtUser(@PathVariable("userId") Long userId, Model model) {
-//        model.addAttribute("allUsers", userService.usergtList(userId));
-//        return "admin/admin";
-//    }
-
     @GetMapping("/manage")
     public String manageAdmins(Model model, @AuthenticationPrincipal User currentUser) {
         List<User> adminUsers = userService.getUsersByRole(UserServiceImpl.ADMIN_ROLE);
@@ -74,7 +58,7 @@ public class AdminController {
         if (currentUser.getId() == userId) {
             return "admin/admin_manage_error";
         } else {
-            userService.updateAdminRole(userId, "dalete");
+            userService.updateAdminRole(userId, "delete");
         }
         return "redirect:/admin/manage";
     }

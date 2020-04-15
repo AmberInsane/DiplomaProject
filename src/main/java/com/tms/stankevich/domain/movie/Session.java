@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-public class Seance implements Serializable {
+public class Session implements Serializable {
     private static final long serialVersionUID = 42L;
 
     @Id

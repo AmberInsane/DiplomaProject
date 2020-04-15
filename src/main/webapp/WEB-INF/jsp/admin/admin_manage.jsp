@@ -28,7 +28,8 @@
                 <td>${user.username}</td>
                 <td>
                         <c:if test="${!pageContext.request.userPrincipal.name.equals(user.username)}">
-                            <a href="/admin/manage/delete_admin/${user.id}">Снять полномочия администратора</a>
+                            <spring:url value="manage/delete_admin/${user.id}" var="deleteAdminUrl"/>
+                            <button class="btn btn-danger" onclick="location.href='${deleteAdminUrl}'">Снять полномочия администратора</button>
                         </c:if>
                         <c:if test="${pageContext.request.userPrincipal.name.equals(user.username)}">
                             <label>Это Вы</label>
@@ -47,13 +48,13 @@
             <tr>
                 <td>${user.username}</td>
                 <td>
-                    <a href="/admin/manage/add_admin/${user.id}">Добавить как администратора</a>
+                    <spring:url value="manage/add_admin/${user.id}" var="addAdminUrl"/>
+                    <button class="btn btn-primary" onclick="location.href='${addAdminUrl}'">Добавить как администратора</button>
                     <%--<spring:url value="/admin/manage/add_admin/${user.id}" var="Добавить как администратора" />--%>
                 </td>
             </tr>
         </c:forEach>
     </table>
-    <a href="${pageContext.request.contextPath}/">Назад</a>
 </div>
 
 <jsp:include page="../parts/footer.jsp"/>

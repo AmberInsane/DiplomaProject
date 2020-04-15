@@ -25,31 +25,29 @@
             <th>description</th>
             <th>year</th>
             <th>genre</th>
-            <th>timeLength</th>
-            <security:authorize access="isAuthenticated()">
-                <security:authorize access="hasRole('ADMIN')">
-                    <th>update_movie</th>
-                    <th>delete_movie</th>
-                </security:authorize>
-                <security:authorize access="hasRole('USER')">
-                    <th>rate_movie</th>
-                </security:authorize>
-            </security:authorize>
+            <th>time</th>
+            <th></th>
         </tr>
         <c:forEach items="${movies}" var="movie">
             <tr>
                 <td>${movie.title}</td>
                 <td>${movie.description}</td>
                 <td>${movie.year}</td>
-                <td>${movie.genre}</td>
+                <td>
+                    <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
+                        ${genre.name}
+                        <c:if test="${not loop.last}">,</c:if>
+                    </c:forEach>
+                </td>
                 <td>${movie.timeLength} min</td>
                 <security:authorize access="isAuthenticated()">
                     <security:authorize access="hasRole('ADMIN')">
                         <td>
-                            <a href="${pageContext.request.contextPath}/movie/update_movie/${movie.id}">update_movie</a>
-                        </td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/movie/delete_movie/${movie.id}">delete_movie</a>
+                            <spring:url value="/movie/update_movie/${movie.id}" var="updateUrl"/>
+                            <spring:url value="/movie/delete_movie/${movie.id}" var="deleteUrl"/>
+
+                            <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
+                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete</button>
                         </td>
                     </security:authorize>
                     <security:authorize access="hasRole('USER')">
@@ -65,6 +63,9 @@
         <security:authorize access="hasRole('ADMIN')">
             <div class="btn-link">
                 <a href="${pageContext.request.contextPath}/movie/add_movie"><spring:message code="movie.add"/></a>
+            </div>
+            <div class="btn-link">
+                <a href="${pageContext.request.contextPath}/movie/genre">Manage genres</a>
             </div>
         </security:authorize>
     </security:authorize>
