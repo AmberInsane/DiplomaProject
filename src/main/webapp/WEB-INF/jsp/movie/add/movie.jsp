@@ -12,12 +12,13 @@
 <html>
 <head>
     <title>Title</title>
+    <spring:url value="/movie/add_movie" var="movieActionUrl"/>
+    <spring:url value="/movies" var="returnUrl"/>
 </head>
 <body>
-<jsp:include page="../parts/header.jsp"/>
-
-
+<jsp:include page="../../parts/header.jsp"/>
 <div class="container">
+    <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to movies</button>
     <c:choose>
         <c:when test="${movieForm['new']}">
             <h1>Add Movie</h1>
@@ -27,9 +28,6 @@
         </c:otherwise>
     </c:choose>
     <br/>
-
-    <spring:url value="/movie/add_movie" var="movieActionUrl"/>
-
     <form:form class="form-horizontal" method="POST" modelAttribute="movieForm" action="${movieActionUrl}">
         <form:hidden path="id"/>
         <div>
@@ -102,6 +100,6 @@
         </div>
     </form:form>
 </div>
-<jsp:include page="../parts/footer.jsp"/>
+<jsp:include page="../../parts/footer.jsp"/>
 </body>
 </html>

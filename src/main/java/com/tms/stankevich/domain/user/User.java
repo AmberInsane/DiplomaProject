@@ -1,142 +1,102 @@
 package com.tms.stankevich.domain.user;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User implements UserDetails {
-  private static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = 42L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_id")
-  private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
 
-  @Column(nullable = false, unique = true)
-  @Size(min=5, message = "Не меньше 5 знаков")
-  private String username;
+    @Column(nullable = false, unique = true)
+    private String username;
 
-  @Column(name = "password")
-  @Size(min=5, message = "Не меньше 5 знаков")
-  private String password;
+    @Column(name = "password")
+    private String password;
 
-  @Transient
-  private String passwordConfirm;
+    @Column(name = "email", length = 50)
+    private String email;
 
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinTable(name = "user_role",
-          joinColumns = {@JoinColumn(name = "user_id")},
-          inverseJoinColumns = {@JoinColumn(name = "role_id")})
-  private Set<Role> roles;
+    @Column(name = "birthday")
+    private Date birthday;
 
-  @ManyToMany
-  @JoinTable(name = "user_friends",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "friend_id"))
-  protected List<User> friends = null;
+    @Column(name = "phone", length = 20)
+    private String phone;
 
-  @ManyToMany(mappedBy = "friends")
-  protected List<User> befriended = null;
+    @Transient
+    private String passwordConfirm;
 
-  public User() {
-  }
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private Set<Role> roles;
 
-  public long getId() {
-    return id;
-  }
+    @ManyToMany
+    @JoinTable(name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+    protected List<User> friends = null;
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return getRoles();
-  }
+    @ManyToMany(mappedBy = "friends")
+    protected List<User> befriended = null;
 
-  public String getPassword() {
-    return password;
-  }
 
-  @Override
-  public String getUsername() {
-    return this.username;
-  }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
 
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-  @Override
-  public boolean isEnabled() {
-    return true;
-  }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-  public Set<Role> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(Set<Role> authorities) {
-    this.roles = authorities;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public List<User> getFriends() {
-    return friends;
-  }
-
-  public void setFriends(List<User> friends) {
-    this.friends = friends;
-  }
-
-  public List<User> getBefriended() {
-    return befriended;
-  }
-
-  public void setBefriended(List<User> befriended) {
-    this.befriended = befriended;
-  }
-
-  public String getPasswordConfirm() {
-    return passwordConfirm;
-  }
-
-  public void setPasswordConfirm(String passwordConfirm) {
-    this.passwordConfirm = passwordConfirm;
-  }
+    public boolean isNew() {
+        return (this.id == null);
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id &&
+        return id.equals(user.id) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(passwordConfirm, user.passwordConfirm) &&

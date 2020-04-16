@@ -1,12 +1,13 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Пользователь
-  Date: 05.04.2020
-  Time: 18:52
+  User: stankevich_m
+  Date: 16.04.2020
+  Time: 16:15
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 
 <!DOCTYPE html>
@@ -15,30 +16,93 @@
     <meta charset="utf-8">
     <title>Регистрация</title>
 </head>
-
-<body>
 <jsp:include page="parts/header.jsp"/>
+<body>
 <div class="container">
-    <form:form method="POST" modelAttribute="userForm">
-        <h2>Регистрация</h2>
-        <div class="col-sm-5">
-            <form:input type="text" path="username" placeholder="Username" autofocus="true"/>
-            <form:errors path="username"/>
-                ${usernameError}
+    <c:choose>
+        <c:when test="${userForm['new']}">
+            <h1>Add User</h1>
+        </c:when>
+        <c:otherwise>
+            <h1>Update User</h1>
+        </c:otherwise>
+    </c:choose>
+    <br/>
+    <spring:url value="/registration" var="userActionUrl"/>
+
+    <form:form class="form-horizontal" method="post"
+               modelAttribute="userForm" action="${userActionUrl}">
+
+        <spring:bind path="username">
+            <div class="form-group ${status.error ? 'has-error' : ''}">
+                <label class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <form:input path="username" type="text" class="form-control"
+                                id="username"/>
+                    <form:errors path="username" class="control-label"/>
+                </div>
+            </div>
+        </spring:bind>
+
+        <spring:bind path="email">
+            <div class="form-group ${status.error ? 'has-error' : ''}">
+                <label class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <form:input path="email" class="form-control"
+                                id="email"/>
+                    <form:errors path="email" class="control-label"/>
+                </div>
+            </div>
+        </spring:bind>
+
+        <spring:bind path="birthday">
+            <div class="form-group ${status.error ? 'has-error' : ''}">
+                <label class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <form:input type="date" path="birthday" class="form-control" id="birthday"/>
+                    <form:errors path="birthday" class="control-label"/>
+                </div>
+            </div>
+        </spring:bind>
+
+        <spring:bind path="password">
+            <div class="form-group ${status.error ? 'has-error' : ''}">
+                <label class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                    <form:password path="password" class="form-control"
+                                   id="password"/>
+                    <form:errors path="password" class="control-label"/>
+                </div>
+            </div>
+        </spring:bind>
+
+        <spring:bind path="passwordConfirm">
+            <div class="form-group ${status.error ? 'has-error' : ''}">
+                <div class="col-sm-10">
+                    <form:password path="passwordConfirm" class="form-control"
+                                   id="password" placeholder="password"/>
+                    <form:errors path="passwordConfirm" class="control-label"/>
+                </div>
+            </div>
+        </spring:bind>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <c:choose>
+                    <c:when test="${userForm['new']}">
+                        <button type="submit" class="btn-lg btn-primary pull-right">Add
+                        </button>
+                    </c:when>
+                    <c:otherwise>
+                        <button type="submit" class="btn-lg btn-primary pull-right">Update
+                        </button>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
-        <div class="col-sm-5">
-            <form:input type="password" path="password" placeholder="Password"/>
-        </div>
-        <div>
-            <form:input type="password" path="passwordConfirm" placeholder="Confirm your password"/>
-            <form:errors path="password"/>
-                ${passwordError}
-        </div>
-        <button type="submit">Зарегистрироваться</button>
+
     </form:form>
-    <a href="${pageContext.request.contextPath}/">Главная</a>
 </div>
 <jsp:include page="parts/footer.jsp"/>
 </body>
 </html>
-

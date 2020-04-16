@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .setParameter("paramId", idMin).getResultList();
     }*/
 
-   @Override
+    @Override
     public List<User> getUsersByRole(String roleName) {
         return userRepository.findUsersByRoles(roleRepository.findByName(roleName));
     }
@@ -100,5 +100,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             }
             userRepository.save(user);
         }
+    }
+
+    @Override
+    public void saveOrUpdate(User user) {
+        if (user.isNew())
+            saveUser(user);
+        else
+            userRepository.save(user);
     }
 }

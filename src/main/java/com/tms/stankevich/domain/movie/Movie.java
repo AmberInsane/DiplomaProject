@@ -28,8 +28,8 @@ public class Movie implements Serializable {
     @NotNull
     private String title;
 
-    @Column
     @NotNull
+    @Column(length = 2500)
     private String description;
 
     @Column(name = "issue_year")

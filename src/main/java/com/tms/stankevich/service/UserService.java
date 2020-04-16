@@ -15,4 +15,6 @@ public interface UserService {
     List<User> getUsersByRole(String roleName);
 
     void updateAdminRole(Long userId, String action);
+
+    void saveOrUpdate(User user);
 }

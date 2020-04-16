@@ -15,7 +15,7 @@ public class Ticket implements Serializable {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name="seance_id", nullable=false)
+    @JoinColumn(name="session_id", nullable=false)
     private Session session;
 
     @ManyToOne

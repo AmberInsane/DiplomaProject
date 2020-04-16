@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-
 
 @Controller
 public class RegistrationController {
@@ -25,18 +23,24 @@ public class RegistrationController {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    RegistrationFormValidator registrationFormValidator;
+
+    @InitBinder("userForm")
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(registrationFormValidator);
+    }
+
     Logger logger = Logger.getLogger(RegistrationController.class);
 
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("userForm", new User());
-
         return "registration";
     }
 
-    @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
-
+    /*@PostMapping("/registration")
+    public String addUser(@ModelAttribute("userForm") @Validated User userForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "registration";
         }
@@ -50,36 +54,32 @@ public class RegistrationController {
         }
 
         return "redirect:/";
-    }
+    }*/
 
-    @PostMapping("/registration1")
+    // save or update user
+    // 1. @ModelAttribute bind form value
+    // 2. @Validated form validator
+    // 3. RedirectAttributes for flash value
+    @PostMapping("/registration")
     public String saveOrUpdateUser(@ModelAttribute("userForm") @Validated User user,
-                                   BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
+                                   BindingResult result, Model model,
+                                   final RedirectAttributes redirectAttributes) {
 
-        logger.debug("saveOrUpdateUser()");
+        logger.debug("saveOrUpdateUser() : {}" + user);
 
         if (result.hasErrors()) {
-            //populateDefaultModel(model);
-            return "users/userform";
+            return "registration";
         } else {
-
-          /*  redirectAttributes.addFlashAttribute("css", "success");
-            if(user.isNew()){
-                redirectAttributes.addFlashAttribute("msg", "User added successfully!");
-            }else{
-                redirectAttributes.addFlashAttribute("msg", "User updated successfully!");
-            }
-
             userService.saveOrUpdate(user);
-
+            redirectAttributes.addFlashAttribute("css", "success");
+            redirectAttributes.addFlashAttribute("msg", "User added successfully!");
             // POST/REDIRECT/GET
-            return "redirect:/users/" + user.getId();
+            return "redirect:/";
 
             // POST/FORWARD/GET
-            // return "user/list";*/
-
+            // return "user/list";
 
         }
-        return "redirect:/";
+
     }
 }

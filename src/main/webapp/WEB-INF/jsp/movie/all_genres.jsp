@@ -14,12 +14,14 @@
 <html>
 <head>
     <title>Genres</title>
+    <spring:url value="/movies" var="returnUrl"/>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <div class="container">
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
+            <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to movies</button>
             <h2>genres</h2>
             <c:if test="${not empty msg}">
                 <div class="alert alert-${css} alert-dismissible" role="alert">
@@ -33,15 +35,18 @@
             <table class="table table-striped">
                 <tr>
                     <th>Name</th>
+                    <th>Update</th>
                     <th>Delete</th>
                 </tr>
                 <c:forEach items="${genres}" var="genre">
                     <tr>
                         <td>${genre.name}</td>
                         <td>
-                            <spring:url value="movie/delete_genre/${genre.id}" var="deleteUrl"/>
-                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete
-                            </button>
+                            <spring:url value="/movie/update_movie/${genre.id}" var="updateUrl"/>
+                            <spring:url value="/movie/delete_genre/${genre.id}" var="deleteUrl"/>
+
+                            <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
+                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete</button>
                         </td>
                     </tr>
                 </c:forEach>
