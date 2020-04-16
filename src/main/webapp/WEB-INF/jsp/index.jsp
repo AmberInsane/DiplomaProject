@@ -9,27 +9,33 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <!DOCTYPE HTML>
 <html>
 <head>
     <title><spring:message code="home.title"/></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
+    <spring:url value="/login" var="loginUrl"/>
+    <spring:url value="/registration" var="registrationUrl"/>
 </head>
 <body>
 
 <jsp:include page="parts/header.jsp"/>
 <div class="container">
-    <security:authorize access="!isAuthenticated()">
-        <div class="container small">
-            <h3><spring:message code="home.title"/></h3>
-            <h2><spring:message code="home.info"/></h2>
-            <spring:url value="/login" var="loginUrl"/>
-            <button class="btn left" onclick="location.href='${loginUrl}'"><spring:message code="home.log_in"/></button>
-            <spring:url value="/registration" var="registrationUrl"/>
-            <button class="btn left" onclick="location.href='${registrationUrl}'"><spring:message code="home.registration"/></button>
+    <c:if test="${not empty msg}">
+        <div class="alert alert-${css} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>${msg}</strong>
         </div>
+    </c:if>
+    <security:authorize access="!isAuthenticated()">
+        <h3><spring:message code="home.title"/></h3>
+        <h2><spring:message code="home.info"/></h2>
+        <button class="btn left btn-primary" onclick="location.href='${loginUrl}'">Login</button>
+        <button class="btn right btn-primary" onclick="location.href='${registrationUrl}'">Registration</button>
     </security:authorize>
     <security:authorize access="isAuthenticated()">
         <h3>Welcome ${pageContext.request.userPrincipal.name}</h3>

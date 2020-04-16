@@ -1,9 +1,11 @@
 package com.tms.stankevich.сontroller;
 
 import com.tms.stankevich.domain.movie.Genre;
+import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Movie;
-import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.service.MovieServiceImpl;
+import com.tms.stankevich.service.SessionServiceImpl;
 import com.tms.stankevich.validator.MovieFormValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/movie")
@@ -35,6 +35,8 @@ public class MovieController {
 
     @Autowired
     private MovieServiceImpl movieService;
+    @Autowired
+    private SessionServiceImpl sessionService;
 
     @GetMapping("")
     public String showAllMovies(Model model) {
@@ -47,7 +49,7 @@ public class MovieController {
     public String addMovie(Model model) {
         Movie movie = new Movie();
         model.addAttribute("movieForm",movie);
-        populateDefaultModel(model);
+        populateDefaultMovieModel(model);
         return "movie/movie";
     }
 
@@ -55,7 +57,7 @@ public class MovieController {
     public String saveOrUpdateMovie(@ModelAttribute("movieForm") @Validated Movie movie,
                                     BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            populateDefaultModel(model);
+            populateDefaultMovieModel(model);
             return "movie/movie";
         } else {
             redirectAttributes.addFlashAttribute("css", "success");
@@ -75,7 +77,7 @@ public class MovieController {
 
         if (movie.isPresent()) {
             model.addAttribute("movieForm", movie.get());
-            populateDefaultModel(model);
+            populateDefaultMovieModel(model);
             return "movie/movie";
         } else {
             return "users/userform";
@@ -94,9 +96,7 @@ public class MovieController {
         return "redirect:/movie";
     }
 
-
-
-    private void populateDefaultModel(Model model) {
+    private void populateDefaultMovieModel(Model model) {
         List<Genre> genresList = movieService.getAllGenres();
         model.addAttribute("genreList", genresList);
     }
@@ -105,7 +105,7 @@ public class MovieController {
     public String showAllGenres(Model model) {
         model.addAttribute("genreForm", new Genre());
         model.addAttribute("genres", movieService.getAllGenres());
-        populateDefaultModel(model);
+        populateDefaultMovieModel(model);
         return "movie/genre";
     }
 
@@ -135,4 +135,40 @@ public class MovieController {
         }
        return  "redirect:/movie/genre";
     }
+
+    @GetMapping("/session")
+    public String showAllSessions(Model model) {
+        List<Session> sessions = sessionService.getAllSessions();
+        model.addAttribute("sessions", sessions);
+        return "movie/all_sessions";
+    }
+
+    @GetMapping("/session/add_session")
+    public String addSession(Model model) {
+        Session session = new Session();
+        populateDefaultSessionModel(model);
+        model.addAttribute("sessionForm",session);
+        return "movie/session";
+    }
+
+    @PostMapping(value = "/session/add_movie")
+    public String saveOrUpdateSession(@ModelAttribute("sessionForm") @Validated Session session,
+                                    BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            populateDefaultMovieModel(model);
+            return "movie/session";
+        } else {
+            sessionService.saveOrUpdate(session);
+            return "redirect:/movie/session";
+        }
+    }
+
+    private void populateDefaultSessionModel(Model model) {
+        List<Hall> hallList = sessionService.getAllHalls();
+        model.addAttribute("hallList", hallList);
+
+        List<Movie> movieList = movieService.getAllMovies();
+        model.addAttribute("movieList", movieList);
+    }
+
 }

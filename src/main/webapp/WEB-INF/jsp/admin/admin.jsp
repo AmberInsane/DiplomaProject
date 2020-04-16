@@ -22,7 +22,7 @@
     <br>
     <a href="${pageContext.request.contextPath}/admin/movies"><spring:message code="admin.menu.movies"/></a>
     <br>
-    <a href="${pageContext.request.contextPath}/admin/seance"><spring:message code="admin.menu.seance"/></a>
+    <a href="${pageContext.request.contextPath}/admin/session"><spring:message code="admin.menu.seance"/></a>
     <br>
     <a href="${pageContext.request.contextPath}/admin/hall"><spring:message code="admin.menu.hall"/></a>
     <br>

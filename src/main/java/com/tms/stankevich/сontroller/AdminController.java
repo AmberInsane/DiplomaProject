@@ -55,7 +55,7 @@ public class AdminController {
     @GetMapping("/manage/delete_admin/{userId}")
     public String manageAdmins(@PathVariable Long userId,
                                @AuthenticationPrincipal User currentUser) {
-        if (currentUser.getId() == userId) {
+        if (currentUser.getId().equals(userId)) {
             return "admin/admin_manage_error";
         } else {
             userService.updateAdminRole(userId, "delete");
@@ -66,5 +66,10 @@ public class AdminController {
     @GetMapping("/movies")
     public String manageMovies() {
         return "redirect:/movie";
+    }
+
+    @GetMapping("/session")
+    public String manageSession() {
+        return "redirect:/movie/session";
     }
 }
