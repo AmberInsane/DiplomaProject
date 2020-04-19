@@ -30,17 +30,6 @@ public class Session implements Serializable {
     @ManyToOne
     @JoinColumn(name="movie_id", nullable=false)
     private Movie movie;
-/*
-    @Column(name = "start_date", nullable=false)
-    //@DateTimeFormat(pattern = "dd.mm.yyyy HH:mm")
-    //private Date startDate;
-   // @DateTimeFormat(pattern = "dd.mm.yyyy")
-    private Date startDate;
-
-    @Column(name = "start_time", nullable=false)
-    //@DateTimeFormat(pattern = "dd.mm.yyyy HH:mm")
-    //@DateTimeFormat(pattern = "HH:mm")
-    private LocalTime startTime;*/
 
     @Column(name = "start_time", nullable=false)
     private LocalDateTime startTime;
