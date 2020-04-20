@@ -1,6 +1,7 @@
 package com.tms.stankevich.service;
 
 import com.tms.stankevich.domain.movie.Hall;
+import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.exception.HallDeleteException;
 
@@ -21,4 +22,6 @@ public interface SessionService {
     void deleteHall(Hall hall) throws HallDeleteException;
 
     Optional<Session> findById(Long id);
+
+    List<Session> findByMovie(Movie movie);
 }

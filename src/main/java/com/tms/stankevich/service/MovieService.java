@@ -2,6 +2,8 @@ package com.tms.stankevich.service;
 
 import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Movie;
+import com.tms.stankevich.exception.GenreDeleteException;
+import com.tms.stankevich.exception.MovieDeleteException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +21,7 @@ interface MovieService {
 
     Optional<Genre> findGenreById(Long id);
 
-    void deleteGenre(Genre genre);
+    void deleteGenre(Genre genre) throws GenreDeleteException;
 
-    void deleteMovie(Movie movie);
+    void deleteMovie(Movie movie) throws MovieDeleteException;
 }

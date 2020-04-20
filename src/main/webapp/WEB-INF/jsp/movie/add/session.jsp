@@ -13,7 +13,7 @@
 <html>
 <head>
     <title>Session</title>
-    <spring:url value="/movie/session/add_session" var="sessionActionUrl"/>
+    <spring:url value="/movie/add/session" var="sessionActionUrl"/>
     <spring:url value="/movie/session" var="returnUrl"/>
 </head>
 <body>

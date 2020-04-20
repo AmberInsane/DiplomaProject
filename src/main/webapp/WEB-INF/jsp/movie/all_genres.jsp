@@ -14,7 +14,7 @@
 <html>
 <head>
     <title>Genres</title>
-    <spring:url value="/movies" var="returnUrl"/>
+    <spring:url value="/movie" var="returnUrl"/>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>

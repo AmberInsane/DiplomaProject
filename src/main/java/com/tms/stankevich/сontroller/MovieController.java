@@ -4,7 +4,9 @@ import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
+import com.tms.stankevich.exception.GenreDeleteException;
 import com.tms.stankevich.exception.HallDeleteException;
+import com.tms.stankevich.exception.MovieDeleteException;
 import com.tms.stankevich.service.MovieServiceImpl;
 import com.tms.stankevich.service.SessionServiceImpl;
 import com.tms.stankevich.validator.HallFormValidator;
@@ -12,9 +14,6 @@ import com.tms.stankevich.validator.MovieFormValidator;
 import com.tms.stankevich.validator.SessionFormValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -70,7 +67,18 @@ public class MovieController {
         return "movie/all_movies";
     }
 
-    @GetMapping("/add_movie")
+    @GetMapping("/{movie_id}")
+    public String showMovie(@PathVariable("movie_id") Long id, Model model) {
+        Optional<Movie> movie = movieService.findById(id);
+        if (movie.isPresent()) {
+            model.addAttribute("movie", movie.get());
+            return "movie/show/movie";
+        } else {
+            return "movie/all_movies";
+        }
+    }
+
+    @GetMapping("/add")
     public String addMovie(Model model) {
         Movie movie = new Movie();
         model.addAttribute("movieForm", movie);
@@ -78,7 +86,7 @@ public class MovieController {
         return "movie/add/movie";
     }
 
-    @PostMapping(value = "/add_movie")
+    @PostMapping(value = "/add")
     public String saveOrUpdateMovie(@ModelAttribute("movieForm") @Validated Movie movie,
                                     BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -114,9 +122,14 @@ public class MovieController {
         Optional<Movie> movie = movieService.findById(id);
         if (movie.isPresent()) {
             String movieName = movie.get().getTitle();
-            movieService.deleteMovie(movie.get());
-            redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", movieName + " удалено");
+            try {
+                movieService.deleteMovie(movie.get());
+                redirectAttributes.addFlashAttribute("css", "success");
+                redirectAttributes.addFlashAttribute("msg", movieName + " удалено");
+            } catch (MovieDeleteException e) {
+                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("msg", movieName + " не удалено: " + e.getCountOfSessions());
+            }
         }
         return "redirect:/movie";
     }
@@ -154,9 +167,14 @@ public class MovieController {
         Optional<Genre> genre = movieService.findGenreById(id);
         if (genre.isPresent()) {
             String genreName = genre.get().getName();
-            movieService.deleteGenre(genre.get());
-            redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", genreName + " удалено");
+            try {
+                movieService.deleteGenre(genre.get());
+                redirectAttributes.addFlashAttribute("css", "success");
+                redirectAttributes.addFlashAttribute("msg", genreName + " удалено");
+            } catch (GenreDeleteException e) {
+                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("msg", genreName + " не удалено:" + e.getCountOfMovies());
+            }
         }
         return "redirect:/movie/genre";
     }
@@ -168,7 +186,7 @@ public class MovieController {
         return "movie/all_sessions";
     }
 
-    @GetMapping("/session/add_session")
+    @GetMapping("/add/session")
     public String addSession(Model model) {
         Session session = new Session();
         populateDefaultSessionModel(model);
@@ -176,7 +194,7 @@ public class MovieController {
         return "movie/add/session";
     }
 
-    @PostMapping(value = "/session/add_session")
+    @PostMapping(value = "/add/session")
     public String saveOrUpdateSession(@ModelAttribute("sessionForm") @Validated Session session,
                                       BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -229,13 +247,13 @@ public class MovieController {
         return "movie/all_halls";
     }
 
-    @GetMapping("/hall/add_hall")
+    @GetMapping("/add/hall")
     public String addHall(Model model) {
         model.addAttribute("hallForm", new Hall());
         return "movie/add/hall";
     }
 
-    @PostMapping(value = "/hall/add_hall")
+    @PostMapping(value = "/add/hall")
     public String saveOrUpdateHall(@ModelAttribute("hallForm") @Validated Hall hall,
                                    BindingResult result, final RedirectAttributes redirectAttributes) {
         String action;

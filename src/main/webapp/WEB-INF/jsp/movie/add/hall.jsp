@@ -13,7 +13,7 @@
 <html>
 <head>
     <title>Hall</title>
-    <spring:url value="/movie/hall/add_hall" var="hallActionUrl"/>
+    <spring:url value="/movie/add/hall" var="hallActionUrl"/>
     <spring:url value="/movie/hall" var="returnUrl"/>
 </head>
 <body>

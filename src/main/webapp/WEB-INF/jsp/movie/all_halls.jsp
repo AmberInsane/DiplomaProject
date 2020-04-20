@@ -57,7 +57,7 @@
                 </table>
 
                 <div class="btn-default">
-                    <spring:url value="/movie/hall/add_hall" var="addHallUrl"/>
+                    <spring:url value="/movie/add/hall" var="addHallUrl"/>
                     <button class="btn btn-primary" onclick="location.href='${addHallUrl}'">Add hall</button>
                 </div>
         </security:authorize>

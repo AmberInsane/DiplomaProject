@@ -3,6 +3,7 @@ package com.tms.stankevich.service;
 import com.tms.stankevich.dao.HallRepository;
 import com.tms.stankevich.dao.SessionRepository;
 import com.tms.stankevich.domain.movie.Hall;
+import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.exception.HallDeleteException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,11 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Optional<Session> findById(Long id) {
         return sessionRepository.findById(id);
+    }
+
+    @Override
+    public List<Session> findByMovie(Movie movie) {
+      return sessionRepository.findSessionsByMovie(movie);
     }
 
     public void deleteSession(Session session) {

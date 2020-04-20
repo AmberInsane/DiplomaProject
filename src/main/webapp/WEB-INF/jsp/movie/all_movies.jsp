@@ -62,7 +62,7 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/movie/add_movie"><spring:message code="movie.add"/></a>
+                <a href="${pageContext.request.contextPath}/movie/add"><spring:message code="movie.add"/></a>
             </div>
             <div class="btn-link">
                 <a href="${pageContext.request.contextPath}/movie/genre">Manage genres</a>
