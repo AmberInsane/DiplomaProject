@@ -17,4 +17,6 @@ public interface UserService {
     void updateAdminRole(Long userId, String action);
 
     void saveOrUpdate(User user);
+
+    List<User> findUsersByName(String userName);
 }

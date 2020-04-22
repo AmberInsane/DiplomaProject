@@ -15,6 +15,7 @@
 <head>
     <meta charset="utf-8">
     <title>Регистрация</title>
+    <spring:url value="/registration" var="userActionUrl"/>
 </head>
 <jsp:include page="parts/header.jsp"/>
 <body>
@@ -28,7 +29,7 @@
         </c:otherwise>
     </c:choose>
     <br/>
-    <spring:url value="/registration" var="userActionUrl"/>
+
 
     <form:form class="form-horizontal" method="post"
                modelAttribute="userForm" action="${userActionUrl}">
