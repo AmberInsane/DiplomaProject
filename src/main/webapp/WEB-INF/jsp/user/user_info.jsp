@@ -15,9 +15,15 @@
     <title>UserInfo</title>
     <security:authentication var="curUser" property="principal"/>
     <spring:url value="/user/friend/${user.id}/send" var="sendRequestUrl"/>
-    <spring:url value="/user/friend/${user.id}/black" var="sendToBlackListUrl"/>
+    <spring:url value="/user/friend/${user.id}/block" var="blockUrl"/>
+
+    <spring:url value="/user/request/accept/${nowResponse.id}" var="acceptUrl"/>
+    <spring:url value="/user/request/deny/${nowResponse.id}" var="denyUrl"/>
+    <spring:url value="/user/request/cancel/${nowRequest.id}" var="cancelUrl"/>
+
     <spring:url value="/user/my_tickets" var="myTicketsUrl"/>
     <spring:url value="/user/my_friends" var="myFriendsUrl"/>
+    <spring:url value="/user/my_edit" var="editUrl"/>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
@@ -59,28 +65,62 @@
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Phone</label>
-        <div class="col-sm-10">${user.phone}</div>
+        <label class="col-sm-2">About user</label>
+        <div class="col-sm-10">${user.info.aboutUser}</div>
+    </div>
+
+    <div class="row">
+        <label class="col-sm-2">Favorite Genres</label>
+        <div class="col-sm-10">${user.info.favoriteGenres}</div>
+    </div>
+
+    <div class="row">
+        <label class="col-sm-2">Favorite Movies</label>
+        <div class="col-sm-10">${user.info.favoriteMovies}</div>
     </div>
 
     <security:authorize access="isAuthenticated()">
         <c:choose>
             <c:when test="${user.equals(curUser)}">
                 <div>
-                    <button class="btn btn-primary" onclick="${myTicketsUrl}">Show my tickets</button>
+                    <button class="btn btn-primary" onclick="location.href='${editUrl}'">Edit my info</button>
                 </div>
                 <div>
-                    <button class="btn btn-primary" onclick="${myTicketsUrl}">Show my friends</button>
+                    <button class="btn btn-primary" onclick="location.href='${myTicketsUrl}'">Show my tickets</button>
                 </div>
+                <div>
+                    <button class="btn btn-primary" onclick="location.href='${myFriendsUrl}'">Show my friends</button>
+                </div>
+                <c:if test="${requestsNum > 0}">
+                    <div class="text-info">
+                        (+ ${requestsNum})
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <div>
-                    <button class="btn btn-primary" onclick="this.disabled=true;post('${sendRequestUrl}')">Send Friend
-                        Request
-                    </button>
+                    <c:choose>
+                        <c:when test="${not empty nowResponse}">
+                            <button class="btn btn-primary" onclick="this.disabled=true;post('${acceptUrl}')">
+                                Принять
+                            </button>
+                            <button class="btn btn-warning" onclick="this.disabled=true;post('${denyUrl}')">Отклонить
+                            </button>
+                        </c:when>
+                        <c:when test="${not empty nowRequest}">
+                            <button class="btn btn-warning" onclick="this.disabled=true;post('${cancelUrl}')">
+                                Отменить запрос
+                            </button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn btn-primary" onclick="this.disabled=true;post('${sendRequestUrl}')">Send
+                                Friend Request
+                            </button>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div>
-                    <button class="btn btn-danger" onclick="this.disabled=true;post('${sendToBlackListUrl}')">Send to
+                    <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">Send to
                         black list
                     </button>
                 </div>

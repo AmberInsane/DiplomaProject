@@ -35,9 +35,6 @@ public class User implements UserDetails {
     @Column(name = "birthday")
     private Date birthday;
 
-    @Column(name = "phone", length = 20)
-    private String phone;
-
     @Transient
     private String passwordConfirm;
 
@@ -51,7 +48,18 @@ public class User implements UserDetails {
     @JoinTable(name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    protected List<User> friends = null;
+    private Set<User> friends;
+
+    @ManyToMany
+    @JoinTable(name = "user_black_list",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "blocked_user_id"))
+    private Set<User> blackList;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinColumn(name = "info_id")
+    private UserInfo info;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

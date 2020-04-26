@@ -2,11 +2,9 @@ package com.tms.stankevich.service;
 
 import com.tms.stankevich.dao.FriendRequestRepository;
 import com.tms.stankevich.dao.RoleRepository;
+import com.tms.stankevich.dao.UserInfoRepository;
 import com.tms.stankevich.dao.UserRepository;
-import com.tms.stankevich.domain.user.FriendRequest;
-import com.tms.stankevich.domain.user.FriendRequestStatus;
-import com.tms.stankevich.domain.user.Role;
-import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.domain.user.*;
 
 import com.tms.stankevich.exception.FriendRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Autowired
     private FriendRequestRepository friendRequestRepository;
+
+    @Autowired
+    private UserInfoRepository userInfoRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -61,17 +62,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public boolean saveUser(User user) {
+    public User saveUser(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
-            return false;
+            return userFromDB;
         }
-
         user.setRoles(Collections.singleton(roleRepository.findByName(USER_ROLE)));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
+        User newUser = userRepository.save(user);
+        return newUser;
     }
 
    /* public List<User> usergtList(Long idMin) {
@@ -111,11 +111,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void saveOrUpdate(User user) {
+    public User saveOrUpdate(User user) {
         if (user.isNew())
-            saveUser(user);
+           return saveUser(user);
         else
-            userRepository.save(user);
+          return userRepository.save(user);
     }
 
     @Override
@@ -158,5 +158,28 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             }
         }
         return Optional.ofNullable(friendRequest);
+    }
+
+    @Override
+    public void sendToBlackList(User currentUser, User userToBlock) {
+        if (!currentUser.getBlackList().contains(userToBlock)) {
+            currentUser.getBlackList().add(userToBlock);
+            saveOrUpdate(userToBlock);
+        }
+    }
+
+    @Override
+    public void saveOrUpdateUserInfo(UserInfo userInfo) {
+        userInfoRepository.save(userInfo);
+    }
+
+    @Override
+    public List<FriendRequest> findInFriendRequests(User user) {
+        return friendRequestRepository.findByUserResponseAndStatus(user, FriendRequestStatus.SD);
+    }
+
+    @Override
+    public List<FriendRequest> findOutFriendRequests(User user) {
+        return friendRequestRepository.findByUserRequestAndStatus(user, FriendRequestStatus.SD);
     }
 }

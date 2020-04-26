@@ -20,17 +20,8 @@
 <jsp:include page="parts/header.jsp"/>
 <body>
 <div class="container">
-    <c:choose>
-        <c:when test="${userForm['new']}">
-            <h1>Add User</h1>
-        </c:when>
-        <c:otherwise>
-            <h1>Update User</h1>
-        </c:otherwise>
-    </c:choose>
+    <h1>Add User</h1>
     <br/>
-
-
     <form:form class="form-horizontal" method="post"
                modelAttribute="userForm" action="${userActionUrl}">
 
@@ -89,16 +80,8 @@
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <c:choose>
-                    <c:when test="${userForm['new']}">
-                        <button type="submit" class="btn-lg btn-primary pull-right">Add
-                        </button>
-                    </c:when>
-                    <c:otherwise>
-                        <button type="submit" class="btn-lg btn-primary pull-right">Update
-                        </button>
-                    </c:otherwise>
-                </c:choose>
+                <button type="submit" class="btn-lg btn-primary pull-right">Add
+                </button>
             </div>
         </div>
 

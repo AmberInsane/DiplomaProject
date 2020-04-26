@@ -3,6 +3,7 @@ package com.tms.stankevich.service;
 
 import com.tms.stankevich.domain.user.FriendRequest;
 import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.domain.user.UserInfo;
 import com.tms.stankevich.exception.FriendRequestException;
 
 import java.util.List;
@@ -13,17 +14,25 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    boolean saveUser(User user);
+    User saveUser(User user);
 
     List<User> getUsersByRole(String roleName);
 
     void updateAdminRole(Long userId, String action);
 
-    void saveOrUpdate(User user);
+    User saveOrUpdate(User user);
 
     List<User> findUsersByName(String userName);
 
     void sendFriendRequest(User currentUser, User friend) throws FriendRequestException;
 
     Optional<FriendRequest> checkFriendRequest(User userRequest, User userResponse) throws FriendRequestException;
+
+    void sendToBlackList(User currentUser, User userToBlock);
+
+    void saveOrUpdateUserInfo(UserInfo userInfo);
+
+    List<FriendRequest> findInFriendRequests(User user);
+
+    List<FriendRequest> findOutFriendRequests(User user);
 }

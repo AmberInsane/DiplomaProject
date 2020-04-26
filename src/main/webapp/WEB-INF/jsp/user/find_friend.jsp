@@ -43,7 +43,6 @@
             <tr>
                 <th>Name</th>
                 <th>Birthday</th>
-                <th>Send request</th>
             </tr>
             <c:forEach items="${friend_list}" var="friend">
                 <tr>
