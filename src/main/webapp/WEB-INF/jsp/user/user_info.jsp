@@ -16,10 +16,13 @@
     <security:authentication var="curUser" property="principal"/>
     <spring:url value="/user/friend/${user.id}/send" var="sendRequestUrl"/>
     <spring:url value="/user/friend/${user.id}/block" var="blockUrl"/>
+    <spring:url value="/user/friend/${user.id}/unblock" var="unblockUrl"/>
+    <spring:url value="/user/friend/${user.id}/delete" var="deleteUrl"/>
 
     <spring:url value="/user/request/accept/${nowResponse.id}" var="acceptUrl"/>
     <spring:url value="/user/request/deny/${nowResponse.id}" var="denyUrl"/>
     <spring:url value="/user/request/cancel/${nowRequest.id}" var="cancelUrl"/>
+
 
     <spring:url value="/user/my_tickets" var="myTicketsUrl"/>
     <spring:url value="/user/my_friends" var="myFriendsUrl"/>
@@ -60,11 +63,6 @@
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Birthday</label>
-        <div class="col-sm-10">${user.birthday}</div>
-    </div>
-
-    <div class="row">
         <label class="col-sm-2">About user</label>
         <div class="col-sm-10">${user.info.aboutUser}</div>
     </div>
@@ -90,12 +88,12 @@
                 </div>
                 <div>
                     <button class="btn btn-primary" onclick="location.href='${myFriendsUrl}'">Show my friends</button>
+                    <c:if test="${requestsNum > 0}">
+                        <div class="text-info">
+                            (+ ${requestsNum})
+                        </div>
+                    </c:if>
                 </div>
-                <c:if test="${requestsNum > 0}">
-                    <div class="text-info">
-                        (+ ${requestsNum})
-                    </div>
-                </c:if>
             </c:when>
             <c:otherwise>
                 <div>
@@ -112,17 +110,33 @@
                                 Отменить запрос
                             </button>
                         </c:when>
-                        <c:otherwise>
-                            <button class="btn btn-primary" onclick="this.disabled=true;post('${sendRequestUrl}')">Send
-                                Friend Request
+                        <c:when test="${not empty isFriend}">
+                            <button class="btn btn-warning" onclick="this.disabled=true;post('${deleteUrl}')">
+                                Удалить из друзей
                             </button>
+                        </c:when>
+                        <c:otherwise>
+                            <c:when test="${!youBlocked}">
+                                <button class="btn btn-primary" onclick="this.disabled=true;post('${sendRequestUrl}')">
+                                    Send
+                                    Friend Request
+                                </button>
+                            </c:when>
                         </c:otherwise>
                     </c:choose>
                 </div>
                 <div>
-                    <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">Send to
-                        black list
-                    </button>
+                    <c:choose>
+                        <c:when test="${blocked}">
+                            <button class="btn btn-primary" onclick="this.disabled=true;post('${unblockUrl}')">Unblock
+                                User
+                            </button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">Block User
+                            </button>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </c:otherwise>
         </c:choose>

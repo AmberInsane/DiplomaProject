@@ -32,9 +32,6 @@ public class User implements UserDetails {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "birthday")
-    private Date birthday;
-
     @Transient
     private String passwordConfirm;
 
@@ -44,13 +41,35 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles;
 
-    @ManyToMany
-    @JoinTable(name = "user_friends",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private Set<User> friends;
+//    @ManyToMany //(fetch = FetchType.EAGER)
+//    @JoinTable(name = "user_friends",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+//    private Set<User> friends;
+//
+//    @ManyToMany
+//    @JoinTable(name = "user_friends",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+//    protected Set<User> friends = null;
+//    @ManyToMany(mappedBy = "friends")
+//    protected List befriended = null;
 
     @ManyToMany
+    @JoinTable(name="user_friends",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="friend_id")
+    )
+    private List<User> friends;
+
+    @ManyToMany
+    @JoinTable(name="user_friends",
+            joinColumns=@JoinColumn(name="friend_id"),
+            inverseJoinColumns=@JoinColumn(name="user_id")
+    )
+    private List<User> friendOf;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_black_list",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "blocked_user_id"))
@@ -60,6 +79,11 @@ public class User implements UserDetails {
     @JoinColumn(name = "info_id")
     private UserInfo info;
 
+    @PrePersist
+    public void prePersist() {
+        if(info == null)
+            info = new UserInfo();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

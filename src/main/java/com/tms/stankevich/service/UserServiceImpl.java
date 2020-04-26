@@ -42,11 +42,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-
         return user;
     }
 
@@ -62,7 +60,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User saveUser(User user) {
+    public User addUser(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
@@ -113,9 +111,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public User saveOrUpdate(User user) {
         if (user.isNew())
-           return saveUser(user);
+            return addUser(user);
         else
-          return userRepository.save(user);
+            return userRepository.save(user);
     }
 
     @Override
@@ -125,47 +123,110 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void sendFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
-        FriendRequest request;
         if (userRequest.equals(userResponse))
             throw new FriendRequestException("Не добавляйте себя в друзья");
-        Optional<FriendRequest> friendRequest = checkFriendRequest(userRequest, userResponse);
-
-        if (friendRequest.isPresent()) {
-            request = friendRequest.get();
-        } else {
-            request = new FriendRequest();
-            request.setUserRequest(userRequest);
-            request.setUserResponse(userResponse);
-        }
-        request.setStatus(FriendRequestStatus.SD);
-        friendRequestRepository.save(request);
+        FriendRequest friendRequest = checkAndGetFriendRequest(userRequest, userResponse);
+        friendRequest.setStatus(FriendRequestStatus.SD);
+        friendRequestRepository.save(friendRequest);
     }
 
     @Override
-    public Optional<FriendRequest> checkFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
-        FriendRequest friendRequest = null;
-        List<FriendRequest> friendRequests = friendRequestRepository.findByUserRequestAndUserResponse(userRequest, userResponse);
-        if (friendRequests.size() > 0) {
-            friendRequest = friendRequests.get(0);
-            @NotNull FriendRequestStatus status = friendRequest.getStatus();
+    public FriendRequest checkAndGetFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
+        FriendRequest request;
+        Optional<FriendRequest> friendRequest = friendRequestRepository.findByUserRequestAndUserResponse(userRequest, userResponse);
+        if (friendRequest.isPresent()) {
+            request = friendRequest.get();
+            @NotNull FriendRequestStatus status = request.getStatus();
             switch (status) {
-                case BL:
-                    throw new FriendRequestException("Вы в черном списке этого пользователя");
                 case OK:
                     throw new FriendRequestException("Вы уже друзья");
                 case SD:
                     throw new FriendRequestException("Вы уже отправили запрос. Ожидайте");
             }
+            return request;
         }
-        return Optional.ofNullable(friendRequest);
+        if (userResponse.getBlackList().contains(userRequest)) {
+            throw new FriendRequestException("Вы в черном списке пользователя");
+        }
+        request = new FriendRequest();
+        request.setUserRequest(userRequest);
+        request.setUserResponse(userResponse);
+        return request;
     }
 
     @Override
-    public void sendToBlackList(User currentUser, User userToBlock) {
-        if (!currentUser.getBlackList().contains(userToBlock)) {
+    public void blockUser(User currentUser, User userToBlock) {
+        if (!isUserBlockedSecond(currentUser, userToBlock)) {
+            //удалить из друзей
+            if (!deleteFromFriends(currentUser, userToBlock)) {
+                //ИЛИ обновить все запросы
+                Optional<FriendRequest> request = findOutFriendRequests(currentUser).stream()
+                        .filter(friendRequest -> friendRequest.getUserResponse().equals(userToBlock)).findFirst();
+                if (request.isPresent()) {
+                    cancelFriendRequest(currentUser, request.get());
+                }
+
+                Optional<FriendRequest> response = findInFriendRequests(currentUser).stream()
+                        .filter(friendRequest -> friendRequest.getUserRequest().equals(userToBlock)).findFirst();
+
+                if (response.isPresent()) {
+                    denyFriendRequest(currentUser, response.get());
+                }
+            }
             currentUser.getBlackList().add(userToBlock);
-            saveOrUpdate(userToBlock);
+            userRepository.save(userToBlock);
         }
+    }
+
+    @Override
+    public void acceptFriendRequest(User currentUser, FriendRequest friendRequest) {
+        if (friendRequest.getUserResponse().equals(currentUser)) {
+            User userRequest = friendRequest.getUserRequest();
+            userRequest.getFriends().add(currentUser);
+            userRepository.save(userRequest);
+
+//            currentUser.getFriends().add(userRequest);
+//            userRepository.save(currentUser);
+
+            friendRequest.setStatus(FriendRequestStatus.OK);
+            friendRequestRepository.save(friendRequest);
+        }
+    }
+
+    @Override
+    public void denyFriendRequest(User currentUser, FriendRequest friendRequest) {
+        if (friendRequest.getUserResponse().equals(currentUser)) {
+            friendRequest.setStatus(FriendRequestStatus.NO);
+            friendRequestRepository.save(friendRequest);
+        }
+    }
+
+    @Override
+    public void cancelFriendRequest(User currentUser, FriendRequest request) {
+        if (request.getUserRequest().equals(currentUser)) {
+            request.setStatus(FriendRequestStatus.AN);
+            friendRequestRepository.save(request);
+        }
+    }
+
+    @Override
+    public boolean deleteFromFriends(User userWho, User userDelete) {
+        if (isUserFriendSecond(userWho, userDelete)) {
+            userWho.getFriends().remove(userDelete);
+            userRepository.save(userWho);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUserBlockedSecond(User currentUser, User userSecond) {
+        return currentUser.getBlackList().contains(userSecond);
+    }
+
+    @Override
+    public boolean isUserFriendSecond(User currentUser, User userSecond) {
+        return currentUser.getFriends().contains(userSecond);
     }
 
     @Override
@@ -181,5 +242,25 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public List<FriendRequest> findOutFriendRequests(User user) {
         return friendRequestRepository.findByUserRequestAndStatus(user, FriendRequestStatus.SD);
+    }
+
+    @Override
+    public void unblockUser(User currentUser, User userToUnblock) {
+        if (currentUser.getBlackList().contains(userToUnblock)) {
+            currentUser.getBlackList().remove(userToUnblock);
+            userRepository.save(currentUser);
+        }
+    }
+
+    @Override
+    public Optional<FriendRequest> findFriendRequestById(Long id) {
+        return friendRequestRepository.findById(id);
+    }
+
+    @Override
+    public List<User> getUserFriendList(User user){
+        List<User> userList = new ArrayList<>(user.getFriends()) ;
+        userList.addAll(user.getFriendOf());
+        return userList;
     }
 }

@@ -14,7 +14,7 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    User saveUser(User user);
+    User addUser(User user);
 
     List<User> getUsersByRole(String roleName);
 
@@ -26,13 +26,31 @@ public interface UserService {
 
     void sendFriendRequest(User currentUser, User friend) throws FriendRequestException;
 
-    Optional<FriendRequest> checkFriendRequest(User userRequest, User userResponse) throws FriendRequestException;
+    FriendRequest checkAndGetFriendRequest(User userRequest, User userResponse) throws FriendRequestException;
 
-    void sendToBlackList(User currentUser, User userToBlock);
+    void blockUser(User currentUser, User userToBlock);
+
+    void acceptFriendRequest(User currentUser, FriendRequest friendRequest);
+
+    void denyFriendRequest(User currentUser, FriendRequest friendRequest);
+
+    void cancelFriendRequest(User currentUser, FriendRequest request);
+
+    boolean deleteFromFriends(User userWho, User userDelete);
+
+    boolean isUserBlockedSecond(User currentUser, User userSecond);
+
+    boolean isUserFriendSecond(User currentUser, User userSecond);
 
     void saveOrUpdateUserInfo(UserInfo userInfo);
 
     List<FriendRequest> findInFriendRequests(User user);
 
     List<FriendRequest> findOutFriendRequests(User user);
+
+    void unblockUser(User currentUser, User userToUnblock);
+
+    Optional<FriendRequest> findFriendRequestById(Long id);
+
+    List<User> getUserFriendList(User user);
 }

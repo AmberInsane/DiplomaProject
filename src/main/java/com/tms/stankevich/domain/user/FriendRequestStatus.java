@@ -4,5 +4,5 @@ public enum FriendRequestStatus {
     SD,
     OK,
     NO,
-    BL
+    AN
 }

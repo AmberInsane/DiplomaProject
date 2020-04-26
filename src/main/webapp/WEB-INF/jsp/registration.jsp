@@ -47,16 +47,6 @@
             </div>
         </spring:bind>
 
-        <spring:bind path="birthday">
-            <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label">Email</label>
-                <div class="col-sm-10">
-                    <form:input type="date" path="birthday" class="form-control" id="birthday"/>
-                    <form:errors path="birthday" class="control-label"/>
-                </div>
-            </div>
-        </spring:bind>
-
         <spring:bind path="password">
             <div class="form-group ${status.error ? 'has-error' : ''}">
                 <label class="col-sm-2 control-label">Password</label>

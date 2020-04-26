@@ -43,8 +43,8 @@
                                 </button>
                             </td>
                             <td>
-                                <spring:url value="/user/friend/${request.userRequest.id}/black" var="blackUrl"/>
-                                <button class="btn btn-danger" onclick="this.disabled=true;post('${blackUrl}')">
+                                <spring:url value="/user/friend/${request.userRequest.id}/block" var="blockUrl"/>
+                                <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">
                                     Отправить в
                                     черный список
                                 </button>
@@ -66,8 +66,8 @@
                                     <a href="${showUrl}">${friend.username}</a>
                                 </td>
                                 <td>
-                                    <spring:url value="/user/friend/${friend.id}/delete" var="denyUrl"/>
-                                    <button class="btn btn-warning" onclick="this.disabled=true;post('${denyUrl}')">
+                                    <spring:url value="/user/friend/${friend.id}/delete" var="deleteUrl"/>
+                                    <button class="btn btn-warning" onclick="this.disabled=true;post('${deleteUrl}')">
                                         Удалить
                                     </button>
                                 </td>

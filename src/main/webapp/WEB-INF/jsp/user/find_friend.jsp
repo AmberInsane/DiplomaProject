@@ -49,7 +49,6 @@
                     <td>
                         <spring:url value="/user/${friend.id}" var="showUrl"/>
                         <a href="${showUrl}">${friend.username}</a></td>
-                    <td>${friend.birthday}</td>
                 </tr>
             </c:forEach>
         </table>

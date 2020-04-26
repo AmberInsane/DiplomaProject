@@ -9,12 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +26,37 @@ public class UserController {
     @GetMapping("/my_profile")
     public String showMyPage(Model model, @AuthenticationPrincipal User currentUser) {
         return showUserPage(currentUser.getId(), model, currentUser);
+    }
+
+    @GetMapping("/my_edit")
+    public String editUser(Model model, @AuthenticationPrincipal User currentUser) {
+
+        UserInfo userInfo = userService.findUserById(currentUser.getId()).getInfo();
+        //проверить и удалить
+        if (userInfo == null) {
+            userInfo = new UserInfo();
+            currentUser.setInfo(userInfo);
+            userInfo = userService.saveOrUpdate(currentUser).getInfo();
+        }
+
+        model.addAttribute("userInfoForm", userInfo);
+        return "user/user_edit";
+    }
+
+    @PostMapping("/my_edit")
+    public String saveEditUser(@ModelAttribute("userInfoForm") UserInfo userInfo) {
+        userService.saveOrUpdateUserInfo(userInfo);
+        return "redirect:/user/my_profile";
+    }
+
+    @GetMapping("/my_friends")
+    public String showMyFriends(Model model, @AuthenticationPrincipal User currentUser) {
+        User user = userService.findUserById(currentUser.getId());
+
+        model.addAttribute("inRequests", userService.findInFriendRequests(user));
+        model.addAttribute("friends", userService.getUserFriendList(user));
+        model.addAttribute("outRequests", userService.findOutFriendRequests(user));
+        return "user/friends";
     }
 
     @GetMapping("/{user_id}")
@@ -48,6 +77,11 @@ public class UserController {
             Optional<FriendRequest> request = outFriendRequests.stream().filter(friendRequest -> friendRequest.getUserResponse().equals(user)).findAny();
             if (request.isPresent())
                 model.addAttribute("nowRequest", request.get());
+
+            model.addAttribute("blocked", userService.isUserBlockedSecond(currentUser, user));
+            model.addAttribute("youBlocked", userService.isUserBlockedSecond(user, currentUser));
+
+            model.addAttribute("isFriend", currentUser.getFriends().contains(user) || currentUser.getFriendOf().contains(user));
         }
         return "user/user_info";
     }
@@ -91,45 +125,32 @@ public class UserController {
         return "redirect:/user/" + userId;
     }
 
-    @PostMapping("/friend/{user_id}/black")
-    public String sendToBlackList(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
+    @PostMapping("/friend/{user_id}/block")
+    public String blockUser(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
         User userToBlock = userService.findUserById(userId);
-        userService.sendToBlackList(currentUser, userToBlock);
+        userService.blockUser(currentUser, userToBlock);
 
-        redirectAttributes.addFlashAttribute("css", "success");
+        redirectAttributes.addFlashAttribute("css", "danger");
         redirectAttributes.addFlashAttribute("msg", "Пользователь добавлен в черный список");
         return "redirect:/user/" + userId;
     }
 
-    @GetMapping("/my_edit")
-    public String editUser(Model model, @AuthenticationPrincipal User currentUser) {
+    @PostMapping("/friend/{user_id}/unblock")
+    public String unblockUser(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
+        User userToUnblock = userService.findUserById(userId);
+        userService.unblockUser(currentUser, userToUnblock);
 
-        UserInfo userInfo = userService.findUserById(currentUser.getId()).getInfo();
-        if (userInfo == null) {
-            userInfo = new UserInfo();
-            currentUser.setInfo(userInfo);
-            userInfo = userService.saveOrUpdate(currentUser).getInfo();
+        redirectAttributes.addFlashAttribute("css", "success");
+        redirectAttributes.addFlashAttribute("msg", "Пользователь убран из черного списока");
+        return "redirect:/user/" + userId;
+    }
+
+    @PostMapping("/request/accept/{request_id}")
+    public String acceptFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
+        Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
+        if (friendRequest.isPresent()) {
+            userService.acceptFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
         }
-
-        model.addAttribute("userInfoForm", userInfo);
-        return "user/user_edit";
+        return "redirect:" + request.getHeader("Referer");
     }
-
-    @PostMapping("/my_edit")
-    public String saveEditUser(@ModelAttribute("userInfoForm") UserInfo userInfo) {
-        userService.saveOrUpdateUserInfo(userInfo);
-        return "redirect:/user/my_profile";
-    }
-
-    @GetMapping("/my_friends")
-    public String showMyFriends(Model model, @AuthenticationPrincipal User currentUser) {
-        User user = userService.findUserById(currentUser.getId());
-
-        model.addAttribute("inRequests", userService.findInFriendRequests(user));
-        model.addAttribute("friends", user.getFriends());
-        model.addAttribute("outRequests", userService.findOutFriendRequests(user));
-        return "user/friends";
-    }
-
-
 }

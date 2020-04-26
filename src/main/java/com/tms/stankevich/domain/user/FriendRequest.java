@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"user_request", "user_response"})})
 public class FriendRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
