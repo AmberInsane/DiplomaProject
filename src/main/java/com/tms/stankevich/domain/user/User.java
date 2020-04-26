@@ -53,10 +53,6 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
     protected List<User> friends = null;
 
-    @ManyToMany(mappedBy = "friends")
-    protected List<User> befriended = null;
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
@@ -96,17 +92,11 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(password, user.password) &&
-                Objects.equals(passwordConfirm, user.passwordConfirm) &&
-                Objects.equals(roles, user.roles) &&
-                Objects.equals(friends, user.friends) &&
-                Objects.equals(befriended, user.befriended);
+        return id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, passwordConfirm, roles, friends, befriended);
+        return Objects.hash(id, username, password, passwordConfirm, roles, friends);
     }
 }

@@ -1,10 +1,14 @@
 package com.tms.stankevich.service;
 
+import com.tms.stankevich.dao.FriendRequestRepository;
 import com.tms.stankevich.dao.RoleRepository;
 import com.tms.stankevich.dao.UserRepository;
+import com.tms.stankevich.domain.user.FriendRequest;
+import com.tms.stankevich.domain.user.FriendRequestStatus;
 import com.tms.stankevich.domain.user.Role;
 import com.tms.stankevich.domain.user.User;
 
+import com.tms.stankevich.exception.FriendRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @Service
@@ -23,6 +28,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private FriendRequestRepository friendRequestRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -112,6 +120,43 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public List<User> findUsersByName(String userName) {
-       return userRepository.findByUsernameStartsWith(userName);
+        return userRepository.findByUsernameStartsWith(userName);
+    }
+
+    @Override
+    public void sendFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
+        FriendRequest request;
+        if (userRequest.equals(userResponse))
+            throw new FriendRequestException("Не добавляйте себя в друзья");
+        Optional<FriendRequest> friendRequest = checkFriendRequest(userRequest, userResponse);
+
+        if (friendRequest.isPresent()) {
+            request = friendRequest.get();
+        } else {
+            request = new FriendRequest();
+            request.setUserRequest(userRequest);
+            request.setUserResponse(userResponse);
+        }
+        request.setStatus(FriendRequestStatus.SD);
+        friendRequestRepository.save(request);
+    }
+
+    @Override
+    public Optional<FriendRequest> checkFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
+        FriendRequest friendRequest = null;
+        List<FriendRequest> friendRequests = friendRequestRepository.findByUserRequestAndUserResponse(userRequest, userResponse);
+        if (friendRequests.size() > 0) {
+            friendRequest = friendRequests.get(0);
+            @NotNull FriendRequestStatus status = friendRequest.getStatus();
+            switch (status) {
+                case BL:
+                    throw new FriendRequestException("Вы в черном списке этого пользователя");
+                case OK:
+                    throw new FriendRequestException("Вы уже друзья");
+                case SD:
+                    throw new FriendRequestException("Вы уже отправили запрос. Ожидайте");
+            }
+        }
+        return Optional.ofNullable(friendRequest);
     }
 }

@@ -51,11 +51,6 @@
                         <spring:url value="/user/${friend.id}" var="showUrl"/>
                         <a href="${showUrl}">${friend.username}</a></td>
                     <td>${friend.birthday}</td>
-                    <td>
-                        <spring:url value="/user/${friend.id}/friend" var="sendRequestUrl"/>
-                        <button class="btn btn-primary" onclick="location.href='${sendRequestUrl}'">Send request
-                        </button>
-                    </td>
                 </tr>
             </c:forEach>
         </table>
