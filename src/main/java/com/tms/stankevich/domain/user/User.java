@@ -55,18 +55,19 @@ public class User implements UserDetails {
 //    @ManyToMany(mappedBy = "friends")
 //    protected List befriended = null;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="user_friends",
             joinColumns=@JoinColumn(name="user_id"),
             inverseJoinColumns=@JoinColumn(name="friend_id")
     )
     private List<User> friends;
 
-    @ManyToMany
-    @JoinTable(name="user_friends",
-            joinColumns=@JoinColumn(name="friend_id"),
-            inverseJoinColumns=@JoinColumn(name="user_id")
-    )
+  //  @ManyToMany
+//    @JoinTable(name="user_friends",
+//            joinColumns=@JoinColumn(name="friend_id"),
+//            inverseJoinColumns=@JoinColumn(name="user_id")
+//    )
+    @ManyToMany(mappedBy="friends", fetch = FetchType.EAGER)
     private List<User> friendOf;
 
     @ManyToMany(fetch = FetchType.EAGER)

@@ -23,7 +23,6 @@
     <spring:url value="/user/request/deny/${nowResponse.id}" var="denyUrl"/>
     <spring:url value="/user/request/cancel/${nowRequest.id}" var="cancelUrl"/>
 
-
     <spring:url value="/user/my_tickets" var="myTicketsUrl"/>
     <spring:url value="/user/my_friends" var="myFriendsUrl"/>
     <spring:url value="/user/my_edit" var="editUrl"/>
@@ -110,18 +109,18 @@
                                 Отменить запрос
                             </button>
                         </c:when>
-                        <c:when test="${not empty isFriend}">
+                        <c:when test="${isFriend}">
                             <button class="btn btn-warning" onclick="this.disabled=true;post('${deleteUrl}')">
                                 Удалить из друзей
                             </button>
                         </c:when>
                         <c:otherwise>
-                            <c:when test="${!youBlocked}">
+                            <c:if test="${!youBlocked && !blocked}">
                                 <button class="btn btn-primary" onclick="this.disabled=true;post('${sendRequestUrl}')">
                                     Send
                                     Friend Request
                                 </button>
-                            </c:when>
+                            </c:if>
                         </c:otherwise>
                     </c:choose>
                 </div>

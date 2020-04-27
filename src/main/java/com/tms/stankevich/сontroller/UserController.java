@@ -54,7 +54,7 @@ public class UserController {
         User user = userService.findUserById(currentUser.getId());
 
         model.addAttribute("inRequests", userService.findInFriendRequests(user));
-        model.addAttribute("friends", userService.getUserFriendList(user));
+        model.addAttribute("friends", user.getFriends());
         model.addAttribute("outRequests", userService.findOutFriendRequests(user));
         return "user/friends";
     }
@@ -81,7 +81,7 @@ public class UserController {
             model.addAttribute("blocked", userService.isUserBlockedSecond(currentUser, user));
             model.addAttribute("youBlocked", userService.isUserBlockedSecond(user, currentUser));
 
-            model.addAttribute("isFriend", currentUser.getFriends().contains(user) || currentUser.getFriendOf().contains(user));
+            model.addAttribute("isFriend", currentUser.getFriends().contains(user));
         }
         return "user/user_info";
     }
@@ -125,6 +125,16 @@ public class UserController {
         return "redirect:/user/" + userId;
     }
 
+    @PostMapping("/friend/{user_id}/delete")
+    public String deleteFriend(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
+        User userToBlock = userService.findUserById(userId);
+        userService.deleteFromFriends(currentUser, userToBlock);
+
+        redirectAttributes.addFlashAttribute("css", "danger");
+        redirectAttributes.addFlashAttribute("msg", "Пользователь удален из друзей");
+        return "redirect:/user/" + userId;
+    }
+
     @PostMapping("/friend/{user_id}/block")
     public String blockUser(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
         User userToBlock = userService.findUserById(userId);
@@ -150,6 +160,24 @@ public class UserController {
         Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
         if (friendRequest.isPresent()) {
             userService.acceptFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
+        }
+        return "redirect:" + request.getHeader("Referer");
+    }
+
+    @PostMapping("/request/deny/{request_id}")
+    public String denyFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
+        Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
+        if (friendRequest.isPresent()) {
+            userService.denyFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
+        }
+        return "redirect:" + request.getHeader("Referer");
+    }
+
+    @PostMapping("/request/cancel/{request_id}")
+    public String cancelFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
+        Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
+        if (friendRequest.isPresent()) {
+            userService.cancelFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
         }
         return "redirect:" + request.getHeader("Referer");
     }

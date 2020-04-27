@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -137,15 +138,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (friendRequest.isPresent()) {
             request = friendRequest.get();
             @NotNull FriendRequestStatus status = request.getStatus();
-            switch (status) {
-                case OK:
-                    throw new FriendRequestException("Вы уже друзья");
-                case SD:
+            if (status == FriendRequestStatus.SD)
                     throw new FriendRequestException("Вы уже отправили запрос. Ожидайте");
-            }
             return request;
         }
-        if (userResponse.getBlackList().contains(userRequest)) {
+        if (isUserFriendSecond(userRequest, userResponse)) {
+            throw new FriendRequestException("Вы уже друзья");
+        }
+        if (isUserBlockedSecond(userResponse,userRequest)) {
             throw new FriendRequestException("Вы в черном списке пользователя");
         }
         request = new FriendRequest();
@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 }
             }
             currentUser.getBlackList().add(userToBlock);
-            userRepository.save(userToBlock);
+            userRepository.save(currentUser);
         }
     }
 
@@ -185,8 +185,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             userRequest.getFriends().add(currentUser);
             userRepository.save(userRequest);
 
-//            currentUser.getFriends().add(userRequest);
-//            userRepository.save(currentUser);
+            currentUser.getFriends().add(userRequest);
+            userRepository.save(currentUser);
 
             friendRequest.setStatus(FriendRequestStatus.OK);
             friendRequestRepository.save(friendRequest);
@@ -212,8 +212,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public boolean deleteFromFriends(User userWho, User userDelete) {
         if (isUserFriendSecond(userWho, userDelete)) {
-            userWho.getFriends().remove(userDelete);
+            userWho.getFriends().removeIf(user -> user.equals(userDelete));
             userRepository.save(userWho);
+
+            userDelete.getFriends().removeIf(user -> user.equals(userWho));
+            userRepository.save(userDelete);
+
             return true;
         }
         return false;
@@ -221,12 +225,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public boolean isUserBlockedSecond(User currentUser, User userSecond) {
-        return currentUser.getBlackList().contains(userSecond);
+        return currentUser.getBlackList().stream().anyMatch(user -> user.equals(userSecond));
     }
 
     @Override
     public boolean isUserFriendSecond(User currentUser, User userSecond) {
-        return currentUser.getFriends().contains(userSecond);
+        return currentUser.getFriends().stream().anyMatch(user -> user.equals(userSecond));
     }
 
     @Override
@@ -246,8 +250,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void unblockUser(User currentUser, User userToUnblock) {
-        if (currentUser.getBlackList().contains(userToUnblock)) {
-            currentUser.getBlackList().remove(userToUnblock);
+        if (isUserBlockedSecond(currentUser, userToUnblock)) {
+           currentUser.getBlackList().removeIf(user -> user.equals(userToUnblock));
             userRepository.save(currentUser);
         }
     }
