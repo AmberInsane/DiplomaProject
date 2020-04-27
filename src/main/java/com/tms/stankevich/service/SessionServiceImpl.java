@@ -9,6 +9,7 @@ import com.tms.stankevich.exception.HallDeleteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<Session> getAllSessions() {
-        return sessionRepository.findAll();
+        return sessionRepository.findSessionsByStartTimeGreaterThanOrderByStartTime(LocalDateTime.now());
     }
 
     @Override
@@ -60,7 +61,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<Session> findByMovie(Movie movie) {
-      return sessionRepository.findSessionsByMovie(movie);
+      return sessionRepository.findSessionsByMovieAndStartTimeGreaterThanOrderByStartTime(movie, LocalDateTime.now());
     }
 
     public void deleteSession(Session session) {

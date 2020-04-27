@@ -1,10 +1,19 @@
 package com.tms.stankevich.domain.movie;
 
 import com.tms.stankevich.domain.user.User;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Ticket implements Serializable {
     private static final long serialVersionUID = 42L;
@@ -25,4 +34,11 @@ public class Ticket implements Serializable {
     @ManyToOne
     @JoinColumn(name="user_for_id", nullable=false)
     private User userFor;
+
+    @Transient
+    private List<User> usersFor;
+
+    public boolean isEnable(){
+        return session.getStartTime().compareTo(LocalDateTime.now()) > 0;
+    }
 }

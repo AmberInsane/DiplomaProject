@@ -41,20 +41,6 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles;
 
-//    @ManyToMany //(fetch = FetchType.EAGER)
-//    @JoinTable(name = "user_friends",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "friend_id"))
-//    private Set<User> friends;
-//
-//    @ManyToMany
-//    @JoinTable(name = "user_friends",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "friend_id"))
-//    protected Set<User> friends = null;
-//    @ManyToMany(mappedBy = "friends")
-//    protected List befriended = null;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="user_friends",
             joinColumns=@JoinColumn(name="user_id"),
@@ -62,11 +48,6 @@ public class User implements UserDetails {
     )
     private List<User> friends;
 
-  //  @ManyToMany
-//    @JoinTable(name="user_friends",
-//            joinColumns=@JoinColumn(name="friend_id"),
-//            inverseJoinColumns=@JoinColumn(name="user_id")
-//    )
     @ManyToMany(mappedBy="friends", fetch = FetchType.EAGER)
     private List<User> friendOf;
 

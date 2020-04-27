@@ -30,7 +30,12 @@
         </tr>
         <c:forEach items="${movies}" var="movie">
             <tr>
-                <td>${movie.title}</td>
+                <td>
+                    <div class="hyperlink">
+                        <spring:url value="/movie/${movie.id}" var="movieUrl"/>
+                        <a href="${movieUrl}">${movie.title}</a>
+                    </div>
+                </td>
                 <td>${movie.description}</td>
                 <td>${movie.year}</td>
                 <td>
@@ -52,7 +57,9 @@
                     </security:authorize>
                     <security:authorize access="hasRole('USER')">
                         <td>
-                            <a href="${pageContext.request.contextPath}/movie/rate_movie/${movie.id}">rate_movie</a>
+                            <spring:url value="/movie/${movie.id}" var="findSessionsUrl"/>
+                            <button class="btn btn-primary" onclick="location.href=('${findSessionsUrl}')">Find Sessions
+                            </button>
                         </td>
                     </security:authorize>
                 </security:authorize>

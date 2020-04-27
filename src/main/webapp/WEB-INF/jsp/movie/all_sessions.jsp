@@ -58,7 +58,7 @@
                     </security:authorize>
                     <security:authorize access="hasRole('USER')">
                         <td>
-                            <spring:url value="/movie/session/buy_ticket/${session.id}" var="buyTicketUrl"/>
+                            <spring:url value="/ticket/${session.id}/buy" var="buyTicketUrl"/>
                             <button class="btn btn-primary" onclick="location.href=('${buyTicketUrl}')">Buy ticket
                             </button>
                         </td>

@@ -1,9 +1,12 @@
 package com.tms.stankevich.сontroller;
 
+import com.tms.stankevich.domain.movie.Ticket;
+import com.tms.stankevich.domain.movie.TicketType;
 import com.tms.stankevich.domain.user.FriendRequest;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.domain.user.UserInfo;
 import com.tms.stankevich.exception.FriendRequestException;
+import com.tms.stankevich.service.TicketService;
 import com.tms.stankevich.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -22,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TicketService ticketService;
 
     @GetMapping("/my_profile")
     public String showMyPage(Model model, @AuthenticationPrincipal User currentUser) {
@@ -57,6 +64,16 @@ public class UserController {
         model.addAttribute("friends", user.getFriends());
         model.addAttribute("outRequests", userService.findOutFriendRequests(user));
         return "user/friends";
+    }
+
+    @GetMapping("/my_tickets")
+    public String showMyTickets(Model model, @AuthenticationPrincipal User currentUser) {
+        Map<TicketType, List<Ticket>> ticketMap = ticketService.findUsersTickets(currentUser);
+        model.addAttribute("tickets", ticketMap.get(TicketType.MY));
+        model.addAttribute("ticketsOld", ticketMap.get(TicketType.MY_OLD));
+        model.addAttribute("ticketsFriends", ticketMap.get(TicketType.FOR_FRIEND));
+        model.addAttribute("ticketsFriendsOld", ticketMap.get(TicketType.FOR_FRIEND_OLD));
+        return "user/tickets";
     }
 
     @GetMapping("/{user_id}")
@@ -180,5 +197,15 @@ public class UserController {
             userService.cancelFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
         }
         return "redirect:" + request.getHeader("Referer");
+    }
+
+    @GetMapping("/find_sessions")
+    public String showMovieSessions() {
+        return "redirect:/movie/session";
+    }
+
+    @GetMapping("/find_movies")
+    public String showMovies() {
+        return "redirect:/movie";
     }
 }

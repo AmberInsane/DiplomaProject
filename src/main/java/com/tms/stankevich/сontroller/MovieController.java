@@ -1,9 +1,8 @@
 package com.tms.stankevich.сontroller;
 
-import com.tms.stankevich.domain.movie.Genre;
-import com.tms.stankevich.domain.movie.Hall;
-import com.tms.stankevich.domain.movie.Movie;
-import com.tms.stankevich.domain.movie.Session;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.tms.stankevich.domain.movie.*;
+import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.GenreDeleteException;
 import com.tms.stankevich.exception.HallDeleteException;
 import com.tms.stankevich.exception.MovieDeleteException;
@@ -14,6 +13,8 @@ import com.tms.stankevich.validator.MovieFormValidator;
 import com.tms.stankevich.validator.SessionFormValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Controller
@@ -72,6 +74,8 @@ public class MovieController {
         Optional<Movie> movie = movieService.findById(id);
         if (movie.isPresent()) {
             model.addAttribute("movie", movie.get());
+            List<Session> sessions = sessionService.findByMovie(movie.get());
+            model.addAttribute("sessions", sessions);
             return "movie/show/movie";
         } else {
             return "movie/all_movies";
@@ -300,5 +304,7 @@ public class MovieController {
         }
         return "redirect:/movie/hall";
     }
+
+
 
 }

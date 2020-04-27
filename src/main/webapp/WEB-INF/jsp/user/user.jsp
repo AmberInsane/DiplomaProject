@@ -17,7 +17,6 @@
 </head>
 <body>
 <div class="component">
-    <h4>User menu</h4>
     <a href="${pageContext.request.contextPath}/user/my_profile">My profile</a>
     <br>
     <a href="${pageContext.request.contextPath}/user/my_tickets">My tickets</a>
