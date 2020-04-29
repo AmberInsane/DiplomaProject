@@ -19,6 +19,13 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Getter
 @Setter
+@NamedQueries({
+        @NamedQuery(name = "Session.findPrevSession",
+                query = "SELECT s FROM Session s where s.hall = ?2 and s.startTime = " +
+                        "(select max(s1.startTime) from Session s1 where s1.startTime < ?1 and s1.hall = ?2)"),
+        @NamedQuery(name = "Session.findNextSession",
+                query = "SELECT s FROM Session s where s.hall = ?2 and s.startTime = " +
+                        "(select min(s1.startTime) from Session s1 where s1.startTime > ?1 and s1.hall = ?2)")})
 public class Session implements Serializable {
     private static final long serialVersionUID = 42L;
 
@@ -28,14 +35,14 @@ public class Session implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="movie_id", nullable=false)
+    @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    @Column(name = "start_time", nullable=false)
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
     @ManyToOne
-    @JoinColumn(name = "hall_id", nullable=false)
+    @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
 
     @Column(name = "price")

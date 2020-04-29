@@ -14,6 +14,7 @@ import org.springframework.validation.Validator;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 
 @Component
@@ -30,10 +31,13 @@ public class SessionFormValidator implements Validator {
     @Value("${session.time.before.hour}")
     private int hoursBefore;
 
+    @Value("${session.time.between.min}")
+    private int minutesBetween;
+
     @Override
     public void validate(Object target, Errors errors) {
         Session session = (Session) target;
-        LocalDateTime startTime = null;
+        LocalDateTime startTime;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateFormatJSP", "NotEmpty.sessionForm.dateTime");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "price", "NotEmpty.sessionForm.price");
@@ -44,47 +48,31 @@ public class SessionFormValidator implements Validator {
             startTime = LocalDateTime.parse(session.getDateFormatJSP().replace("T", " "), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
             session.setStartTime(startTime);
 
-            if (startTime.isAfter(LocalDateTime.now().minusHours(hoursBefore))) {
+            if (LocalDateTime.now().isAfter(startTime.minusHours(hoursBefore))) {
                 errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeBefore");
+            } else {
+                LocalDateTime dateTimeEnd;
+
+                Optional<Session> nextSession = sessionService.getNextSession(startTime, session.getHall());
+                if (nextSession.isPresent()) {
+                    dateTimeEnd = session.getStartTime().plusMinutes(session.getMovie().getTimeLength());
+                    if (dateTimeEnd.isAfter(nextSession.get().getStartTime())) {
+                        errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeSessionNext");
+                    }
+                }
+
+                Optional<Session> prevSession = sessionService.getPrevSession(startTime, session.getHall());
+                if (prevSession.isPresent()) {
+                    dateTimeEnd = prevSession.get().getStartTime().plusMinutes(prevSession.get().getMovie().getTimeLength());
+                    if (dateTimeEnd.plusMinutes(minutesBetween).isAfter(startTime)) {
+                        errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeSessionPrev");
+                    }
+                }
             }
-        } catch (Exception e) {
+
+        } catch (
+                Exception e) {
             errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTime");
         }
-
-
-        /*
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.userForm.name");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "NotEmpty.userForm.email");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "NotEmpty.userForm.address");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty.userForm.password");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword","NotEmpty.userForm.confirmPassword");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sex", "NotEmpty.userForm.sex");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "NotEmpty.userForm.country");
-
-		if(!emailValidator.valid(user.getEmail())){
-			errors.rejectValue("email", "Pattern.userForm.email");
-		}
-
-		if(user.getNumber()==null || user.getNumber()<=0){
-			errors.rejectValue("number", "NotEmpty.userForm.number");
-		}
-
-		if(user.getCountry().equalsIgnoreCase("none")){
-			errors.rejectValue("country", "NotEmpty.userForm.country");
-		}
-
-		if (!user.getPassword().equals(user.getConfirmPassword())) {
-			errors.rejectValue("confirmPassword", "Diff.userform.confirmPassword");
-		}
-
-		if (user.getFramework() == null || user.getFramework().size() < 2) {
-			errors.rejectValue("framework", "Valid.userForm.framework");
-		}
-
-		if (user.getSkill() == null || user.getSkill().size() < 3) {
-			errors.rejectValue("skill", "Valid.userForm.skill");
-		}*/
-
     }
-
 }

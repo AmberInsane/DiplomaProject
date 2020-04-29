@@ -18,12 +18,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     List<Session> findSessionsByMovieAndStartTimeGreaterThanOrderByStartTime(Movie movie, LocalDateTime nowTime);
 
-    @Query("select s from session s  where s.hall_id = ?1 and s.start_time = (select max(start_time) " +
-            "from session s where s.startTime <= ?1 and s.hall = ?2)")
-    Optional<Session> findNextSession(LocalDateTime time, Long hallId);
-//
-//
-//    //добавить добавление времени фильма
-//    @Query("SELECT s FROM session s WHERE s.id = 1")
-//    Optional<Session> findPrevSession(LocalDateTime time, Long hallId);
+    Optional<Session> findNextSession(LocalDateTime time, Hall hall);
+
+    Optional<Session> findPrevSession(LocalDateTime time, Hall hall);
 }
