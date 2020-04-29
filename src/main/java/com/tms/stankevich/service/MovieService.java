@@ -8,7 +8,7 @@ import com.tms.stankevich.exception.MovieDeleteException;
 import java.util.List;
 import java.util.Optional;
 
-interface MovieService {
+public interface MovieService {
     List<Movie> getAllMovies();
 
     void saveOrUpdate(Movie user);
