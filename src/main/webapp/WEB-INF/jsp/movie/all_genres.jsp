@@ -22,7 +22,7 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to movies</button>
-            <h2>genres</h2>
+            <h2>Genres</h2>
             <c:if test="${not empty msg}">
                 <div class="alert alert-${css} alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -42,8 +42,8 @@
                     <tr>
                         <td>${genre.name}</td>
                         <td>
-                            <spring:url value="/movie/update_movie/${genre.id}" var="updateUrl"/>
-                            <spring:url value="/movie/delete_genre/${genre.id}" var="deleteUrl"/>
+                            <spring:url value="/admin/genre/update/${genre.id}" var="updateUrl"/>
+                            <spring:url value="/admin/genre/delete/${genre.id}" var="deleteUrl"/>
 
                             <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
                             <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete</button>
@@ -51,16 +51,6 @@
                     </tr>
                 </c:forEach>
             </table>
-
-            <div class="container">
-                <form:form method="POST" modelAttribute="genreForm">
-                    <h3>Добавить жанр</h3>
-                    <form:input type="text" path="name" placeholder="Name"/>
-                    <div class="btn-default">
-                        <button type="submit">Добавить</button>
-                    </div>
-                </form:form>
-            </div>
         </security:authorize>
     </security:authorize>
 </div>

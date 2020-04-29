@@ -48,20 +48,19 @@
                 <security:authorize access="isAuthenticated()">
                     <security:authorize access="hasRole('ADMIN')">
                         <td>
-                            <spring:url value="/movie/update_movie/${movie.id}" var="updateUrl"/>
-                            <spring:url value="/movie/delete_movie/${movie.id}" var="deleteUrl"/>
+                            <spring:url value="admin/movie/update/${movie.id}" var="updateUrl"/>
+                            <spring:url value="admin/movie/delete/${movie.id}" var="deleteUrl"/>
 
                             <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
-                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete</button>
-                        </td>
-                    </security:authorize>
-                    <security:authorize access="hasRole('USER')">
-                        <td>
-                            <spring:url value="/movie/${movie.id}" var="findSessionsUrl"/>
-                            <button class="btn btn-primary" onclick="location.href=('${findSessionsUrl}')">Find Sessions
+                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete
                             </button>
                         </td>
                     </security:authorize>
+                    <td>
+                        <spring:url value="/movie/${movie.id}" var="findSessionsUrl"/>
+                        <button class="btn btn-primary" onclick="location.href=('${findSessionsUrl}')">Find Sessions
+                        </button>
+                    </td>
                 </security:authorize>
             </tr>
         </c:forEach>
@@ -69,10 +68,10 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/movie/add"><spring:message code="movie.add"/></a>
+                <a href="${pageContext.request.contextPath}/admin/movie/add"><spring:message code="movie.add"/></a>
             </div>
             <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/movie/genre">Manage genres</a>
+                <a href="${pageContext.request.contextPath}/admin/genre">Manage genres</a>
             </div>
         </security:authorize>
     </security:authorize>

@@ -12,9 +12,9 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
-    <title>Hall</title>
-    <spring:url value="/admin/hall/add" var="hallActionUrl"/>
-    <spring:url value="/admin/hall" var="returnUrl"/>
+    <title>Genre</title>
+    <spring:url value="/admin/genre/add" var="genreActionUrl"/>
+    <spring:url value="/admin/genre" var="returnUrl"/>
 </head>
 <body>
 <jsp:include page="../../parts/header.jsp"/>
@@ -22,14 +22,14 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <div class="container">
-                <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to halls</button>
-                <form:form method="POST" modelAttribute="hallForm" action="${hallActionUrl}">
+                <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to genres</button>
+                <form:form method="POST" modelAttribute="genreForm" action="${genreActionUrl}">
                     <c:choose>
-                        <c:when test="${hallForm['new']}">
-                            <h1>Add Hall</h1>
+                        <c:when test="${genreForm['new']}">
+                            <h1>Add Genre</h1>
                         </c:when>
                         <c:otherwise>
-                            <h1>Update Hall</h1>
+                            <h1>Update Genre</h1>
                         </c:otherwise>
                     </c:choose>
                     <br/>
@@ -45,34 +45,12 @@
                                 </div>
                             </div>
                         </spring:bind>
-
-                        <spring:bind path="capacity">
-                            <div class="form-group ${status.error ? 'has-error' : ''}">
-                                <label class="col-sm-2 control-label">Capacity</label>
-                                <div class="col-sm-10">
-                                    <form:input type="number" path="capacity" step="1" placeholder="Capacity"
-                                                class="form-control " id="capacity" autofocus=""/>
-                                    <form:errors path="capacity" class="control-label"/>
-                                </div>
-                            </div>
-                        </spring:bind>
-
-                        <spring:bind path="description">
-                            <div class="form-group ${status.error ? 'has-error' : ''}">
-                                <label class="col-sm-2 control-label">Description</label>
-                                <div class="col-sm-10">
-                                    <form:textarea path="description" rows="5" class="form-control" id="description"
-                                                   placeholder="Description"/>
-                                    <form:errors path="description" class="control-label"/>
-                                </div>
-                            </div>
-                        </spring:bind>
                     </div>
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <c:choose>
-                                <c:when test="${hallForm['new']}">
+                                <c:when test="${genreForm['new']}">
                                     <button type="submit" class="btn-lg btn-primary pull-right">Add</button>
                                 </c:when>
                                 <c:otherwise>

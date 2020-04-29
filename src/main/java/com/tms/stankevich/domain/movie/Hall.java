@@ -25,6 +25,9 @@ public class Hall implements Serializable {
     @Column
     private Short capacity;
 
+    @Column(length = 1000)
+    private String description;
+
     public boolean isNew() {
         return (this.id == null);
     }

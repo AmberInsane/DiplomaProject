@@ -28,12 +28,6 @@
     <form class="form-horizontal" name="loginForm" method="POST" action="${loginUrl}">
         <h3>Вход в систему</h3>
 
-        <%-- <spring:bind path="username">
-             <div class="form-group ${status.error ? 'has-error' : ''}">
-                 <label class="col-sm-2 control-label">Title</label>
-                 <div class="col-sm-10">--%>
-        <%--     <form:input path="username" type="text" class="form-control " id="username"
-                         placeholder="username"/>--%>
         <div class="form-group">
             <label class="col-sm-2 control-label">Username</label>
             <div class="col-sm-5">
@@ -41,15 +35,6 @@
             </div>
         </div>
 
-        <%--      <form:errors path="username" class="control-label"/>
-          </div>
-      </div>
-    </spring:bind>--%>
-
-        <%--  <spring:bind path="password">
-              <div class="form-group ${status.error ? 'has-error' : ''}">
-                  <label class="col-sm-2 control-label">Password</label>
-                  <div class="col-sm-10">--%>
         <div class="form-group">
             <label class="col-sm-2 control-label">Password</label>
             <div class="col-sm-5">
@@ -58,12 +43,6 @@
                 </div>
             </div>
         </div>
-
-
-        <%--            <form:errors path="password" class="control-label"/>
-                </div>
-            </div>
-        </spring:bind>--%>
 
         <button type="submit" class="btn center-block btn-primary">Log In</button>
 

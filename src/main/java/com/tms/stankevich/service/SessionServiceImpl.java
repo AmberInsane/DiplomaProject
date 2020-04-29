@@ -47,6 +47,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    public Optional<Hall> findHallByName(String name) {
+        return hallRepository.findByName(name);
+    }
+
+    @Override
     public void deleteHall(Hall hall) throws HallDeleteException {
         List<Session> session = sessionRepository.findSessionsByHall(hall);
         if (session.size() > 0)
@@ -62,6 +67,16 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public List<Session> findByMovie(Movie movie) {
       return sessionRepository.findSessionsByMovieAndStartTimeGreaterThanOrderByStartTime(movie, LocalDateTime.now());
+    }
+
+    @Override
+    public Optional<LocalDateTime> getNextSession(LocalDateTime time, Hall hall) {
+        return sessionRepository.getNextSessionBeginTime(time, hall);
+    }
+
+    @Override
+    public Optional<LocalDateTime> getPrevSession(LocalDateTime time, Hall hall) {
+        return sessionRepository.getPrevSessionEndTime(time, hall);
     }
 
     public void deleteSession(Session session) {

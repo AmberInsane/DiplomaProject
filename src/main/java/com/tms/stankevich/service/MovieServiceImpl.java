@@ -57,6 +57,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Optional<Genre> findGenreByName(String name) {
+        return genreRepository.findByName(name);
+    }
+
+    @Override
     public void deleteGenre(Genre genre) throws GenreDeleteException {
         List<Movie> movies = movieRepository.findByGenre(genre);
         if (movies.size() > 0)

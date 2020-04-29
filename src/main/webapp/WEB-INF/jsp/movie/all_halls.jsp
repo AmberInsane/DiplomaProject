@@ -44,11 +44,11 @@
                             <td>${hall.name}</td>
                             <td>${hall.capacity}</td>
                             <td>
-                                <spring:url value="/movie/hall/update_hall/${hall.id}" var="updateUrl"/>
+                                <spring:url value="/admin/hall/update/${hall.id}" var="updateUrl"/>
                                 <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
                             </td>
                             <td>
-                                <spring:url value="/movie/hall/delete_hall/${hall.id}" var="deleteUrl"/>
+                                <spring:url value="/admin/hall/delete/${hall.id}" var="deleteUrl"/>
                                 <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete
                                 </button>
                             </td>
@@ -57,7 +57,7 @@
                 </table>
 
                 <div class="btn-default">
-                    <spring:url value="/movie/add/hall" var="addHallUrl"/>
+                    <spring:url value="/admin/add/hall" var="addHallUrl"/>
                     <button class="btn btn-primary" onclick="location.href='${addHallUrl}'">Add hall</button>
                 </div>
         </security:authorize>

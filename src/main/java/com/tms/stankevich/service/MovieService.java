@@ -21,6 +21,8 @@ interface MovieService {
 
     Optional<Genre> findGenreById(Long id);
 
+    Optional<Genre> findGenreByName(String name);
+
     void deleteGenre(Genre genre) throws GenreDeleteException;
 
     void deleteMovie(Movie movie) throws MovieDeleteException;

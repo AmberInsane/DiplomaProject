@@ -3,7 +3,9 @@ package com.tms.stankevich.validator;
 import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.service.MovieServiceImpl;
+import com.tms.stankevich.service.SessionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -18,32 +20,38 @@ import java.time.format.DateTimeFormatter;
 public class SessionFormValidator implements Validator {
 
     @Autowired
-    MovieServiceImpl userService;
+    SessionServiceImpl sessionService;
 
     @Override
     public boolean supports(Class<?> clazz) {
         return Session.class.equals(clazz);
     }
 
+    @Value("session.time.before.min")
+    private int minutesBefore;
+
     @Override
     public void validate(Object target, Errors errors) {
-
         Session session = (Session) target;
         LocalDateTime startTime = null;
 
-      //  ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "NotEmpty.movieForm.title");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateFormatJSP", "NotEmpty.movieForm.title");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "price", "NotEmpty.movieForm.description");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "hall", "NotEmpty.movieForm.description");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "movie", "NotEmpty.movieForm.description");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateFormatJSP", "NotEmpty.sessionForm.dateTime");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "price", "NotEmpty.sessionForm.price");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "hall", "NotEmpty.sessionForm.hall");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "movie", "NotEmpty.sessionForm.movie");
 
         try {
-            startTime = LocalDateTime.parse(session.getDateFormatJSP().replace("T"," "), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            startTime = LocalDateTime.parse(session.getDateFormatJSP().replace("T", " "), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            session.setStartTime(startTime);
+
+            if (startTime.isBefore(LocalDateTime.now().minusMinutes(minutesBefore))) {
+                errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeBefore");
+            }
         } catch (Exception e) {
-            errors.rejectValue("dateFormatJSP", "Diff.userform.confirmPassword");
+            errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTime");
         }
 
-        session.setStartTime(startTime);
+
         /*
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.userForm.name");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "NotEmpty.userForm.email");

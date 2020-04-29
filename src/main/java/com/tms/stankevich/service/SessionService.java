@@ -5,6 +5,7 @@ import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.exception.HallDeleteException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +20,15 @@ public interface SessionService {
 
     Optional<Hall> findHallById(Long id);
 
+    Optional<Hall> findHallByName(String name);
+
     void deleteHall(Hall hall) throws HallDeleteException;
 
     Optional<Session> findById(Long id);
 
     List<Session> findByMovie(Movie movie);
+
+    Optional<LocalDateTime> getNextSession(LocalDateTime time, Hall hall);
+
+    Optional<LocalDateTime> getPrevSession(LocalDateTime time, Hall hall);
 }

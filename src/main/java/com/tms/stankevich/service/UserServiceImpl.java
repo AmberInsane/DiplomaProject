@@ -42,11 +42,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
-        return user;
+        return user.get();
     }
 
     @Override
@@ -56,16 +56,25 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public Optional<User> findUserByName(String name) {
+        return userRepository.findByUsername(name);
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
     public User addUser(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
-
-        if (userFromDB != null) {
-            return userFromDB;
+        Optional<User> userFromDB = userRepository.findByUsername(user.getUsername());
+        if (userFromDB.isPresent()) {
+            return userFromDB.get();
         }
         user.setRoles(Collections.singleton(roleRepository.findByName(USER_ROLE)));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

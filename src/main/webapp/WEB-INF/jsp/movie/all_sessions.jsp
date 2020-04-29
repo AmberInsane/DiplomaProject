@@ -48,8 +48,8 @@
                 <security:authorize access="isAuthenticated()">
                     <security:authorize access="hasRole('ADMIN')">
                         <td>
-                            <spring:url value="/movie/session/update_session/${session.id}" var="updateUrl"/>
-                            <spring:url value="/movie/session/delete_session/${session.id}" var="deleteUrl"/>
+                            <spring:url value="/admin/session/update/${session.id}" var="updateUrl"/>
+                            <spring:url value="/admin/session/delete/${session.id}" var="deleteUrl"/>
 
                             <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
                             <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete
@@ -70,11 +70,11 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <div class="btn-link">
-                <spring:url value="/movie/add/session" var="addSessionUrl"/>
+                <spring:url value="/admin/add/session" var="addSessionUrl"/>
                 <button class="btn btn-primary" onclick="location.href='${addSessionUrl}'">Add session</button>
             </div>
             <div class="btn-link">
-                <spring:url value="/movie/hall" var="hallUrl"/>
+                <spring:url value="/admin/hall" var="hallUrl"/>
                 <button class="btn btn-primary" onclick="location.href='${hallUrl}'">Manage halls</button>
             </div>
         </security:authorize>

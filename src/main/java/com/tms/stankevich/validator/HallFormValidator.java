@@ -1,20 +1,22 @@
 package com.tms.stankevich.validator;
 
 import com.tms.stankevich.domain.movie.Hall;
-import com.tms.stankevich.domain.movie.Movie;
-import com.tms.stankevich.service.MovieServiceImpl;
+import com.tms.stankevich.service.SessionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import java.util.Optional;
 
 
 @Component
 public class HallFormValidator implements Validator {
 
     @Autowired
-    MovieServiceImpl userService;
+    SessionServiceImpl sessionService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -23,48 +25,19 @@ public class HallFormValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-
         Hall hall = (Hall) target;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.movieForm.title");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "capacity", "NotEmpty.movieForm.description");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.hallForm.name");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "capacity", "NotEmpty.hallForm.capacity");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "NotEmpty.hallForm.description");
 
-        if(hall.getCapacity() == null || hall.getCapacity() <= 0){
-            errors.rejectValue("capacity", "NotEmpty.movieForm.year");
+        if (hall.getCapacity() == null || hall.getCapacity() <= 0) {
+            errors.rejectValue("capacity", "NotEmpty.hallForm.capacity");
         }
-        /*
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.userForm.name");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "NotEmpty.userForm.email");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "NotEmpty.userForm.address");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty.userForm.password");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword","NotEmpty.userForm.confirmPassword");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sex", "NotEmpty.userForm.sex");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "NotEmpty.userForm.country");
 
-		if(!emailValidator.valid(user.getEmail())){
-			errors.rejectValue("email", "Pattern.userForm.email");
-		}
-
-		if(user.getNumber()==null || user.getNumber()<=0){
-			errors.rejectValue("number", "NotEmpty.userForm.number");
-		}
-
-		if(user.getCountry().equalsIgnoreCase("none")){
-			errors.rejectValue("country", "NotEmpty.userForm.country");
-		}
-
-		if (!user.getPassword().equals(user.getConfirmPassword())) {
-			errors.rejectValue("confirmPassword", "Diff.userform.confirmPassword");
-		}
-
-		if (user.getFramework() == null || user.getFramework().size() < 2) {
-			errors.rejectValue("framework", "Valid.userForm.framework");
-		}
-
-		if (user.getSkill() == null || user.getSkill().size() < 3) {
-			errors.rejectValue("skill", "Valid.userForm.skill");
-		}*/
-
+        Optional<Hall> hallByName = sessionService.findHallByName(hall.getName());
+        if (hallByName.isPresent()) {
+            errors.rejectValue("name", "Valid.hallForm.name");
+        }
     }
-
 }

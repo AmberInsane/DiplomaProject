@@ -13,7 +13,7 @@
 <html>
 <head>
     <title>Session</title>
-    <spring:url value="/movie/add/session" var="sessionActionUrl"/>
+    <spring:url value="/admin/add/session" var="sessionActionUrl"/>
     <spring:url value="/movie/session" var="returnUrl"/>
 </head>
 <body>
@@ -34,15 +34,6 @@
     <form:form class="form-horizontal" method="POST" modelAttribute="sessionForm" action="${sessionActionUrl}">
         <form:hidden path="id"/>
         <div>
-           <%-- <spring:bind path="startDate">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Start date</label>
-                    <div class="col-sm-3"> &lt;%&ndash;pattern="dd.mm.yyyy HH:mm"&ndash;%&gt;
-                        <form:input path="startDate" type="date" pattern="dd.mm.yyyy" class="input-sm form-control" id="startDate"/>
-                        <form:errors path="startDate" class="control-label"/>
-                    </div>
-                </div>
-            </spring:bind>--%>
             <spring:bind path="startTime">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
                     <label class="col-sm-2 control-label">time</label>

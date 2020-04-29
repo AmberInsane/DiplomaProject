@@ -10,17 +10,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-
-//http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#validation-mvc-configuring
 @Component
 public class RegistrationFormValidator implements Validator {
 
 	@Autowired
 	UserService userService;
 
-	/*@Autowired
-	@Qualifier("emailValidator")
-	EmailValidator emailValidator;*/
+	@Autowired
+	EmailValidator emailValidator;
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -37,14 +34,20 @@ public class RegistrationFormValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty.userForm.password");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm","NotEmpty.userForm.confirmPassword");
 
-		/*if(!emailValidator.valid(user.getEmail())){
+		if(!emailValidator.valid(user.getEmail())){
 			errors.rejectValue("email", "Pattern.userForm.email");
-		}*/
-
+		}
 
 		if (!user.getPassword().equals(user.getPasswordConfirm())) {
-			errors.rejectValue("passwordConfirm", "Diff.userform.confirmPassword");
+			errors.rejectValue("passwordConfirm", "Diff.userForm.confirmPassword");
+		}
+
+		if (userService.findUserByName(user.getUsername()).isPresent()) {
+			errors.rejectValue("username", "Valid.userForm.name");
+		}
+
+		if (userService.findUserByEmail(user.getEmail()).isPresent()) {
+			errors.rejectValue("username", "Valid.userForm.email");
 		}
 	}
-
 }

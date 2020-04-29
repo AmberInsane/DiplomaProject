@@ -12,7 +12,7 @@
 <html>
 <head>
     <title>Title</title>
-    <spring:url value="/movie/add" var="movieActionUrl"/>
+    <spring:url value="/admin/movie/add" var="movieActionUrl"/>
     <spring:url value="/movies" var="returnUrl"/>
 </head>
 <body>
