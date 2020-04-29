@@ -27,8 +27,8 @@ public class SessionFormValidator implements Validator {
         return Session.class.equals(clazz);
     }
 
-    @Value("session.time.before.min")
-    private int minutesBefore;
+    @Value("${session.time.before.hour}")
+    private int hoursBefore;
 
     @Override
     public void validate(Object target, Errors errors) {
@@ -44,7 +44,7 @@ public class SessionFormValidator implements Validator {
             startTime = LocalDateTime.parse(session.getDateFormatJSP().replace("T", " "), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
             session.setStartTime(startTime);
 
-            if (startTime.isBefore(LocalDateTime.now().minusMinutes(minutesBefore))) {
+            if (startTime.isAfter(LocalDateTime.now().minusHours(hoursBefore))) {
                 errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeBefore");
             }
         } catch (Exception e) {

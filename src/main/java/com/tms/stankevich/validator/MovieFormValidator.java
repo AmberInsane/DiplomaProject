@@ -9,19 +9,21 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import java.util.Optional;
+
 
 @Component
 public class MovieFormValidator implements Validator {
 
     @Autowired
-    MovieServiceImpl userService;
+    private MovieServiceImpl movieService;
 
     @Override
     public boolean supports(Class<?> clazz) {
         return Movie.class.equals(clazz);
     }
 
-    @Value("movie.min.year")
+    @Value("${movie.min.year}")
     private int minYear;
 
     @Override
@@ -39,6 +41,13 @@ public class MovieFormValidator implements Validator {
 
         if (movie.getTimeLength() == null || movie.getTimeLength() <= 0) {
             errors.rejectValue("timeLength", "NotEmpty.movieForm.timeLength");
+        }
+
+        if (movie.isNew()) {
+            Optional<Movie> movieByNameYear = movieService.findByTitleYear(movie.getTitle(), movie.getYear());
+            if (movieByNameYear.isPresent()) {
+                errors.rejectValue("name", "Valid.movieForm.name");
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ import com.tms.stankevich.dao.UserRepository;
 import com.tms.stankevich.domain.user.*;
 
 import com.tms.stankevich.exception.FriendRequestException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,8 +42,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public static final String USER_ROLE = "ROLE_USER";
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
 
+    private final Logger logger = LogManager.getLogger(UserServiceImpl.class.getName());
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        logger.debug("loadUserByUsername");
         Optional<User> user = userRepository.findByUsername(username);
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found");

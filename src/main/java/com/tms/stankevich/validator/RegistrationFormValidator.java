@@ -47,7 +47,7 @@ public class RegistrationFormValidator implements Validator {
 		}
 
 		if (userService.findUserByEmail(user.getEmail()).isPresent()) {
-			errors.rejectValue("username", "Valid.userForm.email");
+			errors.rejectValue("email", "Valid.userForm.email");
 		}
 	}
 }

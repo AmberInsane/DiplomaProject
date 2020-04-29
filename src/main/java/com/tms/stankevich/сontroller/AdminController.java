@@ -22,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import org.apache.log4j.Logger;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class AdminController {
     private SessionService sessionService;
 
     @Autowired
-    MovieFormValidator movieFormValidator;
+    private MovieFormValidator movieFormValidator;
 
     @InitBinder("movieForm")
     protected void initBinderMovie(WebDataBinder binder) {
@@ -50,7 +49,7 @@ public class AdminController {
     }
 
     @Autowired
-    GenreFormValidator genreFormValidator;
+    private GenreFormValidator genreFormValidator;
 
     @InitBinder("genreForm")
     protected void initBinderGenre(WebDataBinder binder) {
@@ -73,9 +72,6 @@ public class AdminController {
         binder.setValidator(hallFormValidator);
     }
 
-
-    final static Logger logger = Logger.getLogger(AdminController.class);
-
     @GetMapping("/")
     public String userList(Model model) {
         model.addAttribute("allUsers", userService.getAllUsers());
@@ -86,8 +82,6 @@ public class AdminController {
     public String manageAdmins(Model model, @AuthenticationPrincipal User currentUser) {
         List<User> adminUsers = userService.getUsersByRole(UserServiceImpl.ADMIN_ROLE);
         System.out.println(currentUser);
-        logger.debug(adminUsers.contains(currentUser));
-
         model.addAttribute("adminUsers", adminUsers);
         model.addAttribute("users", userService.getUsersByRole(UserServiceImpl.USER_ROLE));
         model.addAttribute("allUsers", userService.getAllUsers());
@@ -237,7 +231,7 @@ public class AdminController {
         return "redirect:/movie/session";
     }
 
-    @GetMapping("/add/session")
+    @GetMapping("/session/add")
     public String addSession(Model model) {
         Session session = new Session();
         populateDefaultSessionModel(model);
@@ -245,7 +239,7 @@ public class AdminController {
         return "movie/add/session";
     }
 
-    @PostMapping(value = "/add/session")
+    @PostMapping(value = "/session/add")
     public String saveOrUpdateSession(@ModelAttribute("sessionForm") @Validated Session session,
                                       BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -298,13 +292,13 @@ public class AdminController {
         return "movie/all_halls";
     }
 
-    @GetMapping("/add/hall")
+    @GetMapping("/hall/add")
     public String addHall(Model model) {
         model.addAttribute("hallForm", new Hall());
         return "movie/add/hall";
     }
 
-    @PostMapping(value = "/add/hall")
+    @PostMapping(value = "/hall/add")
     public String saveOrUpdateHall(@ModelAttribute("hallForm") @Validated Hall hall,
                                    BindingResult result, final RedirectAttributes redirectAttributes) {
         String action;

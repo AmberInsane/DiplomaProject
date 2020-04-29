@@ -1,7 +1,8 @@
 package com.tms.stankevich.exception;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public static final String DEFAULT_ERROR_VIEW = "error";
 
-	private final Logger logger = Logger.getLogger(GlobalExceptionHandler.class);
+	private final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
 	
 	@ExceptionHandler(value = Exception.class)
 	public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {

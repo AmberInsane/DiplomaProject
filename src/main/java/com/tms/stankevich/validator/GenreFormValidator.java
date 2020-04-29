@@ -27,9 +27,11 @@ public class GenreFormValidator implements Validator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.genreForm.name");
 
-        Optional<Genre> genreByName = movieService.findGenreByName(genre.getName());
-        if (genreByName.isPresent()) {
-            errors.rejectValue("name", "Valid.genreForm.name");
+        if (genre.isNew()) {
+            Optional<Genre> genreByName = movieService.findGenreByName(genre.getName());
+            if (genreByName.isPresent()) {
+                errors.rejectValue("name", "Valid.genreForm.name");
+            }
         }
     }
 

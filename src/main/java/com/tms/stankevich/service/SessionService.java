@@ -28,7 +28,9 @@ public interface SessionService {
 
     List<Session> findByMovie(Movie movie);
 
-    Optional<LocalDateTime> getNextSession(LocalDateTime time, Hall hall);
+    Optional<Session> getNextSession(LocalDateTime time, Hall hall);
 
-    Optional<LocalDateTime> getPrevSession(LocalDateTime time, Hall hall);
+    Optional<Session> getPrevSession(LocalDateTime time, Hall hall);
+
+    void deleteSession(Session session);
 }

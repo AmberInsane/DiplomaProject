@@ -36,6 +36,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Capacity</th>
+                        <th>Description</th>
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
@@ -43,6 +44,7 @@
                         <tr>
                             <td>${hall.name}</td>
                             <td>${hall.capacity}</td>
+                            <td>${hall.description}</td>
                             <td>
                                 <spring:url value="/admin/hall/update/${hall.id}" var="updateUrl"/>
                                 <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
@@ -57,7 +59,7 @@
                 </table>
 
                 <div class="btn-default">
-                    <spring:url value="/admin/add/hall" var="addHallUrl"/>
+                    <spring:url value="/admin/hall/add" var="addHallUrl"/>
                     <button class="btn btn-primary" onclick="location.href='${addHallUrl}'">Add hall</button>
                 </div>
         </security:authorize>

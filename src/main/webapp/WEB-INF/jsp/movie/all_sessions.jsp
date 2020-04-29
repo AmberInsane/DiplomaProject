@@ -70,7 +70,7 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <div class="btn-link">
-                <spring:url value="/admin/add/session" var="addSessionUrl"/>
+                <spring:url value="/admin/session/add" var="addSessionUrl"/>
                 <button class="btn btn-primary" onclick="location.href='${addSessionUrl}'">Add session</button>
             </div>
             <div class="btn-link">

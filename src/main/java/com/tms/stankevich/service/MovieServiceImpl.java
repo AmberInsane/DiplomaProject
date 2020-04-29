@@ -42,6 +42,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Optional<Movie> findByTitleYear(String title, Short year) {
+        return movieRepository.findByTitleAndYear(title, year);
+    }
+
+    @Override
     public void saveOrUpdateGenre(Genre genre) {
         genreRepository.save(genre);
     }

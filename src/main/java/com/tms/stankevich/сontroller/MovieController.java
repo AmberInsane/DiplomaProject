@@ -1,27 +1,12 @@
 package com.tms.stankevich.сontroller;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.tms.stankevich.domain.movie.*;
-import com.tms.stankevich.domain.user.User;
-import com.tms.stankevich.exception.GenreDeleteException;
-import com.tms.stankevich.exception.HallDeleteException;
-import com.tms.stankevich.exception.MovieDeleteException;
-import com.tms.stankevich.service.MovieServiceImpl;
-import com.tms.stankevich.service.SessionServiceImpl;
-import com.tms.stankevich.validator.HallFormValidator;
-import com.tms.stankevich.validator.MovieFormValidator;
-import com.tms.stankevich.validator.SessionFormValidator;
-import org.apache.log4j.Logger;
+import com.tms.stankevich.service.MovieService;
+import com.tms.stankevich.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -29,13 +14,10 @@ import java.util.*;
 @Controller
 @RequestMapping("/movie")
 public class MovieController {
-
-    final static Logger logger = Logger.getLogger(MovieController.class);
-
     @Autowired
-    private MovieServiceImpl movieService;
+    private MovieService movieService;
     @Autowired
-    private SessionServiceImpl sessionService;
+    private SessionService sessionService;
 
     @GetMapping("")
     public String showAllMovies(Model model) {

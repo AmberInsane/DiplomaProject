@@ -34,10 +34,11 @@ public class HallFormValidator implements Validator {
         if (hall.getCapacity() == null || hall.getCapacity() <= 0) {
             errors.rejectValue("capacity", "NotEmpty.hallForm.capacity");
         }
-
-        Optional<Hall> hallByName = sessionService.findHallByName(hall.getName());
-        if (hallByName.isPresent()) {
-            errors.rejectValue("name", "Valid.hallForm.name");
+        if (hall.isNew()) {
+            Optional<Hall> hallByName = sessionService.findHallByName(hall.getName());
+            if (hallByName.isPresent()) {
+                errors.rejectValue("name", "Valid.hallForm.name");
+            }
         }
     }
 }

@@ -15,6 +15,8 @@ public interface MovieService {
 
     Optional<Movie> findById(Long id);
 
+    Optional<Movie> findByTitleYear(String title, Short year);
+
     void saveOrUpdateGenre(Genre genre);
 
     List<Genre> getAllGenres();

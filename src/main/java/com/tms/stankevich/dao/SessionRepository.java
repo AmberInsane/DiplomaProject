@@ -11,15 +11,19 @@ import java.util.Optional;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findById(Long id);
+
     List<Session> findSessionsByStartTimeGreaterThanOrderByStartTime(LocalDateTime nowTime);
+
     List<Session> findSessionsByHall(Hall hall);
+
     List<Session> findSessionsByMovieAndStartTimeGreaterThanOrderByStartTime(Movie movie, LocalDateTime nowTime);
 
-    @Query("SELECT min(start_time) FROM session s WHERE  s.start_time > ?1 and s.hall_id = ?2")
-    Optional<LocalDateTime> getNextSessionBeginTime(LocalDateTime time, Hall hall);
-
-
-    //добавить добавление времени фильма
-    @Query("SELECT max(start_time) FROM session s WHERE  s.start_time <= ?1 and s.hall_id = ?2")
-    Optional<LocalDateTime> getPrevSessionEndTime(LocalDateTime time, Hall hall);
+    @Query("select s from session s  where s.hall_id = ?1 and s.start_time = (select max(start_time) " +
+            "from session s where s.startTime <= ?1 and s.hall = ?2)")
+    Optional<Session> findNextSession(LocalDateTime time, Long hallId);
+//
+//
+//    //добавить добавление времени фильма
+//    @Query("SELECT s FROM session s WHERE s.id = 1")
+//    Optional<Session> findPrevSession(LocalDateTime time, Long hallId);
 }

@@ -70,15 +70,19 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Optional<LocalDateTime> getNextSession(LocalDateTime time, Hall hall) {
-        return sessionRepository.getNextSessionBeginTime(time, hall);
+    public Optional<Session> getNextSession(LocalDateTime time, Hall hall) {
+
+        //return sessionRepository.findNextSession(time, hall.getId());
+        return Optional.empty();
     }
 
     @Override
-    public Optional<LocalDateTime> getPrevSession(LocalDateTime time, Hall hall) {
-        return sessionRepository.getPrevSessionEndTime(time, hall);
+    public Optional<Session> getPrevSession(LocalDateTime time, Hall hall) {
+        //return sessionRepository.findPrevSession(time, hall.getId());
+        return Optional.empty();
     }
 
+    @Override
     public void deleteSession(Session session) {
         sessionRepository.delete(session);
     }
