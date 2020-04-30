@@ -79,9 +79,11 @@
     </div>
 
     <c:if test="${user.equals(curUser)}">
-        <label class="col-sm-2">My Balance</label>
-        <div class="col-sm-10">${user.balance}</div>
-        <button class="btn btn-primary" onclick="location.href='${purseUrl}'">Fill up a purse</button>
+        <div class="row">
+            <label class="col-sm-2">My Balance</label>
+            <div class="col-sm-10">${user.balance}</div>
+            <button class="btn btn-primary" onclick="location.href='${purseUrl}'">Fill up a purse</button>
+        </div>
     </c:if>
 
     <security:authorize access="isAuthenticated()">

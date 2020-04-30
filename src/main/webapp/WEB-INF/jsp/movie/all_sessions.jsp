@@ -5,7 +5,7 @@
   Time: 14:04
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -60,9 +60,16 @@
                     </security:authorize>
                     <security:authorize access="hasRole('USER')">
                         <td>
-                            <spring:url value="/ticket/${session.id}/buy" var="buyTicketUrl"/>
-                            <button class="btn btn-primary" onclick="location.href=('${buyTicketUrl}')">Buy ticket
-                            </button>
+                             <c:choose>
+                                 <c:when test="${session.ticketsSold.compareTo(session.hall.capacity.intValue()) == 0}">
+                                     <label class="text-danger">Sold out</label>
+                                 </c:when>
+                                 <c:otherwise>
+                                     <spring:url value="/ticket/${session.id}/buy" var="buyTicketUrl"/>
+                                     <button class="btn btn-primary" onclick="location.href=('${buyTicketUrl}')">Buy ticket
+                                     </button>
+                                 </c:otherwise>
+                             </c:choose>
                         </td>
                     </security:authorize>
                 </security:authorize>

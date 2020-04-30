@@ -4,6 +4,7 @@ import com.tms.stankevich.dao.*;
 import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.movie.TicketType;
 import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.exception.BalanceMinusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,10 @@ public class TicketServiceImpl implements TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
+
+    @Autowired
+    private UserService userService;
+
     @Override
     public Optional<Ticket> findById(Long ticketId) {
         return ticketRepository.findById(ticketId);
@@ -30,14 +35,14 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void saveTickets(Ticket rawTicket) {
+    public void saveTickets(Ticket rawTicket) throws BalanceMinusException {
+        userService.minusFromBalance(rawTicket.getUserBy(), rawTicket.getCommonSum());
         List<User> usersFor = rawTicket.getUsersFor();
         for (User user : usersFor) {
             Ticket newTicket = new Ticket();
             newTicket.setUserBy(rawTicket.getUserBy());
             newTicket.setSession(rawTicket.getSession());
             newTicket.setUserFor(user);
-
             ticketRepository.save(newTicket);
         }
     }

@@ -3,6 +3,7 @@ package com.tms.stankevich.сontroller;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.service.MovieServiceImpl;
 import com.tms.stankevich.service.SessionServiceImpl;
 import com.tms.stankevich.service.TicketService;
@@ -65,26 +66,37 @@ public class TicketController {
             ticket.setUserBy(user);
             ticket.setSession(session.get());
             model.addAttribute("ticketForm", ticket);
-            List<User> usersFor = new ArrayList<>();
-            usersFor.add(user);
-            usersFor.addAll(userService.findUserById(user.getId()).getFriends());
-            model.addAttribute("friends", usersFor);
+            populateDefaultTicketModel(model, user);
             return "movie/add/ticket";
         }
         return "redirect:" + request.getHeader("Referer");
+    }
+
+    private void populateDefaultTicketModel(Model model, User user) {
+        List<User> usersFor = new ArrayList<>();
+        usersFor.add(user);
+        usersFor.addAll(userService.findUserById(user.getId()).getFriends());
+        model.addAttribute("friends", usersFor);
     }
 
     @PostMapping("/add")
     public String addTicket(@ModelAttribute("ticketForm") @Validated Ticket rawTicket,
                             BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "ticket/" + rawTicket.getSession().getId() + "/buy";
+            populateDefaultTicketModel(model, rawTicket.getUserBy());
+            return "movie/add/ticket";
         } else {
-            ticketService.saveTickets(rawTicket);
-
-            redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", "Ticket added successfully!");
-            return "redirect:/user/my_tickets";
+            try {
+                ticketService.saveTickets(rawTicket);
+                redirectAttributes.addFlashAttribute("css", "success");
+                redirectAttributes.addFlashAttribute("msg", "Ticket added successfully!");
+                return "redirect:/user/my_tickets";
+            } catch (BalanceMinusException e) {
+                model.addAttribute("css", "danger");
+                model.addAttribute("msg_code", "Valid.ticketForm.notEnoughMoney");
+                populateDefaultTicketModel(model, rawTicket.getUserBy());
+                return "movie/add/ticket";
+            }
         }
     }
 }

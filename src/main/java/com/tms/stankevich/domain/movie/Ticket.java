@@ -8,6 +8,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class Ticket implements Serializable {
 
     @Transient
     private List<User> usersFor;
+
+    @Transient
+    private BigDecimal commonSum;
 
     public boolean isEnable(){
         return session.getStartTime().compareTo(LocalDateTime.now()) > 0;

@@ -7,6 +7,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import java.math.BigDecimal;
+
 
 @Component
 public class TicketFormValidator implements Validator {
@@ -27,6 +29,11 @@ public class TicketFormValidator implements Validator {
             Session session = ticket.getSession();
             if (session.getHall().getCapacity() - session.getTicketsSold() < ticketCount) {
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "usersFor", "Valid.ticketForm.ticketCount");
+            }
+            BigDecimal commonSum = session.getPrice().multiply(new BigDecimal(ticketCount));
+            ticket.setCommonSum(commonSum);
+            if (ticket.getUserBy().getBalance().compareTo(commonSum) < 0) {
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "usersFor", "Valid.ticketForm.notEnoughMoney");
             }
         }
     }

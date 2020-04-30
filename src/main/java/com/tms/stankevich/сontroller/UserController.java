@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,6 +81,26 @@ public class UserController {
     public String showMyPurse(Model model, @AuthenticationPrincipal User currentUser) {
         model.addAttribute("balance", userService.findUserById(currentUser.getId()).getBalance());
         return "user/purse";
+    }
+
+    @PostMapping("/my_purse")
+    public String addMoneyMyPurse(@RequestParam("sum") String sum, Model model, @AuthenticationPrincipal User currentUser, final RedirectAttributes redirectAttributes) {
+        BigDecimal sumNumber;
+        try {
+            sumNumber = new BigDecimal(sum);
+        } catch (NumberFormatException e) {
+            sumNumber = BigDecimal.ZERO;
+        }
+        if (sumNumber.compareTo(BigDecimal.ZERO) <= 0) {
+            redirectAttributes.addFlashAttribute("css", "danger");
+            redirectAttributes.addFlashAttribute("msg", "Invalid sum");
+        } else {
+            sumNumber = sumNumber.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+            userService.plusToBalance(currentUser, sumNumber);
+            redirectAttributes.addFlashAttribute("css", "success");
+            redirectAttributes.addFlashAttribute("msg", "Сумма добавлена");
+        }
+        return "redirect:/user/my_purse";
     }
 
     @GetMapping("/{user_id}")

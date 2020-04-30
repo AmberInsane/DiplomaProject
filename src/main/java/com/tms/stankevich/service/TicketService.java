@@ -4,6 +4,7 @@ package com.tms.stankevich.service;
 import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.movie.TicketType;
 import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.exception.BalanceMinusException;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ public interface TicketService {
 
     Ticket save(Ticket ticket);
 
-    void saveTickets(Ticket rawTicket);
+    void saveTickets(Ticket rawTicket) throws BalanceMinusException;
 
     Map<TicketType, List<Ticket>> findUsersTickets(User user);
 

@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @Transient
     private String passwordConfirm;
@@ -71,7 +71,7 @@ public class User implements UserDetails {
         if(info == null)
             info = new UserInfo();
         if(balance == null)
-            balance = new BigDecimal(0);
+            balance = BigDecimal.ZERO;
     }
 
     @Override

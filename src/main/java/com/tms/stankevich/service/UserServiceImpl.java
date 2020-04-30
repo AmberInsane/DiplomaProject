@@ -6,6 +6,7 @@ import com.tms.stankevich.dao.UserInfoRepository;
 import com.tms.stankevich.dao.UserRepository;
 import com.tms.stankevich.domain.user.*;
 
+import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.FriendRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.prefs.BackingStoreException;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,8 +86,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         user.setRoles(Collections.singleton(roleRepository.findByName(USER_ROLE)));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        User newUser = userRepository.save(user);
-        return newUser;
+        return userRepository.save(user);
     }
 
    /* public List<User> usergtList(Long idMin) {
@@ -280,5 +282,20 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         List<User> userList = new ArrayList<>(user.getFriends()) ;
         userList.addAll(user.getFriendOf());
         return userList;
+    }
+
+    @Override
+    public void plusToBalance(User user, BigDecimal sumNumber) {
+        user.setBalance(user.getBalance().add(sumNumber));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void minusFromBalance(User user, BigDecimal sumNumber) throws BalanceMinusException {
+        BigDecimal userBalance = user.getBalance();
+        if (userBalance.compareTo(sumNumber) <0)
+            throw new BalanceMinusException();
+        user.setBalance(user.getBalance().subtract(sumNumber));
+        userRepository.save(user);
     }
 }

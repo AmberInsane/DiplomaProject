@@ -4,8 +4,10 @@ package com.tms.stankevich.service;
 import com.tms.stankevich.domain.user.FriendRequest;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.domain.user.UserInfo;
+import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.FriendRequestException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,4 +59,8 @@ public interface UserService {
     Optional<FriendRequest> findFriendRequestById(Long id);
 
     List<User> getUserFriendList(User user);
+
+    void plusToBalance(User currentUser, BigDecimal sumNumber);
+
+    void minusFromBalance(User user, BigDecimal sumNumber) throws BalanceMinusException;
 }

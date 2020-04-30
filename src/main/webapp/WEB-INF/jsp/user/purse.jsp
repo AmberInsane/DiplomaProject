@@ -20,7 +20,14 @@
 <body>
 <div class="container">
     <h1>My Purse</h1>
-    <br/>
+    <c:if test="${not empty msg}">
+        <div class="alert alert-${css} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>${msg}</strong>
+        </div>
+    </c:if>
     <div class="row">
         <label class="col-sm-2">Balance</label>
         <div class="col-sm-10">${balance}</div>
