@@ -54,6 +54,9 @@ public class Session implements Serializable {
     @Formula(value = "DATE_FORMAT(start_time, '%d.%m.%Y %H:%i')")
     private String dateFormatText;
 
+    @Formula("(select count(1) from Ticket t where t.session_id = session_id)")
+    private Integer ticketsSold;
+
     public boolean isNew() {
         return (this.id == null);
     }

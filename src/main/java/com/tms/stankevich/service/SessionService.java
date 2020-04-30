@@ -4,6 +4,7 @@ import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.exception.HallDeleteException;
+import com.tms.stankevich.exception.SessionDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,5 +33,5 @@ public interface SessionService {
 
     Optional<Session> getPrevSession(LocalDateTime time, Hall hall);
 
-    void deleteSession(Session session);
+    void deleteSession(Session session) throws SessionDeleteException;
 }

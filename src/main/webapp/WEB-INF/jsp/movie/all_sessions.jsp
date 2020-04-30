@@ -26,6 +26,7 @@
             <th>movie</th>
             <th>price</th>
             <th>hall</th>
+            <th>Sold</th>
             <th></th>
         </tr>
         <c:forEach items="${sessions}" var="session">
@@ -45,6 +46,7 @@
                         <a href="${hallUrl}">${session.hall.name}</a>
                     </div>
                 </td>
+                <td>${session.ticketsSold}/${session.hall.capacity}</td>
                 <security:authorize access="isAuthenticated()">
                     <security:authorize access="hasRole('ADMIN')">
                         <td>

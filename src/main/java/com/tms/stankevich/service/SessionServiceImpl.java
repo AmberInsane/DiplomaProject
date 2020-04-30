@@ -2,10 +2,13 @@ package com.tms.stankevich.service;
 
 import com.tms.stankevich.dao.HallRepository;
 import com.tms.stankevich.dao.SessionRepository;
+import com.tms.stankevich.dao.TicketRepository;
 import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
+import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.exception.HallDeleteException;
+import com.tms.stankevich.exception.SessionDeleteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,9 @@ public class SessionServiceImpl implements SessionService {
 
     @Autowired
     HallRepository hallRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
 
     @Override
     public List<Session> getAllSessions() {
@@ -82,7 +88,10 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void deleteSession(Session session) {
+    public void deleteSession(Session session) throws SessionDeleteException {
+        List<Ticket> tickets = ticketRepository.findTicketsBySession(session);
+        if (tickets.size() > 0)
+            throw new SessionDeleteException(tickets.size());
         sessionRepository.delete(session);
     }
 }

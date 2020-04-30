@@ -76,6 +76,12 @@ public class UserController {
         return "user/tickets";
     }
 
+    @GetMapping("/my_purse")
+    public String showMyPurse(Model model, @AuthenticationPrincipal User currentUser) {
+        model.addAttribute("balance", userService.findUserById(currentUser.getId()).getBalance());
+        return "user/purse";
+    }
+
     @GetMapping("/{user_id}")
     public String showUserPage(@PathVariable("user_id") Long userId, Model model, @AuthenticationPrincipal User currentUser) {
         User user = userService.findUserById(userId);

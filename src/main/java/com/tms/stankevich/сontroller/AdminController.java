@@ -8,6 +8,7 @@ import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.GenreDeleteException;
 import com.tms.stankevich.exception.HallDeleteException;
 import com.tms.stankevich.exception.MovieDeleteException;
+import com.tms.stankevich.exception.SessionDeleteException;
 import com.tms.stankevich.service.*;
 import com.tms.stankevich.validator.GenreFormValidator;
 import com.tms.stankevich.validator.HallFormValidator;
@@ -270,7 +271,13 @@ public class AdminController {
 
         if (session.isPresent()) {
             String sessionName = session.get().getMovie() + " " + session.get().getStartTime();
-            sessionService.deleteSession(session.get());
+            try {
+                sessionService.deleteSession(session.get());
+            } catch (SessionDeleteException e) {
+                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("msg", "не удалено:");
+                redirectAttributes.addFlashAttribute("count", e.getCountOfTickets());
+            }
             redirectAttributes.addFlashAttribute("css", "danger");
             redirectAttributes.addFlashAttribute("msg", sessionName + " удалено");
         }

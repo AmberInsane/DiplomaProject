@@ -26,6 +26,8 @@
     <spring:url value="/user/my_tickets" var="myTicketsUrl"/>
     <spring:url value="/user/my_friends" var="myFriendsUrl"/>
     <spring:url value="/user/my_edit" var="editUrl"/>
+    <spring:url value="/user/my_purse" var="purseUrl"/>
+
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
@@ -75,6 +77,12 @@
         <label class="col-sm-2">Favorite Movies</label>
         <div class="col-sm-10">${user.info.favoriteMovies}</div>
     </div>
+
+    <c:if test="${user.equals(curUser)}">
+        <label class="col-sm-2">My Balance</label>
+        <div class="col-sm-10">${user.balance}</div>
+        <button class="btn btn-primary" onclick="location.href='${purseUrl}'">Fill up a purse</button>
+    </c:if>
 
     <security:authorize access="isAuthenticated()">
         <c:choose>

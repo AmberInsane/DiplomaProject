@@ -8,8 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.BlockingDeque;
 
 @Getter
 @Setter
@@ -31,6 +33,9 @@ public class User implements UserDetails {
 
     @Column(name = "email", length = 50)
     private String email;
+
+    @Column
+    private BigDecimal balance;
 
     @Transient
     private String passwordConfirm;
@@ -65,6 +70,8 @@ public class User implements UserDetails {
     public void prePersist() {
         if(info == null)
             info = new UserInfo();
+        if(balance == null)
+            balance = new BigDecimal(0);
     }
 
     @Override
