@@ -13,19 +13,23 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Log in with your account</title>
+    <spring:url value="/user/my_profile" var="profileUrl"/>
+    <spring:url value="/user/my_tickets" var="ticketsUrl"/>
+    <spring:url value="/user/find_sessions" var="sessionsUrl"/>
+    <spring:url value="/user/find_movies" var="moviesUrl"/>
+    <spring:url value="/user/find_friends" var="friendsUrl"/>
 </head>
 <body>
 <div class="component">
-    <a href="${pageContext.request.contextPath}/user/my_profile">My profile</a>
+    <a href="${profileUrl}"><spring:message code="user.menu.profile"/></a>
     <br>
-    <a href="${pageContext.request.contextPath}/user/my_tickets">My tickets</a>
+    <a href="${ticketsUrl}"><spring:message code="user.menu.tickets"/></a>
     <br>
-    <a href="${pageContext.request.contextPath}/user/find_sessions">Find sessions</a>
+    <a href="${sessionsUrl}"><spring:message code="user.menu.sessions"/></a>
     <br>
-    <a href="${pageContext.request.contextPath}/user/find_movies">Find movies</a>
+    <a href="${moviesUrl}"><spring:message code="user.menu.movies"/></a>
     <br>
-    <a href="${pageContext.request.contextPath}/user/find_friends">Find friends</a>
+    <a href="${friendsUrl}"><spring:message code="user.menu.friends"/></a>
     <br>
 </div>
 </body>

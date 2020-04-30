@@ -5,28 +5,28 @@
   Time: 16:15
   To change this template use File | Settings | File Templates.
 --%>
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Регистрация</title>
+    <title><spring:message code="registration.title"/></title>
     <spring:url value="/registration" var="userActionUrl"/>
 </head>
 <jsp:include page="parts/header.jsp"/>
 <body>
 <div class="container">
-    <h1>Add User</h1>
+    <h1><spring:message code="action.add"/> <spring:message code="user.form2"/></h1>
     <br/>
     <form:form class="form-horizontal" method="post"
                modelAttribute="userForm" action="${userActionUrl}">
         <spring:bind path="username">
             <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label">Name</label>
+                <label class="col-sm-2 control-label"><spring:message code="user.username"/></label>
                 <div class="col-sm-10">
                     <form:input path="username" type="text" class="form-control"
                                 id="username"/>
@@ -37,7 +37,7 @@
 
         <spring:bind path="email">
             <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label">Email</label>
+                <label class="col-sm-2 control-label"><spring:message code="user.email"/></label>
                 <div class="col-sm-10">
                     <form:input path="email" class="form-control"
                                 id="email"/>
@@ -48,7 +48,7 @@
 
         <spring:bind path="password">
             <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label">Password</label>
+                <label class="col-sm-2 control-label"><spring:message code="user.password"/></label>
                 <div class="col-sm-10">
                     <form:password path="password" class="form-control"
                                    id="password"/>
@@ -59,9 +59,10 @@
 
         <spring:bind path="passwordConfirm">
             <div class="form-group ${status.error ? 'has-error' : ''}">
+                <label class="col-sm-2 control-label"><spring:message code="user.password.confirm"/></label>
                 <div class="col-sm-10">
                     <form:password path="passwordConfirm" class="form-control"
-                                   id="password" placeholder="password"/>
+                                   id="password"/>
                     <form:errors path="passwordConfirm" class="control-label"/>
                 </div>
             </div>
@@ -69,11 +70,10 @@
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn-lg btn-primary pull-right">Add
+                <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/>
                 </button>
             </div>
         </div>
-
     </form:form>
 </div>
 <jsp:include page="parts/footer.jsp"/>

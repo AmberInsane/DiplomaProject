@@ -17,7 +17,6 @@
 </head>
 <body>
 <div class="component">
-    <h4><spring:message code="admin.menu"/></h4>
     <a href="${pageContext.request.contextPath}/admin/manage"><spring:message code="admin.menu.manage"/></a>
     <br>
     <a href="${pageContext.request.contextPath}/admin/movies"><spring:message code="admin.menu.movies"/></a>
