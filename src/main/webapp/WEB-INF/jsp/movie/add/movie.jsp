@@ -18,13 +18,13 @@
 <body>
 <jsp:include page="../../parts/header.jsp"/>
 <div class="container">
-    <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to movies</button>
+    <button class="btn btn-primary" onclick="location.href='${returnUrl}'"><spring:message code="action.back"/></button>
     <c:choose>
         <c:when test="${movieForm['new']}">
-            <h1>Add Movie</h1>
+            <h1><spring:message code="action.add"/> <spring:message code="movie.form"/></h1>
         </c:when>
         <c:otherwise>
-            <h1>Update Movie</h1>
+            <h1><spring:message code="action.update"/> <spring:message code="movie.form"/></h1>
         </c:otherwise>
     </c:choose>
     <br/>
@@ -33,7 +33,7 @@
         <div>
             <spring:bind path="title">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Title</label>
+                    <label class="col-sm-2 control-label"><spring:message code="movie.title"/></label>
                     <div class="col-sm-10">
                         <form:input path="title" type="text" class="form-control " id="title" placeholder="Title"/>
                         <form:errors path="title" class="control-label"/>
@@ -43,7 +43,7 @@
 
             <spring:bind path="description">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Description</label>
+                    <label class="col-sm-2 control-label"><spring:message code="movie.description"/></label>
                     <div class="col-sm-10">
                         <form:textarea path="description" rows="5" class="form-control" id="description"
                                        placeholder="Description"/>
@@ -54,7 +54,7 @@
 
             <spring:bind path="year">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Year</label>
+                    <label class="col-sm-2 control-label"><spring:message code="movie.year"/></label>
                     <div class="col-sm-10">
                         <form:input path="year" cols="4" class="form-control" id="year" placeholder="Year"/>
                         <form:errors path="year" class="control-label"/>
@@ -64,7 +64,7 @@
 
             <spring:bind path="genre">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Genre</label>
+                    <label class="col-sm-2 control-label"><spring:message code="genre.form"/></label>
                     <div class="col-sm-5">
                         <form:select path="genre" multiple="true" size="5" class="form-control">
                             <form:options items="${genreList}" itemValue="id" itemLabel="name"/>
@@ -77,7 +77,7 @@
 
             <spring:bind path="timeLength">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">TimeLength</label>
+                    <label class="col-sm-2 control-label"><spring:message code="movie.time"/> (<spring:message code="movie.time.minutes"/>)</label>
                     <div class="col-sm-10">
                         <form:input path="timeLength" cols="4" class="form-control" id="timeLength"
                                     placeholder="TimeLength"/>
@@ -90,10 +90,10 @@
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
                     <c:when test="${movieForm['new']}">
-                        <button type="submit" class="btn-lg btn-primary pull-right">Add</button>
+                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/></button>
                     </c:when>
                     <c:otherwise>
-                        <button type="submit" class="btn-lg btn-primary pull-right">Update</button>
+                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.update"/></button>
                     </c:otherwise>
                 </c:choose>
             </div>

@@ -23,6 +23,14 @@
 
 <jsp:include page="parts/header.jsp"/>
 <div class="container">
+    <c:if test="${not empty msg_code}">
+        <div class="alert alert-${css} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong><spring:message code="${msg_code}"/></strong>
+        </div>
+    </c:if>
     <security:authorize access="!isAuthenticated()">
         <h3><spring:message code="home.title"/></h3>
         <h2><spring:message code="home.info"/></h2>

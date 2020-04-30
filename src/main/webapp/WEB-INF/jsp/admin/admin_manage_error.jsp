@@ -10,17 +10,16 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title>Title</title>
+    <title><spring:message code="error.title"/></title>
     <spring:url value="/resources/core/image/sadcat.jpg" var="catImg" />
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <div class="container">
-    Пожалуйста, не надо удалять себя из администраторов
-    <br>
+    <h2><spring:message code="admin.error"/></h2>
     <img src="${catImg}"/>
     <br>
-    <a href="${pageContext.request.contextPath}/admin/manage">Ладно, больше не буду</a>
+    <a href="${pageContext.request.contextPath}/admin/manage"><spring:message code="admin.error.ok"/></a>
 </div>
 <jsp:include page="../parts/footer.jsp"/>
 </body>

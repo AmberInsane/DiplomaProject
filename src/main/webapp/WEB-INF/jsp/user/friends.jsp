@@ -14,16 +14,16 @@
 
 <html>
 <head>
-    <title>Friends</title>
+    <title><spring:message code="user.action.friends.my"/></title>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <div class="container">
     <security:authorize access="isAuthenticated()">
-        <h2>my friends</h2>
+        <h2><spring:message code="user.action.friends.my"/></h2>
         <c:if test="${inRequests.size() > 0}">
             <div>
-                <h3>Входящие заявки</h3>
+                <h3><spring:message code="user.action.friends.in"/></h3>
                 <table class="table table-striped">
                     <c:forEach items="${inRequests}" var="request">
                         <tr>
@@ -34,19 +34,19 @@
                             <td>
                                 <spring:url value="/user/request/accept/${request.id}" var="acceptUrl"/>
                                 <button class="btn btn-primary" onclick="this.disabled=true;post('${acceptUrl}')">
-                                    Принять
+                                    <spring:message code="user.action.friends.accept"/>
                                 </button>
                             </td>
                             <td>
-                                <spring:url value="/user/request/deny/${request.id}" var="denyUrl"/>
-                                <button class="btn btn-warning" onclick="this.disabled=true;post('${denyUrl}')">Отклонить
+                                <spring:url value="/user/request/refuse/${request.id}" var="refuseUrl"/>
+                                <button class="btn btn-warning" onclick="this.disabled=true;post('${refuseUrl}')">
+                                    <spring:message code="user.action.friends.refuse"/>
                                 </button>
                             </td>
                             <td>
                                 <spring:url value="/user/friend/${request.userRequest.id}/block" var="blockUrl"/>
                                 <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">
-                                    Отправить в
-                                    черный список
+                                    <spring:message code="user.action.friends.block"/>
                                 </button>
                             </td>
                         </tr>
@@ -57,7 +57,7 @@
         <c:choose>
             <c:when test="${friends.size() > 0}">
                 <div>
-                    <h3>My Friends</h3>
+                    <h3><spring:message code="user.action.friends.my"/></h3>
                     <table class="table table-striped">
                         <c:forEach items="${friends}" var="friend">
                             <tr>
@@ -68,14 +68,13 @@
                                 <td>
                                     <spring:url value="/user/friend/${friend.id}/delete" var="deleteUrl"/>
                                     <button class="btn btn-warning" onclick="this.disabled=true;post('${deleteUrl}')">
-                                        Удалить
+                                        <spring:message code="user.action.friends.delete"/>
                                     </button>
                                 </td>
                                 <td>
                                     <spring:url value="/user/friend/${friend.id}/block" var="blockUrl"/>
                                     <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">
-                                        Отправить в
-                                        черный список
+                                        <spring:message code="user.action.friends.block"/>
                                     </button>
                                 </td>
                             </tr>
@@ -85,13 +84,13 @@
             </c:when>
             <c:otherwise>
                 <div>
-                    <label class="text-info">You don't have friends. YET</label>
+                    <label class="text-info"><spring:message code="user.action.friends.no"/></label>
                 </div>
             </c:otherwise>
         </c:choose>
         <c:if test="${outRequests.size() > 0}">
             <div>
-                <h3>Исходящие заявки</h3>
+                <h3><spring:message code="user.action.friends.out"/></h3>
                 <table class="table table-striped">
                     <c:forEach items="${outRequests}" var="request">
                         <tr>
@@ -102,7 +101,7 @@
                             <td>
                                 <spring:url value="/user/request/cancel/${request.id}" var="cancelUrl"/>
                                 <button class="btn btn-warning" onclick="this.disabled=true;post('${cancelUrl}')">
-                                    Отменить запрос
+                                    <spring:message code="user.action.friends.cancel"/>
                                 </button>
                             </td>
                         </tr>

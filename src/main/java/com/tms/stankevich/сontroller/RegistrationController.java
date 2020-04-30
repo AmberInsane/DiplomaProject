@@ -37,13 +37,13 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String saveOrUpdateUser(@ModelAttribute("userForm") @Validated User user,
-                                   BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
+                                   BindingResult result, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "registration";
         } else {
             userService.saveOrUpdate(user);
             redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", "User added successfully!");
+            redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
             return "redirect:/";
         }
 

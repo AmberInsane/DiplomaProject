@@ -13,19 +13,31 @@
 
 <html>
 <head>
-    <title>Movies</title>
+    <title><spring:message code="movie.form3"/></title>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <div class="container">
-    <h2>Фильмы</h2>
+    <c:if test="${not empty msg_code}">
+        <div class="alert alert-${css} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong><spring:message code="${msg_code}"/></strong>
+            <c:if test="${not empty count}">
+                <spring:message code="messages.found"/> ${count} <spring:message
+                    code="${count_type_code}"/>
+            </c:if>
+        </div>
+    </c:if>
+    <h2><spring:message code="movie.form3"/></h2>
     <table class="table table-striped">
         <tr>
-            <th>title</th>
-            <th>description</th>
-            <th>year</th>
-            <th>genre</th>
-            <th>time</th>
+            <th><spring:message code="movie.title"/></th>
+            <th><spring:message code="movie.description"/></th>
+            <th><spring:message code="movie.year"/></th>
+            <th><spring:message code="genre.form"/></th>
+            <th><spring:message code="movie.time"/></th>
             <th></th>
         </tr>
         <c:forEach items="${movies}" var="movie">
@@ -44,21 +56,24 @@
                         <c:if test="${not loop.last}">,</c:if>
                     </c:forEach>
                 </td>
-                <td>${movie.timeLength} min</td>
+                <td>${movie.timeLength} <spring:message code="movie.time.minutes"/></td>
                 <security:authorize access="isAuthenticated()">
                     <security:authorize access="hasRole('ADMIN')">
                         <td>
                             <spring:url value="admin/movie/update/${movie.id}" var="updateUrl"/>
                             <spring:url value="admin/movie/delete/${movie.id}" var="deleteUrl"/>
 
-                            <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update</button>
-                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">Delete
+                            <button class="btn btn-primary" onclick="location.href='${updateUrl}'"><spring:message
+                                    code="action.update"/></button>
+                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">
+                                <spring:message code="action.delete"/>
                             </button>
                         </td>
                     </security:authorize>
                     <td>
                         <spring:url value="/movie/${movie.id}" var="findSessionsUrl"/>
-                        <button class="btn btn-primary" onclick="location.href=('${findSessionsUrl}')">Find Sessions
+                        <button class="btn btn-primary" onclick="location.href=('${findSessionsUrl}')"><spring:message
+                                code="action.find"/> <spring:message code="session.form3"/>
                         </button>
                     </td>
                 </security:authorize>
@@ -68,10 +83,11 @@
     <security:authorize access="isAuthenticated()">
         <security:authorize access="hasRole('ADMIN')">
             <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/admin/movie/add"><spring:message code="movie.add"/></a>
+                <a href="${pageContext.request.contextPath}/admin/movie/add"><spring:message code="action.add"/> <spring:message code="movie.form"/></a>
             </div>
             <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/admin/genre">Manage genres</a>
+                <a href="${pageContext.request.contextPath}/admin/genre"><spring:message code="action.manage"/>
+                    <spring:message code="genre.form4"/></a>
             </div>
         </security:authorize>
     </security:authorize>

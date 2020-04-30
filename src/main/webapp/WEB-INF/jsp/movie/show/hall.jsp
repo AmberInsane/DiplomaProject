@@ -19,11 +19,11 @@
 <div class="container">
     <h2>${hall.name}</h2>
     <div class="row">
-        <label class="col-sm-2">Description</label>
+        <label class="col-sm-2"><spring:message code="hall.description"/></label>
         <div class="col-sm-10">${hall.description}</div>
     </div>
     <div class="row">
-        <label class="col-sm-2">Capacity</label>
+        <label class="col-sm-2"><spring:message code="hall.capacity"/></label>
         <div class="col-sm-10">${hall.capacity}</div>
     </div>
 </div>

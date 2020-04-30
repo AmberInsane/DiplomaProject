@@ -28,12 +28,12 @@
 
     <h2>${movie.title}</h2>
     <div class="row">
-        <label class="col-sm-2">Description</label>
+        <label class="col-sm-2"><spring:message code="movie.description"/></label>
         <div class="col-sm-10">${movie.description}</div>
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Year</label>
+        <label class="col-sm-2"><spring:message code="movie.year"/></label>
         <div class="col-sm-10">
             <div>
                 <spring:url value="/movie/year/${movie.year}" var="yearUrl"/>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Genre</label>
+        <label class="col-sm-2"><spring:message code="genre.form"/></label>
         <div class="col-sm-10">
             <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
                 <spring:url value="/movie/genre/${genre.id}" var="genreUrl"/>
@@ -54,14 +54,14 @@
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Time</label>
-        <div class="col-sm-10">${movie.timeLength}</div>
+        <label class="col-sm-2"><spring:message code="movie.time"/></label>
+        <div class="col-sm-10">${movie.timeLength} <spring:message code="movie.time.minutes"/></div>
     </div>
 
     <div>
         <c:choose>
             <c:when test="${sessions.size() > 0}">
-                <h3>Sessions</h3>
+                <h3><spring:message code="session.form3"/></h3>
                 <table class="table table-striped">
                     <c:forEach items="${sessions}" var="session">
                         <tr>
@@ -79,19 +79,20 @@
                                         <spring:url value="/movie/session/delete_session/${session.id}"
                                                     var="deleteUrl"/>
 
-                                        <button class="btn btn-primary" onclick="location.href='${updateUrl}'">Update
+                                        <button class="btn btn-primary" onclick="location.href='${updateUrl}'">
+                                            <spring:message code="action.update"/>
                                         </button>
                                         <button class="btn btn-danger"
                                                 onclick="this.disabled=true;post('${deleteUrl}')">
-                                            Delete
+                                            <spring:message code="action.delete"/>
                                         </button>
                                     </td>
                                 </security:authorize>
                                 <security:authorize access="hasRole('USER')">
                                     <td>
                                         <spring:url value="/ticket/${session.id}/buy" var="buyTicketUrl"/>
-                                        <button class="btn btn-primary" onclick="location.href=('${buyTicketUrl}')">Buy
-                                            ticket
+                                        <button class="btn btn-primary" onclick="location.href=('${buyTicketUrl}')">
+                                            <spring:message code="action.buy"/> <spring:message code="ticket.form2"/>
                                         </button>
                                     </td>
                                 </security:authorize>
@@ -101,7 +102,7 @@
                 </table>
             </c:when>
             <c:otherwise>
-                <label class="text-info">no Sessions found</label>
+                <label class="text-info"><spring:message code="text.not.found.session"/></label>
             </c:otherwise>
         </c:choose>
     </div>

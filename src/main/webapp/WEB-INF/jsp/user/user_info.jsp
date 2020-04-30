@@ -12,7 +12,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>UserInfo</title>
+    <title>${user.username}</title>
     <security:authentication var="curUser" property="principal"/>
     <spring:url value="/user/friend/${user.id}/send" var="sendRequestUrl"/>
     <spring:url value="/user/friend/${user.id}/block" var="blockUrl"/>
@@ -20,69 +20,57 @@
     <spring:url value="/user/friend/${user.id}/delete" var="deleteUrl"/>
 
     <spring:url value="/user/request/accept/${nowResponse.id}" var="acceptUrl"/>
-    <spring:url value="/user/request/deny/${nowResponse.id}" var="denyUrl"/>
+    <spring:url value="/user/request/refuse/${nowResponse.id}" var="refuseUrl"/>
     <spring:url value="/user/request/cancel/${nowRequest.id}" var="cancelUrl"/>
 
     <spring:url value="/user/my_tickets" var="myTicketsUrl"/>
     <spring:url value="/user/my_friends" var="myFriendsUrl"/>
     <spring:url value="/user/my_edit" var="editUrl"/>
     <spring:url value="/user/my_purse" var="purseUrl"/>
-
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <div class="container">
-    <c:if test="${not empty msg}">
+    <c:if test="${not empty msg_code}">
         <div class="alert alert-${css} alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <strong>${msg}</strong>
+            <strong><spring:message code="${msg_code}"/></strong>
+            <c:if test="${not empty cause_code}">
+                <spring:message code="${cause_code}"/>
+            </c:if>
         </div>
     </c:if>
 
-    <h3>
-        <c:choose>
-            <c:when test="${user.equals(curUser)}">
-                Your Details
-            </c:when>
-            <c:otherwise>
-                ${user.username} Details
-            </c:otherwise>
-        </c:choose>
-    </h3>
-
+    <h3>${user.username}</h3>
 
     <div class="row">
-        <label class="col-sm-2">Name</label>
-        <div class="col-sm-10">${user.username}</div>
-    </div>
-
-    <div class="row">
-        <label class="col-sm-2">Email</label>
+        <label class="col-sm-2"><spring:message code="user.email"/></label>
         <div class="col-sm-10">${user.email}</div>
     </div>
 
     <div class="row">
-        <label class="col-sm-2">About user</label>
+        <label class="col-sm-2"><spring:message code="user.info.about"/></label>
         <div class="col-sm-10">${user.info.aboutUser}</div>
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Favorite Genres</label>
+        <label class="col-sm-2"><spring:message code="user.info.genres"/></label>
         <div class="col-sm-10">${user.info.favoriteGenres}</div>
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Favorite Movies</label>
+        <label class="col-sm-2"><spring:message code="user.info.movies"/></label>
         <div class="col-sm-10">${user.info.favoriteMovies}</div>
     </div>
 
     <c:if test="${user.equals(curUser)}">
         <div class="row">
-            <label class="col-sm-2">My Balance</label>
+            <label class="col-sm-2"><spring:message code="user.balance"/></label>
             <div class="col-sm-10">${user.balance}</div>
-            <button class="btn btn-primary" onclick="location.href='${purseUrl}'">Fill up a purse</button>
+            <button class="btn btn-primary" onclick="location.href='${purseUrl}'"><spring:message
+                    code="user.action.balance"/></button>
         </div>
     </c:if>
 
@@ -90,13 +78,16 @@
         <c:choose>
             <c:when test="${user.equals(curUser)}">
                 <div>
-                    <button class="btn btn-primary" onclick="location.href='${editUrl}'">Edit my info</button>
+                    <button class="btn btn-primary" onclick="location.href='${editUrl}'"><spring:message
+                            code="user.action.edit"/></button>
                 </div>
                 <div>
-                    <button class="btn btn-primary" onclick="location.href='${myTicketsUrl}'">Show my tickets</button>
+                    <button class="btn btn-primary" onclick="location.href='${myTicketsUrl}'"><spring:message
+                            code="user.action.tickets.my"/></button>
                 </div>
                 <div>
-                    <button class="btn btn-primary" onclick="location.href='${myFriendsUrl}'">Show my friends</button>
+                    <button class="btn btn-primary" onclick="location.href='${myFriendsUrl}'"><spring:message
+                            code="user.action.friends.my"/></button>
                     <c:if test="${requestsNum > 0}">
                         <div class="text-info">
                             (+ ${requestsNum})
@@ -109,26 +100,26 @@
                     <c:choose>
                         <c:when test="${not empty nowResponse}">
                             <button class="btn btn-primary" onclick="this.disabled=true;post('${acceptUrl}')">
-                                Принять
+                                <spring:message code="user.action.friends.accept"/>
                             </button>
-                            <button class="btn btn-warning" onclick="this.disabled=true;post('${denyUrl}')">Отклонить
+                            <button class="btn btn-warning" onclick="this.disabled=true;post('${refuseUrl}')">
+                                <spring:message code="user.action.friends.refuse"/>
                             </button>
                         </c:when>
                         <c:when test="${not empty nowRequest}">
                             <button class="btn btn-warning" onclick="this.disabled=true;post('${cancelUrl}')">
-                                Отменить запрос
+                                <spring:message code="user.action.friends.cancel"/>
                             </button>
                         </c:when>
                         <c:when test="${isFriend}">
                             <button class="btn btn-warning" onclick="this.disabled=true;post('${deleteUrl}')">
-                                Удалить из друзей
+                                <spring:message code="user.action.friends.delete"/>
                             </button>
                         </c:when>
                         <c:otherwise>
                             <c:if test="${!youBlocked && !blocked}">
                                 <button class="btn btn-primary" onclick="this.disabled=true;post('${sendRequestUrl}')">
-                                    Send
-                                    Friend Request
+                                    <spring:message code="user.action.friends.request"/>
                                 </button>
                             </c:if>
                         </c:otherwise>
@@ -137,12 +128,13 @@
                 <div>
                     <c:choose>
                         <c:when test="${blocked}">
-                            <button class="btn btn-primary" onclick="this.disabled=true;post('${unblockUrl}')">Unblock
-                                User
+                            <button class="btn btn-primary" onclick="this.disabled=true;post('${unblockUrl}')">
+                                <spring:message code="user.action.friends.unblock"/>
                             </button>
                         </c:when>
                         <c:otherwise>
-                            <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">Block User
+                            <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">
+                                <spring:message code="user.action.friends.block"/>
                             </button>
                         </c:otherwise>
                     </c:choose>

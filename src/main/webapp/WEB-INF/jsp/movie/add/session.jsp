@@ -12,7 +12,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <title>Session</title>
+    <title><spring:message code="session.form"/></title>
     <spring:url value="/admin/session/add" var="sessionActionUrl"/>
     <spring:url value="/movie/session" var="returnUrl"/>
 </head>
@@ -24,10 +24,10 @@
     <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to sessions</button>
     <c:choose>
         <c:when test="${sessionForm['new']}">
-            <h1>Add Session</h1>
+            <h1><spring:message code="action.add"/> <spring:message code="session.form"/></h1>
         </c:when>
         <c:otherwise>
-            <h1>Update Movie</h1>
+            <h1><spring:message code="action.update"/> <spring:message code="session.form"/></h1>
         </c:otherwise>
     </c:choose>
     <br/>
@@ -36,7 +36,7 @@
         <div>
             <spring:bind path="startTime">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">time</label>
+                    <label class="col-sm-2 control-label"><spring:message code="session.time"/></label>
                     <div class="col-sm-3">
                         <form:input path="dateFormatJSP" type="datetime-local" class="input-sm form-control" id="dateInitializer"/>
                         <form:errors path="dateFormatJSP" class="control-label"/>
@@ -46,7 +46,7 @@
 
             <spring:bind path="price">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Price</label>
+                    <label class="col-sm-2 control-label"><spring:message code="session.price"/></label>
                     <div class="col-sm-10">
                         <form:input path="price" type="number" step="0.01" class="form-control " id="price" placeholder="Price"/>
                         <form:errors path="price" class="control-label"/>
@@ -56,7 +56,7 @@
 
             <spring:bind path="hall">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Hall</label>
+                    <label class="col-sm-2 control-label"><spring:message code="hall.form"/></label>
                     <div class="col-sm-5">
                         <form:select path="hall" multiple="false" size="5" class="form-control">
                             <form:options items="${hallList}" itemValue="id" itemLabel="name"/>
@@ -68,7 +68,7 @@
 
             <spring:bind path="movie">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">Movie</label>
+                    <label class="col-sm-2 control-label"><spring:message code="movie.form"/></label>
                     <div class="col-sm-5">
                         <form:select path="movie" multiple="false" size="5" class="form-control">
                             <form:options items="${movieList}" itemValue="id" itemLabel="title"/>
@@ -82,10 +82,10 @@
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
                     <c:when test="${sessionForm['new']}">
-                        <button type="submit" class="btn-lg btn-primary pull-right">Add</button>
+                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/></button>
                     </c:when>
                     <c:otherwise>
-                        <button type="submit" class="btn-lg btn-primary pull-right">Update</button>
+                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.update"/></button>
                     </c:otherwise>
                 </c:choose>
             </div>

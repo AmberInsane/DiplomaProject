@@ -38,7 +38,7 @@ public interface UserService {
 
     void acceptFriendRequest(User currentUser, FriendRequest friendRequest);
 
-    void denyFriendRequest(User currentUser, FriendRequest friendRequest);
+    void refuseFriendRequest(User currentUser, FriendRequest friendRequest);
 
     void cancelFriendRequest(User currentUser, FriendRequest request);
 

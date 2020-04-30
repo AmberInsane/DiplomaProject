@@ -8,41 +8,38 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>Purse</title>
+    <title><spring:message code="user.action.balance"/></title>
     <spring:url value="/user/my_purse" var="userActionUrl"/>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <body>
 <div class="container">
-    <h1>My Purse</h1>
-    <c:if test="${not empty msg}">
+    <h1><spring:message code="user.action.balance"/></h1>
+    <c:if test="${not empty msg_code}">
         <div class="alert alert-${css} alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <strong>${msg}</strong>
+            <strong><spring:message code="${msg_code}"/></strong>
         </div>
     </c:if>
     <div class="row">
-        <label class="col-sm-2">Balance</label>
+        <label class="col-sm-2"><spring:message code="user.balance"/></label>
         <div class="col-sm-10">${balance}</div>
     </div>
     <form class="form-horizontal" method="post" action="${userActionUrl}">
         <div class="form-group">
-            <label class="col-sm-2 control-label">Add money</label>
+            <label class="col-sm-2 control-label"><spring:message code="text.sum"/></label>
             <div class="col-sm-5">
-                <input name="sum" type="number" step="0.01" />
+                <input name="sum" type="number" step="0.01"/>
             </div>
         </div>
-
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn-lg btn-primary pull-right">Add
+                <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/>
                 </button>
             </div>
         </div>

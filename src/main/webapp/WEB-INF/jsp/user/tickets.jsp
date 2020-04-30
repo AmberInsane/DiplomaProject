@@ -24,15 +24,13 @@
             <strong>${msg}</strong>
         </div>
     </c:if>
-
-    <h2>My tickets</h2>
-
+    <h2><spring:message code="user.action.tickets.my"/></h2>
     <div>
-        <label class="text-primary">My current tickets</label>
+        <label class="text-primary"><spring:message code="user.action.tickets.valid"/></label>
         <div>
             <table class="table table-striped">
                 <tr>
-                    <th>Bought by me</th>
+                    <th><spring:message code="user.action.tickets.me"/></th>
                 </tr>
                 <c:choose>
                     <c:when test="${tickets.size() > 0}">
@@ -47,7 +45,7 @@
                                 <td>
                                     <spring:url value="/ticket/return/${ticket.id}" var="returnTicketUrl"/>
                                     <button class="btn btn-danger" onclick="location.href=('${returnTicketUrl}')">
-                                        Return ticket
+                                        <spring:message code="action.return"/>
                                     </button>
                                 </td>
                             </tr>
@@ -55,12 +53,12 @@
                     </c:when>
                     <c:otherwise>
                         <tr>
-                            <td>Not found</td>
+                            <td><spring:message code="text.not.found"/></td>
                         </tr>
                     </c:otherwise>
                 </c:choose>
                 <tr>
-                    <th>Bought by friends</th>
+                    <th><spring:message code="user.action.tickets.friends"/></th>
                 </tr>
                 <c:choose>
                     <c:when test="${ticketsFriends.size() > 0}">
@@ -78,7 +76,7 @@
                                 <td>
                                     <spring:url value="/ticket/return/${ticket.id}" var="returnTicketUrl"/>
                                     <button class="btn btn-danger" onclick="location.href=('${returnTicketUrl}')">
-                                        Return ticket
+                                        <spring:message code="action.return"/>
                                     </button>
                                 </td>
                             </tr>
@@ -86,7 +84,7 @@
                     </c:when>
                     <c:otherwise>
                         <tr>
-                            <td>Not found</td>
+                            <td><spring:message code="text.not.found"/></td>
                         </tr>
                     </c:otherwise>
                 </c:choose>
@@ -94,11 +92,11 @@
         </div>
     </div>
     <div>
-        <label class="text-primary">My old tickets</label>
+        <label class="text-primary"><spring:message code="user.action.tickets.invalid"/></label>
         <div>
             <table class="table table-striped">
                 <tr>
-                    <th>Bought by me</th>
+                    <th><spring:message code="user.action.tickets.me"/></th>
                 </tr>
                 <c:choose>
                     <c:when test="${ticketsOld.size() > 0}">
@@ -113,7 +111,7 @@
                                 <td>
                                     <spring:url value="/ticket/rate_movie/${ticket.id}" var="rateMovieUrl"/>
                                     <button class="btn btn-warning" onclick="location.href=('${rateMovieUrl}')">
-                                        Rate movie
+                                        <spring:message code="user.action.movie.rate"/>
                                     </button>
                                 </td>
                             </tr>
@@ -121,12 +119,12 @@
                     </c:when>
                     <c:otherwise>
                         <tr>
-                            <td>Not found</td>
+                            <td><spring:message code="text.not.found"/></td>
                         </tr>
                     </c:otherwise>
                 </c:choose>
                 <tr>
-                    <th>Bought by friends</th>
+                    <th><spring:message code="user.action.tickets.friends"/></th>
                 </tr>
                 <c:choose>
                     <c:when test="${ticketsFriendsOld.size() > 0}">
@@ -144,7 +142,7 @@
                                 <td>
                                     <spring:url value="/ticket/rate_movie/${ticket.id}" var="rateMovieUrl"/>
                                     <button class="btn btn-warning" onclick="location.href=('${rateMovieUrl}')">
-                                        Rate movie
+                                        <spring:message code="user.action.movie.rate"/>
                                     </button>
                                 </td>
                             </tr>
@@ -152,7 +150,7 @@
                     </c:when>
                     <c:otherwise>
                         <tr>
-                            <td>Not found</td>
+                            <td><spring:message code="text.not.found"/></td>
                         </tr>
                     </c:otherwise>
                 </c:choose>

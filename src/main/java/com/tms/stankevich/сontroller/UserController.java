@@ -38,15 +38,7 @@ public class UserController {
 
     @GetMapping("/my_edit")
     public String editUser(Model model, @AuthenticationPrincipal User currentUser) {
-
         UserInfo userInfo = userService.findUserById(currentUser.getId()).getInfo();
-        //проверить и удалить
-        if (userInfo == null) {
-            userInfo = new UserInfo();
-            currentUser.setInfo(userInfo);
-            userInfo = userService.saveOrUpdate(currentUser).getInfo();
-        }
-
         model.addAttribute("userInfoForm", userInfo);
         return "user/user_edit";
     }
@@ -93,12 +85,12 @@ public class UserController {
         }
         if (sumNumber.compareTo(BigDecimal.ZERO) <= 0) {
             redirectAttributes.addFlashAttribute("css", "danger");
-            redirectAttributes.addFlashAttribute("msg", "Invalid sum");
+            redirectAttributes.addFlashAttribute("msg_code", "messages.invalid.sum");
         } else {
             sumNumber = sumNumber.setScale(2, BigDecimal.ROUND_HALF_DOWN);
             userService.plusToBalance(currentUser, sumNumber);
             redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", "Сумма добавлена");
+            redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
         }
         return "redirect:/user/my_purse";
     }
@@ -141,15 +133,18 @@ public class UserController {
             List<User> foundUsers = userService.findUsersByName(userName);
             if (foundUsers.size() > 0) {
                 model.addAttribute("css", "success");
-                model.addAttribute("msg", "я нашел целых смотри сколько " + foundUsers.size() + " :)");
+                model.addAttribute("msg_code", "messages.found");
+                model.addAttribute("count",  foundUsers.size());
+                model.addAttribute("count_type_code", "user.form5");
+
                 model.addAttribute("friend_list", foundUsers);
             } else {
-                model.addAttribute("css", "danger");
-                model.addAttribute("msg", "я никого не нашел с именем " + userName + " :(");
+                model.addAttribute("css", "alert");
+                model.addAttribute("msg_code", "text.not.found");
             }
         } else {
-            model.addAttribute("css", "danger");
-            model.addAttribute("msg", "Ведите имя для поиска");
+            model.addAttribute("css", "alert");
+            model.addAttribute("msg_code", "messages.enter.name");
         }
         return "user/find_friend";
     }
@@ -161,11 +156,12 @@ public class UserController {
             userService.sendFriendRequest(currentUser, friend);
         } catch (FriendRequestException e) {
             redirectAttributes.addFlashAttribute("css", "danger");
-            redirectAttributes.addFlashAttribute("msg", "Отказано в отправке запроса: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("msg_code", "message.request.deny");
+            redirectAttributes.addFlashAttribute("cause_code", e.getMessage());
             return "redirect:/user/" + userId;
         }
         redirectAttributes.addFlashAttribute("css", "success");
-        redirectAttributes.addFlashAttribute("msg", "Запрос отправлен");
+        redirectAttributes.addFlashAttribute("msg_code", "message.request.send");
         return "redirect:/user/" + userId;
     }
 
@@ -174,8 +170,8 @@ public class UserController {
         User userToBlock = userService.findUserById(userId);
         userService.deleteFromFriends(currentUser, userToBlock);
 
-        redirectAttributes.addFlashAttribute("css", "danger");
-        redirectAttributes.addFlashAttribute("msg", "Пользователь удален из друзей");
+        redirectAttributes.addFlashAttribute("css", "success");
+        redirectAttributes.addFlashAttribute("msg_code", "message.request.remove");
         return "redirect:/user/" + userId;
     }
 
@@ -184,8 +180,8 @@ public class UserController {
         User userToBlock = userService.findUserById(userId);
         userService.blockUser(currentUser, userToBlock);
 
-        redirectAttributes.addFlashAttribute("css", "danger");
-        redirectAttributes.addFlashAttribute("msg", "Пользователь добавлен в черный список");
+        redirectAttributes.addFlashAttribute("css", "alert");
+        redirectAttributes.addFlashAttribute("msg_code", "message.request.block");
         return "redirect:/user/" + userId;
     }
 
@@ -195,7 +191,7 @@ public class UserController {
         userService.unblockUser(currentUser, userToUnblock);
 
         redirectAttributes.addFlashAttribute("css", "success");
-        redirectAttributes.addFlashAttribute("msg", "Пользователь убран из черного списока");
+        redirectAttributes.addFlashAttribute("msg_code", "message.request.unblock");
         return "redirect:/user/" + userId;
     }
 
@@ -208,11 +204,11 @@ public class UserController {
         return "redirect:" + request.getHeader("Referer");
     }
 
-    @PostMapping("/request/deny/{request_id}")
-    public String denyFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
+    @PostMapping("/request/refuse/{request_id}")
+    public String refuseFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
         Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
         if (friendRequest.isPresent()) {
-            userService.denyFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
+            userService.refuseFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
         }
         return "redirect:" + request.getHeader("Referer");
     }

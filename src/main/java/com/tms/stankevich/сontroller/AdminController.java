@@ -133,9 +133,9 @@ public class AdminController {
         } else {
             redirectAttributes.addFlashAttribute("css", "success");
             if (movie.isNew()) {
-                redirectAttributes.addFlashAttribute("msg", "Movie added successfully!");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
             } else {
-                redirectAttributes.addFlashAttribute("msg", "Movie updated successfully!");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.update.success");
             }
             movieService.saveOrUpdate(movie);
             return "redirect:/movie";
@@ -163,10 +163,12 @@ public class AdminController {
             try {
                 movieService.deleteMovie(movie.get());
                 redirectAttributes.addFlashAttribute("css", "success");
-                redirectAttributes.addFlashAttribute("msg", movieName + " удалено");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (MovieDeleteException e) {
                 redirectAttributes.addFlashAttribute("css", "alert");
-                redirectAttributes.addFlashAttribute("msg", movieName + " не удалено: " + e.getCountOfSessions());
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
+                redirectAttributes.addFlashAttribute("count", e.getCountOfSessions());
+                redirectAttributes.addFlashAttribute("count_type_code", "session.form5");
             }
         }
         return "redirect:/movie";
@@ -187,16 +189,19 @@ public class AdminController {
     @PostMapping(value = "/genre/add")
     public String saveOrUpdateGenre(@ModelAttribute("genreForm") @Validated Genre genre,
                                     BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
-        if (genre.getName().length() < 3) {
-            redirectAttributes.addFlashAttribute("css", "has-error");
-            redirectAttributes.addFlashAttribute("msg", "не добавлено");
+        if (result.hasErrors()) {
+            populateDefaultSessionModel(model);
+            return "movie/add/session";
         } else {
             redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", genre.getName() + " добавлено");
+            if (genre.isNew()) {
+                redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
+            } else {
+                redirectAttributes.addFlashAttribute("msg_code", "messages.update.success");
+            }
             movieService.saveOrUpdateGenre(genre);
+            return "redirect:/admin/genre";
         }
-
-        return "redirect:/admin/genre";
     }
 
     @GetMapping("/genre/update/{id}")
@@ -214,14 +219,15 @@ public class AdminController {
     public String deleteGenre(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         Optional<Genre> genre = movieService.findGenreById(id);
         if (genre.isPresent()) {
-            String genreName = genre.get().getName();
             try {
                 movieService.deleteGenre(genre.get());
                 redirectAttributes.addFlashAttribute("css", "success");
-                redirectAttributes.addFlashAttribute("msg", genreName + " удалено");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (GenreDeleteException e) {
                 redirectAttributes.addFlashAttribute("css", "alert");
-                redirectAttributes.addFlashAttribute("msg", genreName + " не удалено:" + e.getCountOfMovies());
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
+                redirectAttributes.addFlashAttribute("count", e.getCountOfMovies());
+                redirectAttributes.addFlashAttribute("count_type_code", "genre.form5");
             }
         }
         return "redirect:/admin/genre";
@@ -273,13 +279,14 @@ public class AdminController {
             String sessionName = session.get().getMovie() + " " + session.get().getStartTime();
             try {
                 sessionService.deleteSession(session.get());
+                redirectAttributes.addFlashAttribute("css", "success");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (SessionDeleteException e) {
                 redirectAttributes.addFlashAttribute("css", "alert");
-                redirectAttributes.addFlashAttribute("msg", "не удалено:");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
                 redirectAttributes.addFlashAttribute("count", e.getCountOfTickets());
+                redirectAttributes.addFlashAttribute("count_type_code", "ticket.form5");
             }
-            redirectAttributes.addFlashAttribute("css", "danger");
-            redirectAttributes.addFlashAttribute("msg", sessionName + " удалено");
         }
         return "redirect:/movie/session";
     }
@@ -309,16 +316,16 @@ public class AdminController {
     public String saveOrUpdateHall(@ModelAttribute("hallForm") @Validated Hall hall,
                                    BindingResult result, final RedirectAttributes redirectAttributes) {
         String action;
-        if (hall.isNew())
-            action = "добавлен";
-        else
-            action = "изменен";
         if (result.hasErrors()) {
             return "movie/add/hall";
         } else {
-            Hall hal1 = sessionService.saveOrUpdateHall(hall);
+            sessionService.saveOrUpdateHall(hall);
             redirectAttributes.addFlashAttribute("css", "success");
-            redirectAttributes.addFlashAttribute("msg", hal1.getName() + " " + action);
+            if (hall.isNew()) {
+                redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
+            } else {
+                redirectAttributes.addFlashAttribute("msg_code", "messages.update.success");
+            }
             return "redirect:/admin/hall";
         }
     }
@@ -343,15 +350,15 @@ public class AdminController {
             String hallName = hall.get().getName();
             try {
                 sessionService.deleteHall(hall.get());
-                redirectAttributes.addFlashAttribute("css", "danger");
-                redirectAttributes.addFlashAttribute("msg", hallName + " удалено");
+                redirectAttributes.addFlashAttribute("css", "success");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (HallDeleteException e) {
-                redirectAttributes.addFlashAttribute("css", "danger");
-                redirectAttributes.addFlashAttribute("msg", hallName + " не удалено:" + e.getCountOfSessions());
+                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
+                redirectAttributes.addFlashAttribute("count", e.getCountOfSessions());
+                redirectAttributes.addFlashAttribute("count_type_code", "session.form5");
             }
         }
         return "redirect:/admin/hall";
     }
-
-
 }

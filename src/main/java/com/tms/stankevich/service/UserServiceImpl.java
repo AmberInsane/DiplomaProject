@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void sendFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
         if (userRequest.equals(userResponse))
-            throw new FriendRequestException("Не добавляйте себя в друзья");
+            throw new FriendRequestException("message.request.deny.me");
         FriendRequest friendRequest = checkAndGetFriendRequest(userRequest, userResponse);
         friendRequest.setStatus(FriendRequestStatus.SD);
         friendRequestRepository.save(friendRequest);
@@ -155,14 +155,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             request = friendRequest.get();
             @NotNull FriendRequestStatus status = request.getStatus();
             if (status == FriendRequestStatus.SD)
-                    throw new FriendRequestException("Вы уже отправили запрос. Ожидайте");
+                    throw new FriendRequestException("message.request.deny.repeat");
             return request;
         }
         if (isUserFriendSecond(userRequest, userResponse)) {
-            throw new FriendRequestException("Вы уже друзья");
+            throw new FriendRequestException("message.request.deny.already");
         }
         if (isUserBlockedSecond(userResponse,userRequest)) {
-            throw new FriendRequestException("Вы в черном списке пользователя");
+            throw new FriendRequestException("message.request.deny.block");
         }
         request = new FriendRequest();
         request.setUserRequest(userRequest);
@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                         .filter(friendRequest -> friendRequest.getUserRequest().equals(userToBlock)).findFirst();
 
                 if (response.isPresent()) {
-                    denyFriendRequest(currentUser, response.get());
+                    refuseFriendRequest(currentUser, response.get());
                 }
             }
             currentUser.getBlackList().add(userToBlock);
@@ -210,7 +210,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void denyFriendRequest(User currentUser, FriendRequest friendRequest) {
+    public void refuseFriendRequest(User currentUser, FriendRequest friendRequest) {
         if (friendRequest.getUserResponse().equals(currentUser)) {
             friendRequest.setStatus(FriendRequestStatus.NO);
             friendRequestRepository.save(friendRequest);

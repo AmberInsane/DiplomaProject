@@ -89,10 +89,10 @@ public class TicketController {
             try {
                 ticketService.saveTickets(rawTicket);
                 redirectAttributes.addFlashAttribute("css", "success");
-                redirectAttributes.addFlashAttribute("msg", "Ticket added successfully!");
+                redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
                 return "redirect:/user/my_tickets";
             } catch (BalanceMinusException e) {
-                model.addAttribute("css", "danger");
+                model.addAttribute("css", "alert");
                 model.addAttribute("msg_code", "Valid.ticketForm.notEnoughMoney");
                 populateDefaultTicketModel(model, rawTicket.getUserBy());
                 return "movie/add/ticket";

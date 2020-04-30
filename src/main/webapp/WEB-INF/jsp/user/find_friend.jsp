@@ -9,23 +9,34 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
-    <title>Find friend</title>
+    <title><spring:message code="user.menu.friends"/></title>
     <spring:url value="/user/find_friends" var="findUserUrl"/>
 </head>
 <body>
 <jsp:include page="../parts/header.jsp"/>
 <div class="container">
-    <h2>Find friends</h2>
+    <c:if test="${not empty msg_code}">
+        <div class="alert alert-${css} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong><spring:message code="${msg_code}"/></strong>
+            <c:if test="${not empty count}">
+                <spring:message code="messages.found"/> ${count} <spring:message
+                    code="${count_type_code}"/>
+            </c:if>
+        </div>
+    </c:if>
+    <h2><spring:message code="user.menu.friends"/></h2>
     <form:form class="form-horizontal" method="post" action="${findUserUrl}">
         <div class="form-group ${status.error ? 'has-error' : ''}">
-            <label class="col-sm-2 control-label">User name to find</label>
+            <label class="col-sm-2 control-label"><spring:message code="user.username"/></label>
             <div class="col-sm-10">
                 <input type="text" name="friend_name"/>
             </div>
-            <button type="submit" class="btn-lg btn-primary pull-right">Find</button>
+            <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.find"/></button>
         </div>
     </form:form>
 
@@ -41,8 +52,7 @@
     <c:if test="${not empty friend_list}">
         <table class="table table-striped">
             <tr>
-                <th>Name</th>
-                <th>Birthday</th>
+                <th><spring:message code="user.username"/></th>
             </tr>
             <c:forEach items="${friend_list}" var="friend">
                 <tr>

@@ -11,13 +11,13 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
-    <title>Buy ticket</title>
+    <title><spring:message code="action.buy"/> <spring:message code="ticket.form2"/></title>
     <spring:url value="/ticket/add" var="ticketActionUrl"/>
 </head>
 <body>
 <jsp:include page="../../parts/header.jsp"/>
 <div class="container">
-    <h1>Buy ticket</h1>
+    <h1><spring:message code="action.buy"/> <spring:message code="ticket.form2"/></h1>
     <c:if test="${not empty msg || not empty msg_code}">
         <div class="alert alert-${css} alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -34,17 +34,17 @@
         </div>
     </c:if>
     <div class="row">
-        <label class="col-sm-2">Movie</label>
+        <label class="col-sm-2"><spring:message code="movie.form"/></label>
         <div class="col-sm-10">${ticketForm.session.movie.title}</div>
     </div>
 
     <div class="row">
-        <label class="col-sm-2">Start date</label>
+        <label class="col-sm-2"><spring:message code="session.time"/></label>
         <div class="col-sm-10">${ticketForm.session.dateFormatText}</div>
     </div>
 
     <div class="row">
-        <label class="col-sm-2">My balance</label>
+        <label class="col-sm-2"><spring:message code="user.balance"/></label>
         <div class="col-sm-10">${ticketForm.userBy.balance}</div>
     </div>
 
@@ -55,7 +55,7 @@
         <div>
             <spring:bind path="usersFor">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label">For users</label>
+                    <label class="col-sm-2 control-label"><spring:message code="ticket.for.users"/></label>
                     <div class="col-sm-5">
                         <form:select path="usersFor" multiple="true" size="5" class="form-control">
                             <form:options items="${friends}" itemValue="id" itemLabel="username"/>
@@ -68,7 +68,7 @@
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn-lg btn-primary pull-right">Buy</button>
+                <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.buy"/></button>
             </div>
         </div>
     </form:form>
