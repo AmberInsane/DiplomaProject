@@ -15,38 +15,40 @@
     <meta charset="utf-8">
     <title><spring:message code="login.title"/></title>
     <spring:url value="/login" var="loginUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 
 <body>
-<jsp:include page="parts/header.jsp"/>
-<div class="container">
-    <form class="form-horizontal" name="loginForm" method="POST" action="${loginUrl}">
-        <h3><spring:message code="login.title.long"/></h3>
-        <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="user.username"/></label>
-            <div class="col-sm-5">
-                <input name="username" type="text"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="user.password"/></label>
-            <div class="col-sm-5">
-                <div class="col-sm-5">
-                    <input name="password" type="password"/>
+
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="parts/header.jsp"/>
+        <div class="container mt-5">
+            <form class="form col-sm-4 mx-auto" name="loginForm" method="POST" action="${loginUrl}">
+                <h2><spring:message code="login.title.long"/></h2>
+                <div class="form-group">
+                    <label class="form-control-label"><spring:message code="user.username"/></label>
+                    <div><input name="username" type="text"/></div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label class="form-control-label"><spring:message code="user.password"/></label>
+                    <div><input name="password" type="password"/></div>
+                </div>
+                <button type="submit" class="btn center-block btn-primary"><spring:message code="login.title"/></button>
+                <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong><spring:message code="login.error"/></strong>
+                    </div>
+                </c:if>
+            </form>
         </div>
-        <button type="submit" class="btn center-block btn-primary"><spring:message code="login.title"/></button>
-        <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <strong><spring:message code="login.error"/></strong>
-            </div>
-        </c:if>
-    </form>
+    </div>
+    <jsp:include page="parts/footer.jsp"/>
 </div>
-<jsp:include page="parts/footer.jsp"/>
 </body>
 </html>

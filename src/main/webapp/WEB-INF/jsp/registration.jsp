@@ -16,66 +16,74 @@
     <meta charset="utf-8">
     <title><spring:message code="registration.title"/></title>
     <spring:url value="/registration" var="userActionUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
-<jsp:include page="parts/header.jsp"/>
+
 <body>
-<div class="container">
-    <h1><spring:message code="action.add"/> <spring:message code="user.form2"/></h1>
-    <br/>
-    <form:form class="form-horizontal" method="post"
-               modelAttribute="userForm" action="${userActionUrl}">
-        <spring:bind path="username">
-            <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label"><spring:message code="user.username"/></label>
-                <div class="col-sm-10">
-                    <form:input path="username" type="text" class="form-control"
-                                id="username"/>
-                    <form:errors path="username" class="control-label"/>
-                </div>
-            </div>
-        </spring:bind>
 
-        <spring:bind path="email">
-            <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label"><spring:message code="user.email"/></label>
-                <div class="col-sm-10">
-                    <form:input path="email" class="form-control"
-                                id="email"/>
-                    <form:errors path="email" class="control-label"/>
-                </div>
-            </div>
-        </spring:bind>
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="parts/header.jsp"/>
+        <div class="container mt-5">
+            <h2><spring:message code="action.add"/> <spring:message code="user.form2"/></h2>
+            <form:form class="form-horizontal" method="post"
+                       modelAttribute="userForm" action="${userActionUrl}">
+                <spring:bind path="username">
+                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                        <label class="col-sm-2 form-control-label"><spring:message code="user.username"/></label>
+                        <div class="col-sm-10">
+                            <form:input path="username" type="text" class="form-control"
+                                        id="username"/>
+                            <form:errors path="username" class="form-control-feedback"/>
+                        </div>
+                    </div>
+                </spring:bind>
 
-        <spring:bind path="password">
-            <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label"><spring:message code="user.password"/></label>
-                <div class="col-sm-10">
-                    <form:password path="password" class="form-control"
-                                   id="password"/>
-                    <form:errors path="password" class="control-label"/>
-                </div>
-            </div>
-        </spring:bind>
+                <spring:bind path="email">
+                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                        <label class="col-sm-2 form-control-label"><spring:message code="user.email"/></label>
+                        <div class="col-sm-10">
+                            <form:input path="email" class="form-control"
+                                        id="email"/>
+                            <form:errors path="email" class="form-control-feedback"/>
+                        </div>
+                    </div>
+                </spring:bind>
 
-        <spring:bind path="passwordConfirm">
-            <div class="form-group ${status.error ? 'has-error' : ''}">
-                <label class="col-sm-2 control-label"><spring:message code="user.password.confirm"/></label>
-                <div class="col-sm-10">
-                    <form:password path="passwordConfirm" class="form-control"
-                                   id="password"/>
-                    <form:errors path="passwordConfirm" class="control-label"/>
-                </div>
-            </div>
-        </spring:bind>
+                <spring:bind path="password">
+                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                        <label class="col-sm-2 form-control-label"><spring:message code="user.password"/></label>
+                        <div class="col-sm-10">
+                            <form:password path="password" class="form-control"
+                                           id="password"/>
+                            <form:errors path="password" class="form-control-feedback"/>
+                        </div>
+                    </div>
+                </spring:bind>
 
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/>
-                </button>
-            </div>
+                <spring:bind path="passwordConfirm">
+                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                        <label class="col-sm-2 form-control-label"><spring:message code="user.password.confirm"/></label>
+                        <div class="col-sm-10">
+                            <form:password path="passwordConfirm" class="form-control"
+                                           id="password"/>
+                            <form:errors path="passwordConfirm" class="form-control-feedback"/>
+                        </div>
+                    </div>
+                </spring:bind>
+
+                <div class="form-group">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.add"/>
+                        </button>
+                    </div>
+                </div>
+            </form:form>
         </div>
-    </form:form>
+    </div>
+    <jsp:include page="parts/footer.jsp"/>
 </div>
-<jsp:include page="parts/footer.jsp"/>
 </body>
 </html>

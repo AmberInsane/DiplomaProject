@@ -32,56 +32,56 @@
         <form:hidden path="id"/>
         <div>
             <spring:bind path="title">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="movie.title"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="movie.title"/></label>
                     <div class="col-sm-10">
                         <form:input path="title" type="text" class="form-control " id="title" placeholder="Title"/>
-                        <form:errors path="title" class="control-label"/>
+                        <form:errors path="title" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
 
             <spring:bind path="description">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="movie.description"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="movie.description"/></label>
                     <div class="col-sm-10">
                         <form:textarea path="description" rows="5" class="form-control" id="description"
                                        placeholder="Description"/>
-                        <form:errors path="description" class="control-label"/>
+                        <form:errors path="description" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
 
             <spring:bind path="year">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="movie.year"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="movie.year"/></label>
                     <div class="col-sm-10">
                         <form:input path="year" cols="4" class="form-control" id="year" placeholder="Year"/>
-                        <form:errors path="year" class="control-label"/>
+                        <form:errors path="year" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
 
             <spring:bind path="genre">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="genre.form"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="genre.form"/></label>
                     <div class="col-sm-5">
                         <form:select path="genre" multiple="true" size="5" class="form-control">
                             <form:options items="${genreList}" itemValue="id" itemLabel="name"/>
                         </form:select>
-                        <form:errors path="genre" class="control-label"/>
+                        <form:errors path="genre" class="form-control-label"/>
                     </div>
                     <div class="col-sm-5"></div>
                 </div>
             </spring:bind>
 
             <spring:bind path="timeLength">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="movie.time"/> (<spring:message code="movie.time.minutes"/>)</label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="movie.time"/> (<spring:message code="movie.time.minutes"/>)</label>
                     <div class="col-sm-10">
                         <form:input path="timeLength" cols="4" class="form-control" id="timeLength"
                                     placeholder="TimeLength"/>
-                        <form:errors path="timeLength" class="control-label"/>
+                        <form:errors path="timeLength" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
@@ -90,10 +90,10 @@
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
                     <c:when test="${movieForm['new']}">
-                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/></button>
+                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.add"/></button>
                     </c:when>
                     <c:otherwise>
-                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.update"/></button>
+                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.update"/></button>
                     </c:otherwise>
                 </c:choose>
             </div>

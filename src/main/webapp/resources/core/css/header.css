@@ -1,0 +1,24 @@
+.navbar {
+    background-color: rgba(89, 28, 119, 0.9);
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.navbar-brand.brand {
+    color: rgba(86, 230, 231, 0.7)
+}
+
+.languages {
+    line-height: 1rem;
+    margin-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.languages a {
+    color: #4ec9ca
+}
+
+.languages a + a {
+    margin-left: 16px;
+}

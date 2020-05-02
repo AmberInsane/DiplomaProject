@@ -3,6 +3,7 @@ package com.tms.stankevich.domain.movie;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,7 +26,8 @@ public class Hall implements Serializable {
     @Column
     private Short capacity;
 
-    @Column(length = 1000)
+    @Column
+    @Type(type="text")
     private String description;
 
     public boolean isNew() {

@@ -1,18 +1,25 @@
 package com.tms.stankevich.service;
 
 import com.tms.stankevich.dao.GenreRepository;
+import com.tms.stankevich.dao.MovieRateRepository;
 import com.tms.stankevich.dao.MovieRepository;
 import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Movie;
+import com.tms.stankevich.domain.movie.MovieRate;
 import com.tms.stankevich.domain.movie.Session;
+import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.GenreDeleteException;
 import com.tms.stankevich.exception.MovieDeleteException;
-import com.tms.stankevich.service.MovieService;
+import com.tms.stankevich.exception.MovieRateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class MovieServiceImpl implements MovieService {
@@ -24,7 +31,25 @@ public class MovieServiceImpl implements MovieService {
     private GenreRepository genreRepository;
 
     @Autowired
+    private MovieRateRepository movieRateRepository;
+
+    @Autowired
     private SessionService sessionService;
+
+    @Value("${movie.min.rate}")
+    private Integer minRate;
+
+    @Value("${movie.max.rate}")
+    private Integer maxRate;
+
+    private List<Integer> ratesList;
+
+    @PostConstruct
+    public void reset() {
+        ratesList = IntStream.rangeClosed(minRate, maxRate)
+                .boxed().collect(Collectors.toList());
+    }
+
 
     @Override
     public List<Movie> getAllMovies() {
@@ -80,5 +105,31 @@ public class MovieServiceImpl implements MovieService {
         if (sessions.size() > 0)
             throw new MovieDeleteException(sessions.size());
         movieRepository.delete(movie);
+    }
+
+    @Override
+    public List<Integer> getRatesList() {
+        return ratesList;
+    }
+
+    @Override
+    public void rateMovie(Movie movie, User user, Integer rateValue) throws MovieRateException {
+        if (rateValue < maxRate || rateValue > maxRate)
+            throw new MovieRateException("message.movie.rate.bounds");
+        Optional<MovieRate> oldRate = movieRateRepository.findByUserAndMovie(user, movie);
+        MovieRate rate;
+        if (oldRate.isPresent()) {
+            rate = oldRate.get();
+        } else {
+            rate = new MovieRate();
+            rate.setMovie(movie);
+            rate.setUser(user);
+        }
+        rate.setValue(rateValue);
+    }
+
+    @Override
+    public Optional<MovieRate> getUserMovieRate(User user, Movie movie) {
+        return movieRateRepository.findByUserAndMovie(user, movie);
     }
 }

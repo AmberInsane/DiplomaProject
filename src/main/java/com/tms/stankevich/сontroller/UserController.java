@@ -180,7 +180,7 @@ public class UserController {
         User userToBlock = userService.findUserById(userId);
         userService.blockUser(currentUser, userToBlock);
 
-        redirectAttributes.addFlashAttribute("css", "alert");
+        redirectAttributes.addFlashAttribute("css", "danger");
         redirectAttributes.addFlashAttribute("msg_code", "message.request.block");
         return "redirect:/user/" + userId;
     }

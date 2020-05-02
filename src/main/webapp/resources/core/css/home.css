@@ -1,0 +1,17 @@
+.home-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 70%;
+    flex-direction: column;
+    margin: auto;
+}
+
+.home-info .home-actions {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.home-actions .buttons {
+    margin-top: 40px;
+}

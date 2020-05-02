@@ -92,11 +92,25 @@ public class TicketController {
                 redirectAttributes.addFlashAttribute("msg_code", "messages.add.success");
                 return "redirect:/user/my_tickets";
             } catch (BalanceMinusException e) {
-                model.addAttribute("css", "alert");
+                model.addAttribute("css", "danger");
                 model.addAttribute("msg_code", "Valid.ticketForm.notEnoughMoney");
                 populateDefaultTicketModel(model, rawTicket.getUserBy());
                 return "movie/add/ticket";
             }
         }
+    }
+
+    @GetMapping("/rate_movie/{ticket_id}")
+    public String rateTicket(Model model, @PathVariable("ticket_id") Long ticketId, HttpServletRequest request, @AuthenticationPrincipal User user,
+                             final RedirectAttributes redirectAttributes) {
+        Optional<Ticket> ticket = ticketService.findById(ticketId);
+        if (ticket.isPresent()) {
+            if (ticket.get().getUserFor().equals(user)) {
+                redirectAttributes.addFlashAttribute("rate_user", user);
+                return "redirect:/movie/" + ticket.get().getSession().getMovie().getId();
+            }
+        }
+
+        return "redirect:" + request.getHeader("Referer");
     }
 }

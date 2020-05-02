@@ -36,34 +36,34 @@
                     <form:hidden path="id"/>
                     <div>
                         <spring:bind path="name">
-                            <div class="form-group ${status.error ? 'has-error' : ''}">
-                                <label class="col-sm-2 control-label"><spring:message code="text.name"/></label>
+                            <div class="form-group ${status.error ? 'has-danger' : ''}">
+                                <label class="col-sm-2 form-control-label"><spring:message code="text.name"/></label>
                                 <div class="col-sm-10">
                                     <form:input path="name" type="text" class="form-control " id="name"
                                                 placeholder="Name"/>
-                                    <form:errors path="name" class="control-label"/>
+                                    <form:errors path="name" class="form-control-label"/>
                                 </div>
                             </div>
                         </spring:bind>
 
                         <spring:bind path="capacity">
-                            <div class="form-group ${status.error ? 'has-error' : ''}">
-                                <label class="col-sm-2 control-label"><spring:message code="hall.capacity"/></label>
+                            <div class="form-group ${status.error ? 'has-danger' : ''}">
+                                <label class="col-sm-2 form-control-label"><spring:message code="hall.capacity"/></label>
                                 <div class="col-sm-10">
                                     <form:input type="number" path="capacity" step="1" placeholder="Capacity"
                                                 class="form-control " id="capacity" autofocus=""/>
-                                    <form:errors path="capacity" class="control-label"/>
+                                    <form:errors path="capacity" class="form-control-label"/>
                                 </div>
                             </div>
                         </spring:bind>
 
                         <spring:bind path="description">
-                            <div class="form-group ${status.error ? 'has-error' : ''}">
-                                <label class="col-sm-2 control-label"><spring:message code="hall.description"/></label>
+                            <div class="form-group ${status.error ? 'has-danger' : ''}">
+                                <label class="col-sm-2 form-control-label"><spring:message code="hall.description"/></label>
                                 <div class="col-sm-10">
                                     <form:textarea path="description" rows="5" class="form-control" id="description"
                                                    placeholder="Description"/>
-                                    <form:errors path="description" class="control-label"/>
+                                    <form:errors path="description" class="form-control-label"/>
                                 </div>
                             </div>
                         </spring:bind>
@@ -73,10 +73,10 @@
                         <div class="col-sm-offset-2 col-sm-10">
                             <c:choose>
                                 <c:when test="${hallForm['new']}">
-                                    <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/></button>
+                                    <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.add"/></button>
                                 </c:when>
                                 <c:otherwise>
-                                    <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.update"/></button>
+                                    <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.update"/></button>
                                 </c:otherwise>
                             </c:choose>
                         </div>

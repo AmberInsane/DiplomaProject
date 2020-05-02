@@ -35,45 +35,45 @@
         <form:hidden path="id"/>
         <div>
             <spring:bind path="startTime">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="session.time"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="session.time"/></label>
                     <div class="col-sm-3">
                         <form:input path="dateFormatJSP" type="datetime-local" class="input-sm form-control" id="dateInitializer"/>
-                        <form:errors path="dateFormatJSP" class="control-label"/>
+                        <form:errors path="dateFormatJSP" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
 
             <spring:bind path="price">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="session.price"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="session.price"/></label>
                     <div class="col-sm-10">
                         <form:input path="price" type="number" step="0.01" class="form-control " id="price" placeholder="Price"/>
-                        <form:errors path="price" class="control-label"/>
+                        <form:errors path="price" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
 
             <spring:bind path="hall">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="hall.form"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="hall.form"/></label>
                     <div class="col-sm-5">
                         <form:select path="hall" multiple="false" size="5" class="form-control">
                             <form:options items="${hallList}" itemValue="id" itemLabel="name"/>
                         </form:select>
-                        <form:errors path="hall" class="control-label"/>
+                        <form:errors path="hall" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
 
             <spring:bind path="movie">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="col-sm-2 control-label"><spring:message code="movie.form"/></label>
+                <div class="form-group ${status.error ? 'has-danger' : ''}">
+                    <label class="col-sm-2 form-control-label"><spring:message code="movie.form"/></label>
                     <div class="col-sm-5">
                         <form:select path="movie" multiple="false" size="5" class="form-control">
                             <form:options items="${movieList}" itemValue="id" itemLabel="title"/>
                         </form:select>
-                        <form:errors path="movie" class="control-label"/>
+                        <form:errors path="movie" class="form-control-label"/>
                     </div>
                 </div>
             </spring:bind>
@@ -82,10 +82,10 @@
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
                     <c:when test="${sessionForm['new']}">
-                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.add"/></button>
+                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.add"/></button>
                     </c:when>
                     <c:otherwise>
-                        <button type="submit" class="btn-lg btn-primary pull-right"><spring:message code="action.update"/></button>
+                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.update"/></button>
                     </c:otherwise>
                 </c:choose>
             </div>

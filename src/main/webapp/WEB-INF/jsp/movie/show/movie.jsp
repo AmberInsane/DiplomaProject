@@ -12,52 +12,82 @@
 <html>
 <head>
     <title>${movie.title}</title>
+    <spring:url value="/movie/rate/${movie.id}" var="rateUrl"/>
 </head>
 <body>
 <jsp:include page="../../parts/header.jsp"/>
 
 <div class="container">
-    <c:if test="${not empty msg}">
+    <c:if test="${not empty msg_code}">
         <div class="alert alert-${css} alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <strong>${msg}</strong>
+            <strong><spring:message code="${msg_code}"/></strong>
         </div>
     </c:if>
 
     <h2>${movie.title}</h2>
     <div class="row">
-        <label class="col-sm-2"><spring:message code="movie.description"/></label>
-        <div class="col-sm-10">${movie.description}</div>
-    </div>
-
-    <div class="row">
-        <label class="col-sm-2"><spring:message code="movie.year"/></label>
         <div class="col-sm-10">
-            <div>
-                <spring:url value="/movie/year/${movie.year}" var="yearUrl"/>
-                <a href="${yearUrl}">${movie.year}</a>
+            <div class="row">
+                <label class="col-sm-2"><spring:message code="movie.description"/></label>
+                <div class="col-sm-10">${movie.description}</div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2"><spring:message code="movie.year"/></label>
+                <div class="col-sm-10">
+                    <div>
+                        <spring:url value="/movie/year/${movie.year}" var="yearUrl"/>
+                        <a href="${yearUrl}">${movie.year}</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2"><spring:message code="genre.form"/></label>
+                <div class="col-sm-10">
+                    <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
+                        <spring:url value="/movie/genre/${genre.id}" var="genreUrl"/>
+                        <a href="${genreUrl}">${genre.name}</a>
+                        <c:if test="${not loop.last}">,</c:if>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2"><spring:message code="movie.time"/></label>
+                <div class="col-sm-10">${movie.timeLength} <spring:message code="movie.time.minutes"/></div>
             </div>
         </div>
-    </div>
+        <div class="col-sm-2">
+            <c:if test="${not empty user_rate_value}">
+                <div class="row">
+                    <label class="col-sm-2"><spring:message code="movie.rate.me"/></label>
+                    <div class="col-sm-10">${user_rate_value}</div>
+                </div>
+            </c:if>
 
-    <div class="row">
-        <label class="col-sm-2"><spring:message code="genre.form"/></label>
-        <div class="col-sm-10">
-            <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
-                <spring:url value="/movie/genre/${genre.id}" var="genreUrl"/>
-                <a href="${genreUrl}">${genre.name}</a>
-                <c:if test="${not loop.last}">,</c:if>
-            </c:forEach>
+            <c:if test="${not empty rate_user}">
+                <div>
+                    <form class="form" name="loginForm" method="POST" action="${rateUrl}">
+                        <div class="form-group">
+                            <label class="form-control-label"><spring:message code="movie.rate"/></label>
+                                <select name="category">
+                                    <c:forEach items="${rates}" var="rate">
+                                        <option value="${rate}">${rate}</option>
+                                    </c:forEach>
+                                </select>
+                        </div>
+                        <div>
+                            <button class="btn-success btn" type="submit"><spring:message code="action.add"/></button>
+                        </div>
+                    </form>
+                </div>
+            </c:if>
         </div>
     </div>
-
-    <div class="row">
-        <label class="col-sm-2"><spring:message code="movie.time"/></label>
-        <div class="col-sm-10">${movie.timeLength} <spring:message code="movie.time.minutes"/></div>
-    </div>
-
     <div>
         <c:choose>
             <c:when test="${sessions.size() > 0}">

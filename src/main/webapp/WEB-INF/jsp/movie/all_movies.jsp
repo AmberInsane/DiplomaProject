@@ -14,84 +14,95 @@
 <html>
 <head>
     <title><spring:message code="movie.form3"/></title>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../parts/header.jsp"/>
-<div class="container">
-    <c:if test="${not empty msg_code}">
-        <div class="alert alert-${css} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong><spring:message code="${msg_code}"/></strong>
-            <c:if test="${not empty count}">
-                <spring:message code="messages.found"/> ${count} <spring:message
-                    code="${count_type_code}"/>
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="../parts/header.jsp"/>
+        <div class="container mt-5">
+            <c:if test="${not empty msg_code}">
+                <div class="alert alert-${css} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><spring:message code="${msg_code}"/></strong>
+                    <c:if test="${not empty count}">
+                        <spring:message code="messages.found"/> ${count} <spring:message
+                            code="${count_type_code}"/>
+                    </c:if>
+                </div>
             </c:if>
-        </div>
-    </c:if>
-    <h2><spring:message code="movie.form3"/></h2>
-    <table class="table table-striped">
-        <tr>
-            <th><spring:message code="movie.title"/></th>
-            <th><spring:message code="movie.description"/></th>
-            <th><spring:message code="movie.year"/></th>
-            <th><spring:message code="genre.form"/></th>
-            <th><spring:message code="movie.time"/></th>
-            <th></th>
-        </tr>
-        <c:forEach items="${movies}" var="movie">
-            <tr>
-                <td>
-                    <div class="hyperlink">
-                        <spring:url value="/movie/${movie.id}" var="movieUrl"/>
-                        <a href="${movieUrl}">${movie.title}</a>
-                    </div>
-                </td>
-                <td>${movie.description}</td>
-                <td>${movie.year}</td>
-                <td>
-                    <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
-                        ${genre.name}
-                        <c:if test="${not loop.last}">,</c:if>
-                    </c:forEach>
-                </td>
-                <td>${movie.timeLength} <spring:message code="movie.time.minutes"/></td>
-                <security:authorize access="isAuthenticated()">
-                    <security:authorize access="hasRole('ADMIN')">
-                        <td>
-                            <spring:url value="admin/movie/update/${movie.id}" var="updateUrl"/>
-                            <spring:url value="admin/movie/delete/${movie.id}" var="deleteUrl"/>
+            <h2><spring:message code="movie.form3"/></h2>
 
-                            <button class="btn btn-primary" onclick="location.href='${updateUrl}'"><spring:message
-                                    code="action.update"/></button>
-                            <button class="btn btn-danger" onclick="this.disabled=true;post('${deleteUrl}')">
-                                <spring:message code="action.delete"/>
-                            </button>
-                        </td>
-                    </security:authorize>
-                    <td>
-                        <spring:url value="/movie/${movie.id}" var="findSessionsUrl"/>
-                        <button class="btn btn-primary" onclick="location.href=('${findSessionsUrl}')"><spring:message
-                                code="action.find"/> <spring:message code="session.form3"/>
-                        </button>
-                    </td>
+            <security:authorize access="isAuthenticated()">
+                <security:authorize access="hasRole('ADMIN')">
+                    <div class="btn-link">
+                        <a href="${pageContext.request.contextPath}/admin/movie/add"><spring:message code="action.add"/>
+                            <spring:message code="movie.form"/></a>
+                    </div>
+                    <div class="btn-link">
+                        <a href="${pageContext.request.contextPath}/admin/genre"><spring:message code="action.manage"/>
+                            <spring:message code="genre.form4"/></a>
+                    </div>
                 </security:authorize>
-            </tr>
-        </c:forEach>
-    </table>
-    <security:authorize access="isAuthenticated()">
-        <security:authorize access="hasRole('ADMIN')">
-            <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/admin/movie/add"><spring:message code="action.add"/> <spring:message code="movie.form"/></a>
-            </div>
-            <div class="btn-link">
-                <a href="${pageContext.request.contextPath}/admin/genre"><spring:message code="action.manage"/>
-                    <spring:message code="genre.form4"/></a>
-            </div>
-        </security:authorize>
-    </security:authorize>
+            </security:authorize>
+
+            <table class="table table-hover">
+                <tr>
+                    <th><spring:message code="movie.title"/></th>
+                    <th><spring:message code="movie.description"/></th>
+                    <th><spring:message code="movie.year"/></th>
+                    <th><spring:message code="genre.form"/></th>
+                    <th><spring:message code="movie.time"/></th>
+                    <th/>
+                </tr>
+                <c:forEach items="${movies}" var="movie">
+                    <tr>
+                        <td>
+                            <div class="hyperlink">
+                                <spring:url value="/movie/${movie.id}" var="movieUrl"/>
+                                <a href="${movieUrl}">${movie.title}</a>
+                            </div>
+                        </td>
+                        <td>${movie.description}</td>
+                        <td>${movie.year}</td>
+                        <td>
+                            <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
+                                ${genre.name}
+                                <c:if test="${not loop.last}">,</c:if>
+                            </c:forEach>
+                        </td>
+                        <td>${movie.timeLength} <spring:message code="movie.time.minutes"/></td>
+                        <security:authorize access="isAuthenticated()">
+                            <td class="buttons-column">
+                                <security:authorize access="hasRole('ADMIN')">
+                                    <spring:url value="admin/movie/update/${movie.id}" var="updateUrl"/>
+                                    <spring:url value="admin/movie/delete/${movie.id}" var="deleteUrl"/>
+
+                                    <button class="btn btn-sm btn-primary" onclick="location.href='${updateUrl}'">
+                                        <spring:message
+                                                code="action.update"/></button>
+                                    <button class="btn btn-sm btn-danger"
+                                            onclick="this.disabled=true;post('${deleteUrl}')">
+                                        <spring:message code="action.delete"/>
+                                    </button>
+                                </security:authorize>
+                                <spring:url value="/movie/${movie.id}" var="findSessionsUrl"/>
+                                <button class="btn btn-sm btn-primary" onclick="location.href=('${findSessionsUrl}')">
+                                    <spring:message
+                                            code="action.find"/> <spring:message code="session.form3"/>
+                                </button>
+                            </td>
+                        </security:authorize>
+                    </tr>
+                </c:forEach>
+            </table>
+        </div>
+    </div>
+    <jsp:include page="../parts/footer.jsp"/>
 </div>
-<jsp:include page="../parts/footer.jsp"/>
 </body>
 </html>

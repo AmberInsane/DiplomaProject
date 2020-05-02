@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Blob;
 import java.util.List;
 
 @Entity
@@ -29,7 +31,8 @@ public class Movie implements Serializable {
     private String title;
 
     @NotNull
-    @Column(length = 2500)
+    @Column
+    @Type(type = "text")
     private String description;
 
     @Column(name = "issue_year")
@@ -42,15 +45,11 @@ public class Movie implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genre;
 
-    @Column(name = "rating_sum")
-    private BigDecimal ratingSum;
-
-    @Column(name = "rating_num")
-    private BigDecimal ratingNum;
-
     @Column(name = "time_length")
-    @NotNull
     private @Valid Short timeLength;
+
+   /* @Column(name = "IMAGE")
+    private Blob image;*/
 
     public boolean isNew() {
         return (this.id == null);

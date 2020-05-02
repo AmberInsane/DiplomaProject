@@ -165,7 +165,7 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("css", "success");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (MovieDeleteException e) {
-                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("css", "danger");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
                 redirectAttributes.addFlashAttribute("count", e.getCountOfSessions());
                 redirectAttributes.addFlashAttribute("count_type_code", "session.form5");
@@ -224,7 +224,7 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("css", "success");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (GenreDeleteException e) {
-                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("css", "danger");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
                 redirectAttributes.addFlashAttribute("count", e.getCountOfMovies());
                 redirectAttributes.addFlashAttribute("count_type_code", "genre.form5");
@@ -282,7 +282,7 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("css", "success");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (SessionDeleteException e) {
-                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("css", "danger");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
                 redirectAttributes.addFlashAttribute("count", e.getCountOfTickets());
                 redirectAttributes.addFlashAttribute("count_type_code", "ticket.form5");
@@ -353,7 +353,7 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("css", "success");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.success");
             } catch (HallDeleteException e) {
-                redirectAttributes.addFlashAttribute("css", "alert");
+                redirectAttributes.addFlashAttribute("css", "danger");
                 redirectAttributes.addFlashAttribute("msg_code", "messages.delete.error");
                 redirectAttributes.addFlashAttribute("count", e.getCountOfSessions());
                 redirectAttributes.addFlashAttribute("count_type_code", "session.form5");
