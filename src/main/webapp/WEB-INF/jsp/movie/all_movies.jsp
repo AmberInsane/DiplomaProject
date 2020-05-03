@@ -36,7 +36,9 @@
                 </div>
             </c:if>
             <h2><spring:message code="movie.form3"/></h2>
-
+            <c:if test="${not empty genre}">
+                <h4><spring:message code="genre.form"/>: ${genre.name}</h4>
+            </c:if>
             <security:authorize access="isAuthenticated()">
                 <security:authorize access="hasRole('ADMIN')">
                     <div class="btn-link">
@@ -57,7 +59,7 @@
                     <th><spring:message code="movie.year"/></th>
                     <th><spring:message code="genre.form"/></th>
                     <th><spring:message code="movie.time"/></th>
-                    <th/>
+                    <th></th>
                 </tr>
                 <c:forEach items="${movies}" var="movie">
                     <tr>
@@ -71,7 +73,8 @@
                         <td>${movie.year}</td>
                         <td>
                             <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
-                                ${genre.name}
+                                <spring:url value="/movie/genre/${genre.id}" var="genreUrl"/>
+                                <a href="${genreUrl}">${genre.name}</a>
                                 <c:if test="${not loop.last}">,</c:if>
                             </c:forEach>
                         </td>

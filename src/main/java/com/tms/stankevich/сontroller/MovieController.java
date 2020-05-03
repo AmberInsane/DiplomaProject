@@ -6,12 +6,15 @@ import com.tms.stankevich.exception.MovieRateException;
 import com.tms.stankevich.service.MovieService;
 import com.tms.stankevich.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Controller
@@ -21,6 +24,9 @@ public class MovieController {
     private MovieService movieService;
     @Autowired
     private SessionService sessionService;
+
+    @Value("${time.zone}")
+    private String timeZone;
 
     @GetMapping("")
     public String showAllMovies(Model model) {
@@ -48,6 +54,15 @@ public class MovieController {
         }
     }
 
+    @GetMapping("/today")
+    public String showMovieToday(Model model) {
+        Map<Movie, List<Session>> moviesMap = sessionService.getTodaySessionsMap();
+        model.addAttribute("movies", moviesMap);
+        model.addAttribute("today", LocalDate.now(ZoneId.of(timeZone)));
+        return "movie/today_sessions";
+
+    }
+
     @PostMapping("/rate/{movie_id}")
     public String rateMovie(@PathVariable("movie_id") Long id, @RequestParam("rate") Integer rate, Model model, @AuthenticationPrincipal User user) {
         Optional<Movie> movie = movieService.findById(id);
@@ -55,7 +70,7 @@ public class MovieController {
             try {
                 movieService.rateMovie(movie.get(), user, rate);
             } catch (MovieRateException e) {
-                model.addAttribute("css", "alert");
+                model.addAttribute("css", "danger");
                 model.addAttribute("msg_code", e.getMessage());
             }
             return "redirect:/movie/" + movie.get().getId();
@@ -77,6 +92,18 @@ public class MovieController {
         if (hall.isPresent()) {
             model.addAttribute("hall", hall.get());
             return "movie/show/hall";
+        }
+        return "redirect:" + request.getHeader("Referer");
+    }
+
+    @GetMapping("/genre/{genre_id}")
+    public String showMoviesByGenre(@PathVariable("genre_id") Long id, Model model, HttpServletRequest request) {
+        Optional<Genre> genre = movieService.findGenreById(id);
+        if (genre.isPresent()) {
+            List<Movie> movies = movieService.getMoviesByGenre(genre.get());
+            model.addAttribute("genre", genre.get());
+            model.addAttribute("movies", movies);
+            return "movie/all_movies";
         }
         return "redirect:" + request.getHeader("Referer");
     }

@@ -8,6 +8,7 @@ import com.tms.stankevich.exception.SessionDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface SessionService {
@@ -36,4 +37,8 @@ public interface SessionService {
     Optional<Session> getPrevSession(LocalDateTime time, Hall hall);
 
     void deleteSession(Session session) throws SessionDeleteException;
+
+    Map<Movie, List<Session>> getTodaySessionsMap();
+
+    boolean isSessionValid(Session session);
 }

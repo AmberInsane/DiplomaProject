@@ -23,6 +23,10 @@
     background-color: rgba(253, 60, 0, 0.2);
 }
 
+.thead-blue {
+    background-color: rgba(3, 253, 220, 0.11);
+}
+
 .pull-right {
     float: right;
 }

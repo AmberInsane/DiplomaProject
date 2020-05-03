@@ -4,6 +4,7 @@ import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.BalanceMinusException;
+import com.tms.stankevich.exception.TicketReturnTimeException;
 import com.tms.stankevich.service.MovieServiceImpl;
 import com.tms.stankevich.service.SessionServiceImpl;
 import com.tms.stankevich.service.TicketService;
@@ -12,6 +13,7 @@ import com.tms.stankevich.validator.HallFormValidator;
 import com.tms.stankevich.validator.SessionFormValidator;
 import com.tms.stankevich.validator.TicketFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,7 +77,7 @@ public class TicketController {
     private void populateDefaultTicketModel(Model model, User user) {
         List<User> usersFor = new ArrayList<>();
         usersFor.add(user);
-        usersFor.addAll(userService.findUserById(user.getId()).getFriends());
+        usersFor.addAll(userService.findUserById(user.getId()).get().getFriends());
         model.addAttribute("friends", usersFor);
     }
 
@@ -101,13 +103,34 @@ public class TicketController {
     }
 
     @GetMapping("/rate_movie/{ticket_id}")
-    public String rateTicket(Model model, @PathVariable("ticket_id") Long ticketId, HttpServletRequest request, @AuthenticationPrincipal User user,
+    public String rateTicket(@PathVariable("ticket_id") Long ticketId, HttpServletRequest request, @AuthenticationPrincipal User user,
                              final RedirectAttributes redirectAttributes) {
         Optional<Ticket> ticket = ticketService.findById(ticketId);
         if (ticket.isPresent()) {
             if (ticket.get().getUserFor().equals(user)) {
                 redirectAttributes.addFlashAttribute("rate_user", user);
                 return "redirect:/movie/" + ticket.get().getSession().getMovie().getId();
+            }
+        }
+
+        return "redirect:" + request.getHeader("Referer");
+    }
+
+    @GetMapping("/return/{ticket_id}")
+    public String returnTicket(@PathVariable("ticket_id") Long ticketId, HttpServletRequest request, @AuthenticationPrincipal User user,
+                             final RedirectAttributes redirectAttributes) {
+        Optional<Ticket> ticket = ticketService.findById(ticketId);
+        if (ticket.isPresent()) {
+            if (ticket.get().getUserFor().equals(user) || ticket.get().getUserBy().equals(user)) {
+                try {
+                    ticketService.returnTicket(ticket.get());
+                } catch (TicketReturnTimeException e) {
+                    redirectAttributes.addFlashAttribute("css", "danger");
+                    redirectAttributes.addFlashAttribute("msg_code", e.getMessage());
+                    return "redirect:" + request.getHeader("Referer");
+                }
+                redirectAttributes.addFlashAttribute("css", "success");
+                redirectAttributes.addFlashAttribute("msg_code", "message.ticket.return.success");
             }
         }
 

@@ -10,11 +10,17 @@ import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.exception.HallDeleteException;
 import com.tms.stankevich.exception.SessionDeleteException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SessionServiceImpl implements SessionService {
@@ -27,9 +33,12 @@ public class SessionServiceImpl implements SessionService {
     @Autowired
     private TicketRepository ticketRepository;
 
+    @Value("${time.zone}")
+    private String timeZone;
+
     @Override
     public List<Session> getAllSessions() {
-        return sessionRepository.findSessionsByStartTimeGreaterThanOrderByStartTime(LocalDateTime.now());
+        return sessionRepository.findSessionsByStartTimeGreaterThanOrderByStartTime(LocalDateTime.now(ZoneId.of(timeZone)));
     }
 
     @Override
@@ -77,7 +86,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<Session> findByMovie(Movie movie) {
-      return sessionRepository.findSessionsByMovieAndStartTimeGreaterThanOrderByStartTime(movie, LocalDateTime.now());
+      return sessionRepository.findSessionsByMovieAndStartTimeGreaterThanOrderByStartTime(movie, LocalDateTime.now(ZoneId.of(timeZone)));
     }
 
     @Override
@@ -98,5 +107,17 @@ public class SessionServiceImpl implements SessionService {
         if (tickets.size() > 0)
             throw new SessionDeleteException(tickets.size());
         sessionRepository.delete(session);
+    }
+
+    @Override
+    public Map<Movie, List<Session>> getTodaySessionsMap() {
+        List<Session> sessions = sessionRepository.findTodayValidSession();
+        Map<Movie, List<Session>> movieListMap = sessions.stream()
+                .collect(Collectors.groupingBy(Session::getMovie));
+        return movieListMap;
+    }
+    @Override
+    public boolean isSessionValid(Session session) {
+        return session.getStartTime().compareTo(LocalDateTime.now(ZoneId.of(timeZone))) > 0;
     }
 }

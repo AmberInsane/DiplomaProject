@@ -32,13 +32,13 @@ public class UserController {
     private TicketService ticketService;
 
     @GetMapping("/my_profile")
-    public String showMyPage(Model model, @AuthenticationPrincipal User currentUser) {
-        return showUserPage(currentUser.getId(), model, currentUser);
+    public String showMyPage(Model model, @AuthenticationPrincipal User currentUser, HttpServletRequest servletRequest) {
+        return showUserPage(currentUser.getId(), model, currentUser, servletRequest);
     }
 
     @GetMapping("/my_edit")
     public String editUser(Model model, @AuthenticationPrincipal User currentUser) {
-        UserInfo userInfo = userService.findUserById(currentUser.getId()).getInfo();
+        UserInfo userInfo = userService.findUserById(currentUser.getId()).get().getInfo();
         model.addAttribute("userInfoForm", userInfo);
         return "user/user_edit";
     }
@@ -51,7 +51,7 @@ public class UserController {
 
     @GetMapping("/my_friends")
     public String showMyFriends(Model model, @AuthenticationPrincipal User currentUser) {
-        User user = userService.findUserById(currentUser.getId());
+        User user = userService.findUserById(currentUser.getId()).get();
 
         model.addAttribute("inRequests", userService.findInFriendRequests(user));
         model.addAttribute("friends", user.getFriends());
@@ -71,7 +71,7 @@ public class UserController {
 
     @GetMapping("/my_purse")
     public String showMyPurse(Model model, @AuthenticationPrincipal User currentUser) {
-        model.addAttribute("balance", userService.findUserById(currentUser.getId()).getBalance());
+        model.addAttribute("balance", userService.findUserById(currentUser.getId()).get().getBalance());
         return "user/purse";
     }
 
@@ -96,30 +96,36 @@ public class UserController {
     }
 
     @GetMapping("/{user_id}")
-    public String showUserPage(@PathVariable("user_id") Long userId, Model model, @AuthenticationPrincipal User currentUser) {
-        User user = userService.findUserById(userId);
-        model.addAttribute("user", user);
-        if (userId.equals(currentUser.getId())) {
-            model.addAttribute("requestsNum", userService.findInFriendRequests(user).size());
-        } else {
-            //response - current user have in responses user
-            List<FriendRequest> inFriendRequests = userService.findInFriendRequests(currentUser);
-            Optional<FriendRequest> response = inFriendRequests.stream().filter(friendRequest -> friendRequest.getUserRequest().equals(user)).findAny();
-            if (response.isPresent())
-                model.addAttribute("nowResponse", response.get());
+    public String showUserPage(@PathVariable("user_id") Long userId, Model model, @AuthenticationPrincipal User currentUser, HttpServletRequest servletRequest) {
+        Optional<User> optionalUser = userService.findUserById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (!userService.isUserAdmin(user) || userService.isUserAdmin(currentUser)) {
+                model.addAttribute("user", user);
+                if (userId.equals(currentUser.getId())) {
+                    model.addAttribute("requestsNum", userService.findInFriendRequests(user).size());
+                } else {
+                    //response - current user have in responses user
+                    List<FriendRequest> inFriendRequests = userService.findInFriendRequests(currentUser);
+                    Optional<FriendRequest> response = inFriendRequests.stream().filter(friendRequest -> friendRequest.getUserRequest().equals(user)).findAny();
+                    if (response.isPresent())
+                        model.addAttribute("nowResponse", response.get());
 
-            //request - current user have in requests user
-            List<FriendRequest> outFriendRequests = userService.findOutFriendRequests(currentUser);
-            Optional<FriendRequest> request = outFriendRequests.stream().filter(friendRequest -> friendRequest.getUserResponse().equals(user)).findAny();
-            if (request.isPresent())
-                model.addAttribute("nowRequest", request.get());
+                    //request - current user have in requests user
+                    List<FriendRequest> outFriendRequests = userService.findOutFriendRequests(currentUser);
+                    Optional<FriendRequest> request = outFriendRequests.stream().filter(friendRequest -> friendRequest.getUserResponse().equals(user)).findAny();
+                    if (request.isPresent())
+                        model.addAttribute("nowRequest", request.get());
 
-            model.addAttribute("blocked", userService.isUserBlockedSecond(currentUser, user));
-            model.addAttribute("youBlocked", userService.isUserBlockedSecond(user, currentUser));
+                    model.addAttribute("blocked", userService.isUserBlockedSecond(currentUser, user));
+                    model.addAttribute("youBlocked", userService.isUserBlockedSecond(user, currentUser));
 
-            model.addAttribute("isFriend", currentUser.getFriends().contains(user));
+                    model.addAttribute("isFriend", currentUser.getFriends().contains(user));
+                }
+                return "user/user_info";
+            }
         }
-        return "user/user_info";
+        return "redirect:/";
     }
 
     @GetMapping("/find_friends")
@@ -134,24 +140,24 @@ public class UserController {
             if (foundUsers.size() > 0) {
                 model.addAttribute("css", "success");
                 model.addAttribute("msg_code", "messages.found");
-                model.addAttribute("count",  foundUsers.size());
+                model.addAttribute("count", foundUsers.size());
                 model.addAttribute("count_type_code", "user.form5");
 
                 model.addAttribute("friend_list", foundUsers);
             } else {
-                model.addAttribute("css", "alert");
+                model.addAttribute("css", "danger");
                 model.addAttribute("msg_code", "text.not.found");
             }
         } else {
-            model.addAttribute("css", "alert");
+            model.addAttribute("css", "danger");
             model.addAttribute("msg_code", "messages.enter.name");
         }
         return "user/find_friend";
     }
 
     @PostMapping("/friend/{user_id}/send")
-    public String sendFriendRequest(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
-        User friend = userService.findUserById(userId);
+    public String sendFriendRequest(@AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
+        User friend = userService.findUserById(userId).get();
         try {
             userService.sendFriendRequest(currentUser, friend);
         } catch (FriendRequestException e) {
@@ -167,7 +173,7 @@ public class UserController {
 
     @PostMapping("/friend/{user_id}/delete")
     public String deleteFriend(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
-        User userToBlock = userService.findUserById(userId);
+        User userToBlock = userService.findUserById(userId).get();
         userService.deleteFromFriends(currentUser, userToBlock);
 
         redirectAttributes.addFlashAttribute("css", "success");
@@ -177,7 +183,7 @@ public class UserController {
 
     @PostMapping("/friend/{user_id}/block")
     public String blockUser(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
-        User userToBlock = userService.findUserById(userId);
+        User userToBlock = userService.findUserById(userId).get();
         userService.blockUser(currentUser, userToBlock);
 
         redirectAttributes.addFlashAttribute("css", "danger");
@@ -187,7 +193,7 @@ public class UserController {
 
     @PostMapping("/friend/{user_id}/unblock")
     public String unblockUser(Model model, @AuthenticationPrincipal User currentUser, @PathVariable("user_id") Long userId, final RedirectAttributes redirectAttributes) {
-        User userToUnblock = userService.findUserById(userId);
+        User userToUnblock = userService.findUserById(userId).get();
         userService.unblockUser(currentUser, userToUnblock);
 
         redirectAttributes.addFlashAttribute("css", "success");
@@ -199,7 +205,7 @@ public class UserController {
     public String acceptFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
         Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
         if (friendRequest.isPresent()) {
-            userService.acceptFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
+            userService.acceptFriendRequest(userService.findUserById(currentUser.getId()).get(), friendRequest.get());
         }
         return "redirect:" + request.getHeader("Referer");
     }
@@ -208,7 +214,7 @@ public class UserController {
     public String refuseFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
         Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
         if (friendRequest.isPresent()) {
-            userService.refuseFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
+            userService.refuseFriendRequest(userService.findUserById(currentUser.getId()).get(), friendRequest.get());
         }
         return "redirect:" + request.getHeader("Referer");
     }
@@ -217,7 +223,7 @@ public class UserController {
     public String cancelFriendRequest(HttpServletRequest request, @AuthenticationPrincipal User currentUser, @PathVariable("request_id") Long requestId, final RedirectAttributes redirectAttributes) {
         Optional<FriendRequest> friendRequest = userService.findFriendRequestById(requestId);
         if (friendRequest.isPresent()) {
-            userService.cancelFriendRequest(userService.findUserById(currentUser.getId()), friendRequest.get());
+            userService.cancelFriendRequest(userService.findUserById(currentUser.getId()).get(), friendRequest.get());
         }
         return "redirect:" + request.getHeader("Referer");
     }

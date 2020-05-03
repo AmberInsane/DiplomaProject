@@ -39,4 +39,6 @@ public interface MovieService {
     void rateMovie(Movie movie, User user, Integer rate) throws MovieRateException;
 
     Optional<MovieRate> getUserMovieRate(User user, Movie movie);
+
+    List<Movie> getMoviesByGenre(Genre genre);
 }

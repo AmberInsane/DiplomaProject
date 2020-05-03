@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -48,8 +49,11 @@ public class Movie implements Serializable {
     @Column(name = "time_length")
     private @Valid Short timeLength;
 
-   /* @Column(name = "IMAGE")
-    private Blob image;*/
+    @Formula("(select round(avg(mr.value),2) from movie_rate mr where mr.movie_id = movie_id)")
+    private BigDecimal rate;
+
+    @Formula("(select count(mr.value) from movie_rate mr where mr.movie_id = movie_id)")
+    private Integer rateCount;
 
     public boolean isNew() {
         return (this.id == null);

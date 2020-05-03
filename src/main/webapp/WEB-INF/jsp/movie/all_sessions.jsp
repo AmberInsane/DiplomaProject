@@ -17,6 +17,9 @@
     <title><spring:message code="session.form3"/></title>
     <spring:url value="/admin/hall" var="hallUrl"/>
     <spring:url value="/admin/session/add" var="addSessionUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
 <div class="wrapper">
@@ -40,7 +43,7 @@
                 <security:authorize access="hasRole('ADMIN')">
                     <div class="btn-link">
                         <a href="${addSessionUrl}"><spring:message code="action.add"/>
-                            <spring:message code="session.form4"/></a>
+                            <spring:message code="session.form2"/></a>
                     </div>
                     <div class="btn-link">
                         <a href="${hallUrl}"><spring:message
@@ -49,6 +52,7 @@
                 </security:authorize>
             </security:authorize>
             <table class="table table-hover">
+                <thead class="thead-blue">
                 <tr>
                     <th><spring:message code="session.time"/></th>
                     <th><spring:message code="movie.time"/></th>
@@ -58,6 +62,8 @@
                     <th><spring:message code="session.sold"/></th>
                     <th></th>
                 </tr>
+                </thead>
+                <tbody>
                 <c:forEach items="${sessions}" var="session">
                     <tr>
                         <td>${session.dateFormatText}</td>
@@ -111,6 +117,7 @@
                         </security:authorize>
                     </tr>
                 </c:forEach>
+                </tbody>
             </table>
 
         </div>

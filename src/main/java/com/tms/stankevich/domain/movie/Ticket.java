@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,15 +26,15 @@ public class Ticket implements Serializable {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name="session_id", nullable=false)
+    @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 
     @ManyToOne
-    @JoinColumn(name="user_by_id", nullable=false)
+    @JoinColumn(name = "user_by_id", nullable = false)
     private User userBy;
 
     @ManyToOne
-    @JoinColumn(name="user_for_id", nullable=false)
+    @JoinColumn(name = "user_for_id", nullable = false)
     private User userFor;
 
     @Transient
@@ -41,8 +42,4 @@ public class Ticket implements Serializable {
 
     @Transient
     private BigDecimal commonSum;
-
-    public boolean isEnable(){
-        return session.getStartTime().compareTo(LocalDateTime.now()) > 0;
-    }
 }

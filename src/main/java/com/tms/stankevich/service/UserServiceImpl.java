@@ -58,9 +58,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User findUserById(Long userId) {
-        Optional<User> userFromDb = userRepository.findById(userId);
-        return userFromDb.orElse(new User());
+    public Optional<User> findUserById(Long userId) {
+        return userRepository.findById(userId);
     }
 
     @Override
@@ -88,11 +87,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-
-   /* public List<User> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
-    }*/
 
     @Override
     public List<User> getUsersByRole(String roleName) {
@@ -135,7 +129,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public List<User> findUsersByName(String userName) {
-        return userRepository.findByUsernameStartsWith(userName);
+        Role userRole = roleRepository.findByName(USER_ROLE);
+        return userRepository.findByUsernameStartsWithAndRoles(userName, userRole);
     }
 
     @Override
@@ -155,13 +150,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             request = friendRequest.get();
             @NotNull FriendRequestStatus status = request.getStatus();
             if (status == FriendRequestStatus.SD)
-                    throw new FriendRequestException("message.request.deny.repeat");
+                throw new FriendRequestException("message.request.deny.repeat");
             return request;
         }
         if (isUserFriendSecond(userRequest, userResponse)) {
             throw new FriendRequestException("message.request.deny.already");
         }
-        if (isUserBlockedSecond(userResponse,userRequest)) {
+        if (isUserBlockedSecond(userResponse, userRequest)) {
             throw new FriendRequestException("message.request.deny.block");
         }
         request = new FriendRequest();
@@ -267,7 +262,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void unblockUser(User currentUser, User userToUnblock) {
         if (isUserBlockedSecond(currentUser, userToUnblock)) {
-           currentUser.getBlackList().removeIf(user -> user.equals(userToUnblock));
+            currentUser.getBlackList().removeIf(user -> user.equals(userToUnblock));
             userRepository.save(currentUser);
         }
     }
@@ -278,8 +273,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> getUserFriendList(User user){
-        List<User> userList = new ArrayList<>(user.getFriends()) ;
+    public List<User> getUserFriendList(User user) {
+        List<User> userList = new ArrayList<>(user.getFriends());
         userList.addAll(user.getFriendOf());
         return userList;
     }
@@ -293,9 +288,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void minusFromBalance(User user, BigDecimal sumNumber) throws BalanceMinusException {
         BigDecimal userBalance = user.getBalance();
-        if (userBalance.compareTo(sumNumber) <0)
+        if (userBalance.compareTo(sumNumber) < 0)
             throw new BalanceMinusException();
         user.setBalance(user.getBalance().subtract(sumNumber));
         userRepository.save(user);
+    }
+
+    @Override
+    public boolean isUserAdmin(User user) {
+        Role adminRole = roleRepository.findByName(ADMIN_ROLE);
+        return user.getRoles().stream().anyMatch(role -> role.equals(adminRole));
     }
 }

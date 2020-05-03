@@ -64,12 +64,26 @@
                         <label class="col-sm-2"><spring:message code="movie.time"/></label>
                         <div class="col-sm-10">${movie.timeLength} <spring:message code="movie.time.minutes"/></div>
                     </div>
+
+                    <div class="row">
+                        <label class="col-sm-2"><spring:message code="movie.rate.all"/></label>
+                        <div class="col-sm-10">
+                            <c:choose>
+                                <c:when test="${movie.rateCount.equals(0)}">
+                                    <spring:message code="movie.rate.no"/>
+                                </c:when>
+                                <c:otherwise>
+                                    ${movie.rate} (${movie.rateCount})
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-2">
                     <c:if test="${not empty user_rate_value}">
                         <div class="row">
-                            <label class="col-sm-2"><spring:message code="movie.rate.me"/></label>
-                            <div class="col-sm-10">${user_rate_value}</div>
+                            <label class="font-weight-bold text-success"><spring:message
+                                    code="movie.rate.me"/>: ${user_rate_value}</label>
                         </div>
                     </c:if>
 
@@ -78,7 +92,7 @@
                             <form class="form" name="loginForm" method="POST" action="${rateUrl}">
                                 <div class="form-group">
                                     <label class="form-control-label"><spring:message code="movie.rate"/></label>
-                                    <select name="category">
+                                    <select name="rate">
                                         <c:forEach items="${rates}" var="rate">
                                             <option value="${rate}">${rate}</option>
                                         </c:forEach>
@@ -96,8 +110,18 @@
             <div>
                 <c:choose>
                     <c:when test="${sessions.size() > 0}">
-                        <h3><spring:message code="session.form3"/></h3>
-                        <table class="table table-striped">
+                        <h4><spring:message code="session.form3"/></h4>
+                        <table class="table table-hover">
+                            <thead class="thead-blue">
+                            <tr>
+                                <th><spring:message code="session.time"/></th>
+                                <th><spring:message code="session.price"/></th>
+                                <th><spring:message code="hall.form"/></th>
+                                <th><spring:message code="session.sold"/></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             <c:forEach items="${sessions}" var="session">
                                 <tr>
                                     <td>${session.dateFormatText}</td>
@@ -106,6 +130,7 @@
                                         <spring:url value="/movie/hall/${session.hall.id}" var="hallUrl"/>
                                         <a class="hyperlink" href="${hallUrl}">${session.hall.name}</a>
                                     </td>
+                                    <td>${session.ticketsSold}/${session.hall.capacity}</td>
                                     <security:authorize access="isAuthenticated()">
                                         <security:authorize access="hasRole('ADMIN')">
                                             <td>
@@ -114,10 +139,11 @@
                                                 <spring:url value="/movie/session/delete_session/${session.id}"
                                                             var="deleteUrl"/>
 
-                                                <button class="btn btn-primary" onclick="location.href='${updateUrl}'">
+                                                <button class="btn btn-outline-primary"
+                                                        onclick="location.href='${updateUrl}'">
                                                     <spring:message code="action.update"/>
                                                 </button>
-                                                <button class="btn btn-danger"
+                                                <button class="btn btn-outline-danger"
                                                         onclick="this.disabled=true;post('${deleteUrl}')">
                                                     <spring:message code="action.delete"/>
                                                 </button>
@@ -126,7 +152,7 @@
                                         <security:authorize access="hasRole('USER')">
                                             <td>
                                                 <spring:url value="/ticket/${session.id}/buy" var="buyTicketUrl"/>
-                                                <button class="btn btn-primary"
+                                                <button class="btn btn-outline-primary"
                                                         onclick="location.href=('${buyTicketUrl}')">
                                                     <spring:message code="action.buy"/> <spring:message
                                                         code="ticket.form2"/>
@@ -136,6 +162,7 @@
                                     </security:authorize>
                                 </tr>
                             </c:forEach>
+                            </tbody>
                         </table>
                     </c:when>
                     <c:otherwise>

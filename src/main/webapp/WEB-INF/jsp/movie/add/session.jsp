@@ -26,10 +26,10 @@
         <div class="container mt-5">
             <c:choose>
                 <c:when test="${sessionForm['new']}">
-                    <h1><spring:message code="action.add"/> <spring:message code="session.form"/></h1>
+                    <h2><spring:message code="action.add"/> <spring:message code="session.form"/></h2>
                 </c:when>
                 <c:otherwise>
-                    <h1><spring:message code="action.update"/> <spring:message code="session.form"/></h1>
+                    <h2><spring:message code="action.update"/> <spring:message code="session.form"/></h2>
                 </c:otherwise>
             </c:choose>
             <br/>
@@ -74,7 +74,7 @@
                         <div class="form-group ${status.error ? 'has-danger' : ''}">
                             <label class="col-sm-2 form-control-label"><spring:message code="movie.form"/></label>
                             <div class="col-sm-10">
-                                <form:select path="movie" multiple="false" size="5" class="form-control">
+                                <form:select path="movie" multiple="false" size="10" class="form-control">
                                     <form:options items="${movieList}" itemValue="id" itemLabel="title"/>
                                 </form:select>
                                 <form:errors path="movie" class="form-control-label"/>

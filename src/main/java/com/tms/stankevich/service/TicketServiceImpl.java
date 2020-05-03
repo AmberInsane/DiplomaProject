@@ -5,9 +5,14 @@ import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.movie.TicketType;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.BalanceMinusException;
+import com.tms.stankevich.exception.TicketReturnTimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +25,17 @@ public class TicketServiceImpl implements TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
-
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SessionService sessionService;
+
+    @Value("${ticket.return.max.before}")
+    private int maxTimeReturn;
+
+    @Value("${time.zone}")
+    private String timeZone;
 
     @Override
     public Optional<Ticket> findById(Long ticketId) {
@@ -49,7 +62,7 @@ public class TicketServiceImpl implements TicketService {
 
     private Map<Boolean, List<Ticket>> getPartitioned(List<Ticket> tickets) {
         return tickets.stream().collect(
-                Collectors.partitioningBy(Ticket::isEnable));
+                Collectors.partitioningBy(this::isTicketValid));
     }
 
     @Override
@@ -73,5 +86,19 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> findUsersTicketsForFriends(User user) {
         return ticketRepository.findTicketByUserForFriends(user);
+    }
+
+    @Override
+    public void returnTicket(Ticket ticket) throws TicketReturnTimeException {
+        if (LocalDateTime.now(ZoneId.of(timeZone)).plusMinutes(maxTimeReturn).isAfter(ticket.getSession().getStartTime())) {
+            throw new TicketReturnTimeException("message.ticket.late");
+        }
+        userService.plusToBalance(ticket.getUserBy(), ticket.getSession().getPrice());
+        ticketRepository.delete(ticket);
+    }
+
+    @Override
+    public boolean isTicketValid(Ticket ticket) {
+        return sessionService.isSessionValid(ticket.getSession());
     }
 }

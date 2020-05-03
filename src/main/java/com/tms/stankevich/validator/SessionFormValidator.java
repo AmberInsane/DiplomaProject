@@ -13,6 +13,7 @@ import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -34,6 +35,9 @@ public class SessionFormValidator implements Validator {
     @Value("${session.time.between.min}")
     private int minutesBetween;
 
+    @Value("${time.zone}")
+    private String timeZone;
+
     @Override
     public void validate(Object target, Errors errors) {
         Session session = (Session) target;
@@ -52,7 +56,7 @@ public class SessionFormValidator implements Validator {
             startTime = LocalDateTime.parse(session.getDateFormatJSP().replace("T", " "), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
             session.setStartTime(startTime);
 
-            if (LocalDateTime.now().isAfter(startTime.minusHours(hoursBefore))) {
+            if (LocalDateTime.now(ZoneId.of(timeZone)).isAfter(startTime.minusHours(hoursBefore))) {
                 errors.rejectValue("startTime", "Valid.sessionForm.dateTimeBefore");
             } else {
                 LocalDateTime dateTimeEnd;

@@ -121,7 +121,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public void rateMovie(Movie movie, User user, Integer rateValue) throws MovieRateException {
-        if (rateValue < maxRate || rateValue > maxRate)
+        if (rateValue < minRate || rateValue > maxRate)
             throw new MovieRateException("message.movie.rate.bounds");
         Optional<MovieRate> oldRate = movieRateRepository.findByUserAndMovie(user, movie);
         MovieRate rate;
@@ -133,11 +133,17 @@ public class MovieServiceImpl implements MovieService {
             rate.setUser(user);
         }
         rate.setValue(rateValue);
+        movieRateRepository.save(rate);
     }
 
     @Override
     public Optional<MovieRate> getUserMovieRate(User user, Movie movie) {
         return movieRateRepository.findByUserAndMovie(user, movie);
+    }
+
+    @Override
+    public List<Movie> getMoviesByGenre(Genre genre) {
+        return movieRepository.findByGenre(genre);
     }
 
 }

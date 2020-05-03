@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    User findUserById(Long userId);
+    Optional<User> findUserById(Long userId);
 
     Optional<User> findUserByName(String name);
 
@@ -63,4 +63,6 @@ public interface UserService {
     void plusToBalance(User currentUser, BigDecimal sumNumber);
 
     void minusFromBalance(User user, BigDecimal sumNumber) throws BalanceMinusException;
+
+    boolean isUserAdmin(User user);
 }

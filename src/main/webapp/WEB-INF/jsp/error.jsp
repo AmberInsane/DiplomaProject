@@ -8,21 +8,38 @@
 <html>
 <head>
     <title><spring:message code="error.title"/></title>
-    <spring:url value="/resources/core/image/error.jpg" var="errorImg" />
+    <spring:url value="/resources/core/image/error.jpg" var="errorImg"/>
+
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
-<jsp:include page="parts/header.jsp"/>
 <body>
-<div class="container">
-    <h1><spring:message code="error.title"/></h1>
-    <p>${exception.message}</p>
-    ${exception.message}.
-    <c:forEach items="${exception.stackTrace}" var="stackTrace">
-        ${stackTrace}
-    </c:forEach>
-    <br>
-    <img src="${errorImg}"/>
-    <br>
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="parts/header.jsp"/>
+        <div class="container mt-5">
+            <h1><spring:message code="error.title"/></h1>
+            <c:choose>
+                <c:when test="${not empty exception}">
+                    <p>${exception.message}</p>
+                    ${exception.message}
+                    ${errorMsg}
+                    <c:forEach items="${exception.stackTrace}" var="stackTrace">
+                        ${stackTrace}
+                    </c:forEach>
+                </c:when>
+                <c:when test="${not empty errorCode}">
+                    <spring:message code="${errorCode}"/>
+                </c:when>
+            </c:choose>
+
+            <br>
+            <img src="${errorImg}"/>
+            <br>
+        </div>
+    </div>
+    <jsp:include page="parts/footer.jsp"/>
 </div>
-<jsp:include page="parts/footer.jsp"/>
 </body>
 </html>
