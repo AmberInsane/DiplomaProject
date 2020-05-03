@@ -42,7 +42,6 @@ public class MovieController {
                 model.addAttribute("user_rate_value", movieRateUser.get().getValue());
             }
 
-
             return "movie/show/movie";
         } else {
             return "movie/all_movies";

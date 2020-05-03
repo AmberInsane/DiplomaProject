@@ -38,6 +38,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    public List<Hall> getAllHallsOrdered() {
+        return hallRepository.findAllByOrderByName();
+    }
+
+    @Override
     public Session saveOrUpdate(Session session) {
         return sessionRepository.save(session);
     }

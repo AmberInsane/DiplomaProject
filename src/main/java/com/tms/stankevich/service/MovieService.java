@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface MovieService {
     List<Movie> getAllMovies();
 
+    List<Movie> getAllMoviesOrdered();
+
     void saveOrUpdate(Movie user);
 
     Optional<Movie> findById(Long id);

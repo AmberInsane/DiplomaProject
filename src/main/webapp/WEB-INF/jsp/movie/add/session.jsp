@@ -15,83 +15,91 @@
     <title><spring:message code="session.form"/></title>
     <spring:url value="/admin/session/add" var="sessionActionUrl"/>
     <spring:url value="/movie/session" var="returnUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../../parts/header.jsp"/>
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="../../parts/header.jsp"/>
+        <div class="container mt-5">
+            <c:choose>
+                <c:when test="${sessionForm['new']}">
+                    <h1><spring:message code="action.add"/> <spring:message code="session.form"/></h1>
+                </c:when>
+                <c:otherwise>
+                    <h1><spring:message code="action.update"/> <spring:message code="session.form"/></h1>
+                </c:otherwise>
+            </c:choose>
+            <br/>
+            <form:form class="form-horizontal" method="POST" modelAttribute="sessionForm" action="${sessionActionUrl}">
+                <form:hidden path="id"/>
+                <div>
+                    <spring:bind path="startTime">
+                        <div class="form-group ${status.error ? 'has-danger' : ''}">
+                            <label class="col-sm-2 form-control-label"><spring:message code="session.time"/></label>
+                            <div class="col-sm-4">
+                                <form:input path="dateFormatJSP" type="datetime-local" class="input-sm form-control"
+                                            id="dateInitializer"/>
+                                <form:errors path="startTime" class="form-control-label"/>
+                                <form:errors path="dateFormatJSP" class="form-control-label"/>
+                            </div>
+                        </div>
+                    </spring:bind>
 
+                    <spring:bind path="price">
+                        <div class="form-group ${status.error ? 'has-danger' : ''}">
+                            <label class="col-sm-2 form-control-label"><spring:message code="session.price"/></label>
+                            <div class="col-sm-10">
+                                <form:input path="price" type="number" step="0.01" class="form-control " id="price"/>
+                                <form:errors path="price" class="form-control-label"/>
+                            </div>
+                        </div>
+                    </spring:bind>
 
-<div class="container">
-    <button class="btn btn-primary" onclick="location.href='${returnUrl}'">Return to sessions</button>
-    <c:choose>
-        <c:when test="${sessionForm['new']}">
-            <h1><spring:message code="action.add"/> <spring:message code="session.form"/></h1>
-        </c:when>
-        <c:otherwise>
-            <h1><spring:message code="action.update"/> <spring:message code="session.form"/></h1>
-        </c:otherwise>
-    </c:choose>
-    <br/>
-    <form:form class="form-horizontal" method="POST" modelAttribute="sessionForm" action="${sessionActionUrl}">
-        <form:hidden path="id"/>
-        <div>
-            <spring:bind path="startTime">
-                <div class="form-group ${status.error ? 'has-danger' : ''}">
-                    <label class="col-sm-2 form-control-label"><spring:message code="session.time"/></label>
-                    <div class="col-sm-3">
-                        <form:input path="dateFormatJSP" type="datetime-local" class="input-sm form-control" id="dateInitializer"/>
-                        <form:errors path="dateFormatJSP" class="form-control-label"/>
+                    <spring:bind path="hall">
+                        <div class="form-group ${status.error ? 'has-danger' : ''}">
+                            <label class="col-sm-2 form-control-label"><spring:message code="hall.form"/></label>
+                            <div class="col-sm-5">
+                                <form:select path="hall" multiple="false" size="5" class="form-control">
+                                    <form:options items="${hallList}" itemValue="id" itemLabel="name"/>
+                                </form:select>
+                                <form:errors path="hall" class="form-control-label"/>
+                            </div>
+                        </div>
+                    </spring:bind>
+
+                    <spring:bind path="movie">
+                        <div class="form-group ${status.error ? 'has-danger' : ''}">
+                            <label class="col-sm-2 form-control-label"><spring:message code="movie.form"/></label>
+                            <div class="col-sm-10">
+                                <form:select path="movie" multiple="false" size="5" class="form-control">
+                                    <form:options items="${movieList}" itemValue="id" itemLabel="title"/>
+                                </form:select>
+                                <form:errors path="movie" class="form-control-label"/>
+                            </div>
+                        </div>
+                    </spring:bind>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <c:choose>
+                            <c:when test="${sessionForm['new']}">
+                                <button type="submit" class="btn btn-primary pull-right"><spring:message
+                                        code="action.add"/></button>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="submit" class="btn btn-primary pull-right"><spring:message
+                                        code="action.update"/></button>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
-            </spring:bind>
-
-            <spring:bind path="price">
-                <div class="form-group ${status.error ? 'has-danger' : ''}">
-                    <label class="col-sm-2 form-control-label"><spring:message code="session.price"/></label>
-                    <div class="col-sm-10">
-                        <form:input path="price" type="number" step="0.01" class="form-control " id="price" placeholder="Price"/>
-                        <form:errors path="price" class="form-control-label"/>
-                    </div>
-                </div>
-            </spring:bind>
-
-            <spring:bind path="hall">
-                <div class="form-group ${status.error ? 'has-danger' : ''}">
-                    <label class="col-sm-2 form-control-label"><spring:message code="hall.form"/></label>
-                    <div class="col-sm-5">
-                        <form:select path="hall" multiple="false" size="5" class="form-control">
-                            <form:options items="${hallList}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                        <form:errors path="hall" class="form-control-label"/>
-                    </div>
-                </div>
-            </spring:bind>
-
-            <spring:bind path="movie">
-                <div class="form-group ${status.error ? 'has-danger' : ''}">
-                    <label class="col-sm-2 form-control-label"><spring:message code="movie.form"/></label>
-                    <div class="col-sm-5">
-                        <form:select path="movie" multiple="false" size="5" class="form-control">
-                            <form:options items="${movieList}" itemValue="id" itemLabel="title"/>
-                        </form:select>
-                        <form:errors path="movie" class="form-control-label"/>
-                    </div>
-                </div>
-            </spring:bind>
+            </form:form>
         </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <c:choose>
-                    <c:when test="${sessionForm['new']}">
-                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.add"/></button>
-                    </c:when>
-                    <c:otherwise>
-                        <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.update"/></button>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </div>
-    </form:form>
+    </div>
+    <jsp:include page="../../parts/footer.jsp"/>
 </div>
-<jsp:include page="../../parts/footer.jsp"/>
 </body>
 </html>

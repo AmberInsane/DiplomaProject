@@ -15,6 +15,8 @@ public interface SessionService {
 
     List<Hall> getAllHalls();
 
+    List<Hall> getAllHallsOrdered();
+
     Session saveOrUpdate(Session session);
 
     Hall saveOrUpdateHall(Hall hall);

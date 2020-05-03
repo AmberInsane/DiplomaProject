@@ -25,7 +25,7 @@
         <jsp:include page="../parts/header.jsp"/>
         <div class="container mt-5">
             <security:authorize access="isAuthenticated()">
-                <h2><spring:message code="user.action.friends.my"/></h2>
+                <h3><spring:message code="user.action.friends.my"/></h3>
                 <c:if test="${inRequests.size() > 0}">
                     <div>
                         <h3><spring:message code="user.action.friends.in"/></h3>

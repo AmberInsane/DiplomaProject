@@ -26,7 +26,7 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <strong>${msg}</strong>
+                    <strong><spring:message code="${msg_code}"/></strong>
                 </div>
             </c:if>
             <h2><spring:message code="user.action.tickets.my"/></h2>

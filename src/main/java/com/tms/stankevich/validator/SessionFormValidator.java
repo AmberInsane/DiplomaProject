@@ -44,12 +44,16 @@ public class SessionFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "hall", "NotEmpty.sessionForm.hall");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "movie", "NotEmpty.sessionForm.movie");
 
+        if (session.getPrice() == null || session.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            errors.rejectValue("price", "Valid.sessionForm.price");
+        }
+
         try {
             startTime = LocalDateTime.parse(session.getDateFormatJSP().replace("T", " "), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
             session.setStartTime(startTime);
 
             if (LocalDateTime.now().isAfter(startTime.minusHours(hoursBefore))) {
-                errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeBefore");
+                errors.rejectValue("startTime", "Valid.sessionForm.dateTimeBefore");
             } else {
                 LocalDateTime dateTimeEnd;
 
@@ -57,7 +61,7 @@ public class SessionFormValidator implements Validator {
                 if (nextSession.isPresent()) {
                     dateTimeEnd = session.getStartTime().plusMinutes(session.getMovie().getTimeLength());
                     if (dateTimeEnd.isAfter(nextSession.get().getStartTime())) {
-                        errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeSessionNext");
+                        errors.rejectValue("startTime", "Valid.sessionForm.dateTimeSessionNext");
                     }
                 }
 
@@ -65,14 +69,14 @@ public class SessionFormValidator implements Validator {
                 if (prevSession.isPresent()) {
                     dateTimeEnd = prevSession.get().getStartTime().plusMinutes(prevSession.get().getMovie().getTimeLength());
                     if (dateTimeEnd.plusMinutes(minutesBetween).isAfter(startTime)) {
-                        errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTimeSessionPrev");
+                        errors.rejectValue("startTime", "Valid.sessionForm.dateTimeSessionPrev");
                     }
                 }
             }
 
         } catch (
                 Exception e) {
-            errors.rejectValue("dateFormatJSP", "Valid.sessionForm.dateTime");
+            errors.rejectValue("startTime", "Valid.sessionForm.dateTime");
         }
     }
 }

@@ -11,11 +11,13 @@ import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.GenreDeleteException;
 import com.tms.stankevich.exception.MovieDeleteException;
 import com.tms.stankevich.exception.MovieRateException;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,6 +59,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public List<Movie> getAllMoviesOrdered() {
+        return movieRepository.findAllByOrderByTitle();
+    }
+
+    @Override
     public void saveOrUpdate(Movie movie) {
         movieRepository.save(movie);
     }
@@ -78,7 +85,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Genre> getAllGenres() {
-        return genreRepository.findAll();
+        return genreRepository.findAllByOrderByName();
     }
 
     @Override
@@ -132,4 +139,5 @@ public class MovieServiceImpl implements MovieService {
     public Optional<MovieRate> getUserMovieRate(User user, Movie movie) {
         return movieRateRepository.findByUserAndMovie(user, movie);
     }
+
 }

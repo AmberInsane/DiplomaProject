@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface GenreRepository extends JpaRepository<Genre, Long> {
     Optional<Genre> findById(Long id);
     Optional<Genre> findByName(String name);
-    List<Genre> findAll();
+    List<Genre> findAllByOrderByName();
 }
