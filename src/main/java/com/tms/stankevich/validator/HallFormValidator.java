@@ -32,7 +32,7 @@ public class HallFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "NotEmpty.hallForm.description");
 
         if (hall.getCapacity() == null || hall.getCapacity() <= 0) {
-            errors.rejectValue("capacity", "NotEmpty.hallForm.capacity");
+            errors.rejectValue("capacity", "Valid.hallForm.capacity");
         }
         if (hall.isNew()) {
             Optional<Hall> hallByName = sessionService.findHallByName(hall.getName());

@@ -24,5 +24,5 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     Optional<Session> findPrevSession(LocalDateTime time, Hall hall);
 
-    List<Session> findTodayValidSession();
+    List<Session> findDateValidSession(Date date);
 }

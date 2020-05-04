@@ -25,8 +25,6 @@
     <br>
     <a href="${pageContext.request.contextPath}/admin/load"><spring:message code="admin.menu.load"/></a>
     <br>
-<%--    <a href="${pageContext.request.contextPath}/admin/all_info"><spring:message code="admin.menu.all_info"/></a>
-    <br>--%>
 </div>
 </body>
 </html>

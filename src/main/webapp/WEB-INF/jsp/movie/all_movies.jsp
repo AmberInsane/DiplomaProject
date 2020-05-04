@@ -39,6 +39,9 @@
             <c:if test="${not empty genre}">
                 <h4><spring:message code="genre.form"/>: ${genre.name}</h4>
             </c:if>
+            <c:if test="${not empty year}">
+                <h4><spring:message code="movie.year"/>: ${year}</h4>
+            </c:if>
             <security:authorize access="isAuthenticated()">
                 <security:authorize access="hasRole('ADMIN')">
                     <div class="btn-link">
@@ -70,7 +73,9 @@
                             </div>
                         </td>
                         <td>${movie.description}</td>
-                        <td>${movie.year}</td>
+                        <td><spring:url value="/movie/year/${movie.year}" var="yearUrl"/>
+                            <a href="${yearUrl}">${movie.year}</a>
+                        </td>
                         <td>
                             <c:forEach var="genre" items="${movie.genre}" varStatus="loop">
                                 <spring:url value="/movie/genre/${genre.id}" var="genreUrl"/>

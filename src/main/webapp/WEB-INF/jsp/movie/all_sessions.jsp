@@ -17,6 +17,7 @@
     <title><spring:message code="session.form3"/></title>
     <spring:url value="/admin/hall" var="hallUrl"/>
     <spring:url value="/admin/session/add" var="addSessionUrl"/>
+    <spring:url value="/movie/today" var="todayUrl"/>
     <spring:url value="/resources/core/css/index.css" var="indexCss"/>
 
     <link href="${indexCss}" rel="stylesheet"/>
@@ -51,6 +52,10 @@
                     </div>
                 </security:authorize>
             </security:authorize>
+            <div class="btn-link">
+                <a href="${todayUrl}"><spring:message
+                        code="user.action.session.today"/></a>
+            </div>
             <table class="table table-hover">
                 <thead class="thead-blue">
                 <tr>

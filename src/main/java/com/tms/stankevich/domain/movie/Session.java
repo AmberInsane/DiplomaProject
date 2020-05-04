@@ -26,8 +26,8 @@ import java.time.format.DateTimeFormatter;
         @NamedQuery(name = "Session.findNextSession",
                 query = "SELECT s FROM Session s where s.hall = ?2 and s.startTime = " +
                         "(select min(s1.startTime) from Session s1 where s1.startTime > ?1 and s1.hall = ?2)"),
-        @NamedQuery(name = "Session.findTodayValidSession",
-                query = "SELECT s FROM Session s where date(s.startTime) = current_date and s.startTime > current_time")
+        @NamedQuery(name = "Session.findDateValidSession",
+                query = "SELECT s FROM Session s where date(s.startTime) = ?1 and s.startTime > current_time order by s.startTime")
 })
 public class Session implements Serializable {
     private static final long serialVersionUID = 42L;

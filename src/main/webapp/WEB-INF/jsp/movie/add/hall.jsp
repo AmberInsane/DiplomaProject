@@ -14,78 +14,87 @@
 <head>
     <title><spring:message code="hall.form"/></title>
     <spring:url value="/admin/hall/add" var="hallActionUrl"/>
-    <spring:url value="/admin/hall" var="returnUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../../parts/header.jsp"/>
-<div class="container">
-    <security:authorize access="isAuthenticated()">
-        <security:authorize access="hasRole('ADMIN')">
-            <div class="container">
-                <button class="btn btn-primary" onclick="location.href='${returnUrl}'"><spring:message code="action.back"/></button>
-                <form:form method="POST" modelAttribute="hallForm" action="${hallActionUrl}">
-                    <c:choose>
-                        <c:when test="${hallForm['new']}">
-                            <h1><spring:message code="action.add"/> <spring:message code="hall.form1"/></h1>
-                        </c:when>
-                        <c:otherwise>
-                            <h1><spring:message code="action.update"/> <spring:message code="hall.form1"/></h1>
-                        </c:otherwise>
-                    </c:choose>
-                    <br/>
-                    <form:hidden path="id"/>
-                    <div>
-                        <spring:bind path="name">
-                            <div class="form-group ${status.error ? 'has-danger' : ''}">
-                                <label class="col-sm-2 form-control-label"><spring:message code="text.name"/></label>
-                                <div class="col-sm-10">
-                                    <form:input path="name" type="text" class="form-control " id="name"
-                                                placeholder="Name"/>
-                                    <form:errors path="name" class="form-control-label"/>
-                                </div>
-                            </div>
-                        </spring:bind>
-
-                        <spring:bind path="capacity">
-                            <div class="form-group ${status.error ? 'has-danger' : ''}">
-                                <label class="col-sm-2 form-control-label"><spring:message code="hall.capacity"/></label>
-                                <div class="col-sm-10">
-                                    <form:input type="number" path="capacity" step="1" placeholder="Capacity"
-                                                class="form-control " id="capacity" autofocus=""/>
-                                    <form:errors path="capacity" class="form-control-label"/>
-                                </div>
-                            </div>
-                        </spring:bind>
-
-                        <spring:bind path="description">
-                            <div class="form-group ${status.error ? 'has-danger' : ''}">
-                                <label class="col-sm-2 form-control-label"><spring:message code="hall.description"/></label>
-                                <div class="col-sm-10">
-                                    <form:textarea path="description" rows="5" class="form-control" id="description"
-                                                   placeholder="Description"/>
-                                    <form:errors path="description" class="form-control-label"/>
-                                </div>
-                            </div>
-                        </spring:bind>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="../../parts/header.jsp"/>
+        <div class="container mt-5">
+            <security:authorize access="isAuthenticated()">
+                <security:authorize access="hasRole('ADMIN')">
+                    <div class="container">
+                        <form:form method="POST" modelAttribute="hallForm" action="${hallActionUrl}">
                             <c:choose>
                                 <c:when test="${hallForm['new']}">
-                                    <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.add"/></button>
+                                    <h2><spring:message code="action.add"/> <spring:message code="hall.form1"/></h2>
                                 </c:when>
                                 <c:otherwise>
-                                    <button type="submit" class="btn btn-primary pull-right"><spring:message code="action.update"/></button>
+                                    <h2><spring:message code="action.update"/> <spring:message code="hall.form1"/></h2>
                                 </c:otherwise>
                             </c:choose>
-                        </div>
+                            <br/>
+                            <form:hidden path="id"/>
+                            <div>
+                                <spring:bind path="name">
+                                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                                        <label class="col-sm-2 form-control-label"><spring:message
+                                                code="text.name"/></label>
+                                        <div class="col-sm-10">
+                                            <form:input path="name" type="text" class="form-control " id="name"/>
+                                            <form:errors path="name" class="form-control-label"/>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+
+                                <spring:bind path="capacity">
+                                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                                        <label class="col-sm-2 form-control-label"><spring:message
+                                                code="hall.capacity"/></label>
+                                        <div class="col-sm-10">
+                                            <form:input type="number" path="capacity" step="1" class="form-control "
+                                                        id="capacity" autofocus=""/>
+                                            <form:errors path="capacity" class="form-control-label"/>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+
+                                <spring:bind path="description">
+                                    <div class="form-group ${status.error ? 'has-danger' : ''}">
+                                        <label class="col-sm-2 form-control-label"><spring:message
+                                                code="hall.description"/></label>
+                                        <div class="col-sm-10">
+                                            <form:textarea path="description" rows="5" class="form-control"
+                                                           id="description"/>
+                                            <form:errors path="description" class="form-control-label"/>
+                                        </div>
+                                    </div>
+                                </spring:bind>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <c:choose>
+                                        <c:when test="${hallForm['new']}">
+                                            <button type="submit" class="btn btn-primary pull-right"><spring:message
+                                                    code="action.add"/></button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="submit" class="btn btn-primary pull-right"><spring:message
+                                                    code="action.update"/></button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </form:form>
                     </div>
-                </form:form>
-            </div>
-        </security:authorize>
-    </security:authorize>
+                </security:authorize>
+            </security:authorize>
+        </div>
+    </div>
+    <jsp:include page="../../parts/footer.jsp"/>
 </div>
-<jsp:include page="../../parts/footer.jsp"/>
 </body>
 </html>

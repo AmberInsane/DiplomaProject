@@ -69,8 +69,8 @@ public class TicketServiceImpl implements TicketService {
     public Map<TicketType, List<Ticket>> findUsersTickets(User user) {
         Map<TicketType, List<Ticket>> ticketsMap = new HashMap<>();
 
-        List<Ticket> myTickets = ticketRepository.findTicketByUserFor(user);
-        List<Ticket> friendTickets = ticketRepository.findTicketByUserForFriends(user);
+        List<Ticket> myTickets = findTicketByUserFor(user);
+        List<Ticket> friendTickets = findTicketByUserForFriends(user);
 
         Map<Boolean, List<Ticket>> myPartitioned = getPartitioned(myTickets);
         ticketsMap.put(TicketType.MY, myPartitioned.get(true));
@@ -85,6 +85,16 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<Ticket> findUsersTicketsForFriends(User user) {
+        return ticketRepository.findTicketByUserForFriends(user);
+    }
+
+    @Override
+    public List<Ticket> findTicketByUserFor(User user) {
+        return ticketRepository.findTicketByUserFor(user);
+    }
+
+    @Override
+    public List<Ticket> findTicketByUserForFriends(User user) {
         return ticketRepository.findTicketByUserForFriends(user);
     }
 

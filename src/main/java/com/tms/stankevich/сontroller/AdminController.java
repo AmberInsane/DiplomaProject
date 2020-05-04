@@ -5,15 +5,14 @@ import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.domain.movie.Movie;
 import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.domain.user.User;
-import com.tms.stankevich.exception.GenreDeleteException;
-import com.tms.stankevich.exception.HallDeleteException;
-import com.tms.stankevich.exception.MovieDeleteException;
-import com.tms.stankevich.exception.SessionDeleteException;
+import com.tms.stankevich.exception.*;
 import com.tms.stankevich.service.*;
 import com.tms.stankevich.validator.GenreFormValidator;
 import com.tms.stankevich.validator.HallFormValidator;
 import com.tms.stankevich.validator.MovieFormValidator;
 import com.tms.stankevich.validator.SessionFormValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +36,8 @@ import java.util.Optional;
 @RequestMapping("/admin")
 @SessionAttributes(value = "user")
 public class AdminController {
+    private final Logger logger = LogManager.getLogger(AdminController.class);
+
     @Autowired
     private UserService userService;
 
@@ -99,18 +100,28 @@ public class AdminController {
     }
 
     @GetMapping("/manage/add_admin/{userId}")
-    public String manageAdmins(@PathVariable Long userId) {
-        userService.updateAdminRole(userId, "add");
+    public String manageAdmins(@PathVariable Long userId, final RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateAdminRole(userId, "add");
+        } catch (AdminAddException e) {
+            redirectAttributes.addFlashAttribute("css", "danger");
+            redirectAttributes.addFlashAttribute("msg_code", e.getMessage());
+        }
         return "redirect:/admin/manage";
     }
 
     @GetMapping("/manage/delete_admin/{userId}")
     public String manageAdmins(@PathVariable Long userId,
-                               @AuthenticationPrincipal User currentUser) {
+                               @AuthenticationPrincipal User currentUser, final RedirectAttributes redirectAttributes) {
         if (currentUser.getId().equals(userId)) {
             return "admin/admin_manage_error";
         } else {
-            userService.updateAdminRole(userId, "delete");
+            try {
+                userService.updateAdminRole(userId, "delete");
+            } catch (AdminAddException e) {
+                redirectAttributes.addFlashAttribute("css", "danger");
+                redirectAttributes.addFlashAttribute("msg_code", e.getMessage());
+            }
         }
         return "redirect:/admin/manage";
     }
@@ -199,8 +210,7 @@ public class AdminController {
     public String saveOrUpdateGenre(@ModelAttribute("genreForm") @Validated Genre genre,
                                     BindingResult result, Model model, final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            populateDefaultSessionModel(model);
-            return "movie/add/session";
+            return "movie/add/genre";
         } else {
             redirectAttributes.addFlashAttribute("css", "success");
             if (genre.isNew()) {
@@ -324,7 +334,6 @@ public class AdminController {
     @PostMapping(value = "/hall/add")
     public String saveOrUpdateHall(@ModelAttribute("hallForm") @Validated Hall hall,
                                    BindingResult result, final RedirectAttributes redirectAttributes) {
-        String action;
         if (result.hasErrors()) {
             return "movie/add/hall";
         } else {
@@ -354,9 +363,7 @@ public class AdminController {
     @PostMapping("/hall/delete/{id}")
     public String deleteHall(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         Optional<Hall> hall = sessionService.findHallById(id);
-
         if (hall.isPresent()) {
-            String hallName = hall.get().getName();
             try {
                 sessionService.deleteHall(hall.get());
                 redirectAttributes.addFlashAttribute("css", "success");

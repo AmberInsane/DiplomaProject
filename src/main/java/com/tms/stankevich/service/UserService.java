@@ -4,6 +4,7 @@ package com.tms.stankevich.service;
 import com.tms.stankevich.domain.user.FriendRequest;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.domain.user.UserInfo;
+import com.tms.stankevich.exception.AdminAddException;
 import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.FriendRequestException;
 
@@ -24,7 +25,7 @@ public interface UserService {
 
     List<User> getUsersByRole(String roleName);
 
-    void updateAdminRole(Long userId, String action);
+    void updateAdminRole(Long userId, String action) throws AdminAddException;
 
     User saveOrUpdate(User user);
 

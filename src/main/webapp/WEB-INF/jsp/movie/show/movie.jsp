@@ -69,7 +69,7 @@
                         <label class="col-sm-2"><spring:message code="movie.rate.all"/></label>
                         <div class="col-sm-10">
                             <c:choose>
-                                <c:when test="${movie.rateCount.equals(0)}">
+                                <c:when test="${movie.rateCount == 0}">
                                     <spring:message code="movie.rate.no"/>
                                 </c:when>
                                 <c:otherwise>

@@ -12,21 +12,27 @@
 <html>
 <head>
     <title>${hall.name}</title>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../../parts/header.jsp"/>
-
-<div class="container">
-    <h2>${hall.name}</h2>
-    <div class="row">
-        <label class="col-sm-2"><spring:message code="hall.description"/></label>
-        <div class="col-sm-10">${hall.description}</div>
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="../../parts/header.jsp"/>
+        <div class="container mt-5">
+            <h2>${hall.name}</h2>
+            <div class="row">
+                <label class="col-sm-2"><spring:message code="hall.description"/></label>
+                <div class="col-sm-10">${hall.description}</div>
+            </div>
+            <div class="row">
+                <label class="col-sm-2"><spring:message code="hall.capacity"/></label>
+                <div class="col-sm-10">${hall.capacity}</div>
+            </div>
+        </div>
     </div>
-    <div class="row">
-        <label class="col-sm-2"><spring:message code="hall.capacity"/></label>
-        <div class="col-sm-10">${hall.capacity}</div>
-    </div>
+    <jsp:include page="../../parts/footer.jsp"/>
 </div>
-<jsp:include page="../../parts/footer.jsp"/>
 </body>
 </html>

@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,54 +73,73 @@ public class MovieLoadServiceKinogo implements MovieLoadService {
 
     private Movie createMovieFromElement(Element movieElement) {
         try {
-            Movie movie = new Movie();
-
             String title = movieElement.select("h2.zagolovki").text();
             title = title.substring(0, title.indexOf(" ("));
-            if (!title.equals("")) {
-                movie.setTitle(title);
 
-                String year = movieElement.select("b:contains(Год выпуска:)").first().nextElementSibling().text();
-                if (!year.equals("")) {
-                    movie.setYear(Short.parseShort(year));
+            Short year = Short.parseShort(movieElement.select("b:contains(Год выпуска:)").first().nextElementSibling().text());
+
+            if (!title.equals("") && !year.equals(0)) {
+                if (!movieService.findByTitleYear(title, year).isPresent()) {
+                    Movie movie = new Movie();
+                    movie.setTitle(title);
+                    movie.setYear(year);
+
                     String duration = getTextSibling(movieElement.select("b:contains(Продолжительность:)"));
+
                     if (!duration.equals("") && duration.indexOf(" мин.") > 0) {
                         duration = duration.substring(0, duration.indexOf(" мин."));
                         movie.setTimeLength(Short.parseShort(duration));
+                        String movieUrl = movieElement.select("h2.zagolovki").select("[href]").attr("href");
 
-                        String description = movieElement.select("[id^=news-id]").text();
-                        if (!description.equals("")) {
-                            movie.setDescription(description);
-                            List<String> genres = new ArrayList<>();
-                            Element genreTitle = movieElement.select("b:contains(Жанр:)").first();
-                            Element nextElem = genreTitle.nextElementSibling();
-                            while (!nextElem.text().equals("")) {
-                                genres.add(nextElem.text());
-                                nextElem = nextElem.nextElementSibling();
-                            }
+                        if (!movieUrl.equals("")) {
+                            Element moviePageElement = getContentFromURL(movieElement.select("h2.zagolovki").select("[href]").attr("href"));
+                            List<Node> childNodes = moviePageElement.select("[class=fullimg]").select("[style=display:inline;]").get(0).childNodes();
 
-                            List<Genre> movieGenres = new ArrayList<>();
-                            for (String genre : genres) {
-                                Optional<Genre> genreByName = movieService.findGenreByName(genre);
-                                if (genreByName.isPresent()) {
-                                    movieGenres.add(genreByName.get());
-                                } else {
-                                    Genre newGenre = new Genre();
-                                    newGenre.setName(genre);
-                                    movieService.saveOrUpdateGenre(newGenre);
-                                    movieGenres.add(movieService.findGenreByName(genre).get());
+                            StringBuilder description = new StringBuilder();
+                            for (Node childNode : childNodes) {
+                                if (childNode instanceof TextNode) {
+                                    String text = ((TextNode) childNode).text();
+                                    if (!text.equals("\n") && !text.equals("<br>") && !text.equals("") && (!text.equals(" "))) {
+                                        description.append(text).append(" ");
+                                    }
                                 }
                             }
 
-                            if (movieGenres.size() > 0) {
-                                movie.setGenre(movieGenres);
-                                if (!movieService.findByTitleYear(movie.getTitle(), movie.getYear()).isPresent()) {
+                            if (!description.toString().equals("")) {
+                                movie.setDescription(description.toString());
+
+
+                                List<String> genres = new ArrayList<>();
+                                Element genreTitle = movieElement.select("b:contains(Жанр:)").first();
+                                Element nextElem = genreTitle.nextElementSibling();
+                                while (!nextElem.text().equals("")) {
+                                    genres.add(nextElem.text());
+                                    nextElem = nextElem.nextElementSibling();
+                                }
+
+                                List<Genre> movieGenres = new ArrayList<>();
+
+                                for (String genre : genres) {
+                                    Optional<Genre> genreByName = movieService.findGenreByName(genre);
+                                    if (genreByName.isPresent()) {
+                                        movieGenres.add(genreByName.get());
+                                    } else {
+                                        Genre newGenre = new Genre();
+                                        newGenre.setName(genre);
+                                        newGenre = movieService.saveOrUpdateGenre(newGenre);
+                                        movieGenres.add(newGenre);
+                                    }
+                                }
+
+                                if (movieGenres.size() > 0) {
+                                    movie.setGenre(movieGenres);
                                     movieService.saveOrUpdate(movie);
                                     return movie;
                                 }
                             }
                         }
                     }
+
                 }
             }
         } catch (Exception e) {

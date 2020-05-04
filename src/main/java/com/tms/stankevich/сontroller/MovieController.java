@@ -2,9 +2,12 @@ package com.tms.stankevich.сontroller;
 
 import com.tms.stankevich.domain.movie.*;
 import com.tms.stankevich.domain.user.User;
+import com.tms.stankevich.exception.GlobalExceptionHandler;
 import com.tms.stankevich.exception.MovieRateException;
 import com.tms.stankevich.service.MovieService;
 import com.tms.stankevich.service.SessionService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.sql.Date;
 
 @Controller
 @RequestMapping("/movie")
@@ -27,6 +31,8 @@ public class MovieController {
 
     @Value("${time.zone}")
     private String timeZone;
+
+    private final Logger logger = LogManager.getLogger(MovieController.class);
 
     @GetMapping("")
     public String showAllMovies(Model model) {
@@ -56,9 +62,8 @@ public class MovieController {
 
     @GetMapping("/today")
     public String showMovieToday(Model model) {
-        Map<Movie, List<Session>> moviesMap = sessionService.getTodaySessionsMap();
+        Map<Date, Map<Movie, List<Session>>> moviesMap = sessionService.getDaysSessionsMap();
         model.addAttribute("movies", moviesMap);
-        model.addAttribute("today", LocalDate.now(ZoneId.of(timeZone)));
         return "movie/today_sessions";
 
     }
@@ -75,7 +80,7 @@ public class MovieController {
             }
             return "redirect:/movie/" + movie.get().getId();
         } else {
-            return "movie/all_movies";
+            return "redirect:/";
         }
     }
 
@@ -93,7 +98,7 @@ public class MovieController {
             model.addAttribute("hall", hall.get());
             return "movie/show/hall";
         }
-        return "redirect:" + request.getHeader("Referer");
+        return "redirect:/";
     }
 
     @GetMapping("/genre/{genre_id}")
@@ -105,6 +110,31 @@ public class MovieController {
             model.addAttribute("movies", movies);
             return "movie/all_movies";
         }
-        return "redirect:" + request.getHeader("Referer");
+        return "redirect:/";
+    }
+
+    @GetMapping("/year/{year}")
+    public String showMoviesByYear(@PathVariable("year") String yearStr, Model model, HttpServletRequest request) {
+        try {
+            Short year = Short.parseShort(yearStr);
+            List<Movie> movies = movieService.getMoviesByYear(year);
+            model.addAttribute("year", year);
+            model.addAttribute("movies", movies);
+            return "movie/all_movies";
+
+        } catch (NumberFormatException e) {
+            Enumeration<String> headerNames = request.getHeaderNames();
+            String name;
+            String value;
+
+            while (headerNames.hasMoreElements()) {
+                name = headerNames.nextElement();
+                value = request.getHeader(name);
+                logger.info(name  + " " + value);
+                logger.error(name  + " " + value);
+                logger.debug(name  + " " + value);
+            }
+            return "redirect:/";
+        }
     }
 }

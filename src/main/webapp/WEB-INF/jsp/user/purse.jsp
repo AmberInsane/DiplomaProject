@@ -12,11 +12,15 @@
 <head>
     <title><spring:message code="user.action.balance"/></title>
     <spring:url value="/user/my_purse" var="userActionUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../parts/header.jsp"/>
-<body>
-<div class="container">
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="../parts/header.jsp"/>
+        <div class="container mt-5">
     <h1><spring:message code="user.action.balance"/></h1>
     <c:if test="${not empty msg_code}">
         <div class="alert alert-${css} alert-dismissible" role="alert">

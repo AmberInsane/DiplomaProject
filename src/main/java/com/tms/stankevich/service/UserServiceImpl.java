@@ -4,8 +4,10 @@ import com.tms.stankevich.dao.FriendRequestRepository;
 import com.tms.stankevich.dao.RoleRepository;
 import com.tms.stankevich.dao.UserInfoRepository;
 import com.tms.stankevich.dao.UserRepository;
+import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.user.*;
 
+import com.tms.stankevich.exception.AdminAddException;
 import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.FriendRequestException;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private TicketService ticketService;
 
     public static final String USER_ROLE = "ROLE_USER";
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
@@ -94,7 +99,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void updateAdminRole(Long userId, String action) {
+    public void updateAdminRole(Long userId, String action) throws AdminAddException {
         Role userRole = roleRepository.findByName(USER_ROLE);
         Role adminRole = roleRepository.findByName(ADMIN_ROLE);
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -103,13 +108,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             User user = optionalUser.get();
             switch (action) {
                 case "delete":
-                    if (user.getRoles().contains(adminRole)) {
+                    if (isUserAdmin(user)) {
                         user.getRoles().remove(adminRole);
                         user.getRoles().add(userRole);
                     }
                     break;
                 case "add":
-                    if (!user.getRoles().contains(adminRole)) {
+                    if (!isUserAdmin(user)) {
+                        if (isUserActive(user)) {
+                            throw new AdminAddException("admin.manage.error.active");
+                        }
                         user.getRoles().remove(userRole);
                         user.getRoles().add(adminRole);
                     }
@@ -117,6 +125,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             }
             userRepository.save(user);
         }
+    }
+
+    private boolean isUserActive(User user) {
+        return user.getFriends().size() > 0
+                || user.getBlackList().size() > 0
+                || user.getBalance().compareTo(BigDecimal.ZERO) > 0
+                || findInFriendRequests(user).size() > 0
+                || findOutFriendRequests(user).size() > 0
+                || ticketService.findTicketByUserFor(user).size() > 0
+                ||  ticketService.findTicketByUserForFriends(user).size() > 0;
     }
 
     @Override

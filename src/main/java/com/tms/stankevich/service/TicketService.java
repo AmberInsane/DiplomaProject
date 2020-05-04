@@ -22,6 +22,10 @@ public interface TicketService {
 
     List<Ticket> findUsersTicketsForFriends(User user);
 
+    List<Ticket> findTicketByUserFor(User user);
+
+    List<Ticket> findTicketByUserForFriends(User user);
+
     void returnTicket(Ticket ticket) throws TicketReturnTimeException;
 
     boolean isTicketValid(Ticket ticket);

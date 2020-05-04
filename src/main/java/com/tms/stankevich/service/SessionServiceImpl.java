@@ -17,9 +17,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +33,9 @@ public class SessionServiceImpl implements SessionService {
 
     @Value("${time.zone}")
     private String timeZone;
+
+    @Value("${session.togay.count}")
+    private Integer sessionDaysCount;
 
     @Override
     public List<Session> getAllSessions() {
@@ -110,8 +111,8 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Map<Movie, List<Session>> getTodaySessionsMap() {
-        List<Session> sessions = sessionRepository.findTodayValidSession();
+    public Map<Movie, List<Session>> getDaySessionsMap(Date date) {
+        List<Session> sessions = sessionRepository.findDateValidSession(date);
         Map<Movie, List<Session>> movieListMap = sessions.stream()
                 .collect(Collectors.groupingBy(Session::getMovie));
         return movieListMap;
@@ -119,5 +120,16 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public boolean isSessionValid(Session session) {
         return session.getStartTime().compareTo(LocalDateTime.now(ZoneId.of(timeZone))) > 0;
+    }
+
+    @Override
+    public Map<Date, Map<Movie, List<Session>>> getDaysSessionsMap() {
+        Map<Date, Map<Movie, List<Session>>> sessionsMap = new TreeMap<>();
+        LocalDate date = LocalDate.now(ZoneId.of(timeZone));
+        for (int i = 0; i < sessionDaysCount; i++) {
+            sessionsMap.put(Date.valueOf(date), getDaySessionsMap(Date.valueOf(date)));
+            date = date.plusDays(1);
+        }
+        return sessionsMap;
     }
 }

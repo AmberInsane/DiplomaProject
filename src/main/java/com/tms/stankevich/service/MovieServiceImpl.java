@@ -79,8 +79,8 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void saveOrUpdateGenre(Genre genre) {
-        genreRepository.save(genre);
+    public Genre saveOrUpdateGenre(Genre genre) {
+        return genreRepository.save(genre);
     }
 
     @Override
@@ -144,6 +144,11 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<Movie> getMoviesByGenre(Genre genre) {
         return movieRepository.findByGenre(genre);
+    }
+
+    @Override
+    public List<Movie> getMoviesByYear(Short year) {
+        return movieRepository.findByYear(year);
     }
 
 }

@@ -22,7 +22,7 @@ public interface MovieService {
 
     Optional<Movie> findByTitleYear(String title, Short year);
 
-    void saveOrUpdateGenre(Genre genre);
+    Genre saveOrUpdateGenre(Genre genre);
 
     List<Genre> getAllGenres();
 
@@ -41,4 +41,6 @@ public interface MovieService {
     Optional<MovieRate> getUserMovieRate(User user, Movie movie);
 
     List<Movie> getMoviesByGenre(Genre genre);
+
+    List<Movie> getMoviesByYear(Short year);
 }

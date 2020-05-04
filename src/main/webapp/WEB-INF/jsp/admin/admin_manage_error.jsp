@@ -11,16 +11,23 @@
 <html>
 <head>
     <title><spring:message code="error.title"/></title>
-    <spring:url value="/resources/core/image/sadcat.jpg" var="catImg" />
+    <spring:url value="/resources/core/image/sadcat.jpg" var="catImg"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
 <body>
-<jsp:include page="../parts/header.jsp"/>
-<div class="container">
-    <h2><spring:message code="admin.error"/></h2>
-    <img src="${catImg}"/>
-    <br>
-    <a href="${pageContext.request.contextPath}/admin/manage"><spring:message code="admin.error.ok"/></a>
+<div class="wrapper">
+    <div class="wrapper-inner">
+        <jsp:include page="../parts/header.jsp"/>
+        <div class="container mt-5">
+            <h2><spring:message code="admin.error"/></h2>
+            <img src="${catImg}"/>
+            <br>
+            <a href="${pageContext.request.contextPath}/admin/manage"><spring:message code="admin.error.ok"/></a>
+        </div>
+    </div>
+    <jsp:include page="../parts/footer.jsp"/>
 </div>
-<jsp:include page="../parts/footer.jsp"/>
 </body>
 </html>

@@ -6,7 +6,9 @@ import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.exception.HallDeleteException;
 import com.tms.stankevich.exception.SessionDeleteException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +40,9 @@ public interface SessionService {
 
     void deleteSession(Session session) throws SessionDeleteException;
 
-    Map<Movie, List<Session>> getTodaySessionsMap();
+    Map<Movie, List<Session>> getDaySessionsMap(Date date);
 
     boolean isSessionValid(Session session);
+
+    Map<Date, Map<Movie, List<Session>>> getDaysSessionsMap();
 }
