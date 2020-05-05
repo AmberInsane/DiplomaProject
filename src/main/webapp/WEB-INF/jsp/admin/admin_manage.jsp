@@ -28,7 +28,7 @@
                     <strong><spring:message code="${msg_code}"/></strong>
                 </div>
             </c:if>
-            <h3><spring:message code="admin.title"/></h3>
+            <h4><spring:message code="admin.title"/></h4>
             <table class="table table-hover">
                 <c:forEach items="${adminUsers}" var="user">
                     <tr>
@@ -46,7 +46,7 @@
                     </tr>
                 </c:forEach>
             </table>
-            <h3><spring:message code="user.form3"/></h3>
+            <h4><spring:message code="user.form3"/></h4>
             <table class="table table-hover">
                 <c:forEach items="${users}" var="user">
                     <tr>

@@ -14,7 +14,13 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findTicketByUserFor(User user);
     List<Ticket> findTicketsBySession(Session session);
 
-    @Query("SELECT t FROM Ticket t WHERE t.userBy = ?1 and t.userFor <> ?1")
+    @Query("SELECT t FROM Ticket t WHERE t.userBy = ?1 and t.userFor = ?1 order by t.session.startTime")
+    List<Ticket> findTicketByAndForUser(User user);
+
+    @Query("SELECT t FROM Ticket t WHERE t.userBy = ?1 and t.userFor <> ?1 order by t.session.startTime")
     List<Ticket> findTicketByUserForFriends(User user);
+
+    @Query("SELECT t FROM Ticket t WHERE t.userBy <> ?1 and t.userFor = ?1 order by t.session.startTime")
+    List<Ticket> findTicketByFriendsForUser(User user);
 
 }

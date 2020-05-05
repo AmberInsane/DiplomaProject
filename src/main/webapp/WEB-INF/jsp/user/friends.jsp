@@ -28,32 +28,30 @@
                 <h3><spring:message code="user.action.friends.my"/></h3>
                 <c:if test="${inRequests.size() > 0}">
                     <div>
-                        <h3><spring:message code="user.action.friends.in"/></h3>
-                        <table class="table table-striped">
+                        <h4><spring:message code="user.action.friends.in"/></h4>
+                        <table class="table table-hover">
                             <c:forEach items="${inRequests}" var="request">
                                 <tr>
                                     <td>
                                         <spring:url value="/user/${request.userRequest.id}" var="showUrl"/>
                                         <a href="${showUrl}">${request.userRequest.username}</a>
                                     </td>
-                                    <td>
+                                    <td class="buttons-column">
                                         <spring:url value="/user/request/accept/${request.id}" var="acceptUrl"/>
-                                        <button class="btn btn-primary"
+                                        <button class="btn btn-outline-primary"
                                                 onclick="this.disabled=true;post('${acceptUrl}')">
                                             <spring:message code="user.action.friends.accept"/>
                                         </button>
-                                    </td>
-                                    <td>
+
                                         <spring:url value="/user/request/refuse/${request.id}" var="refuseUrl"/>
-                                        <button class="btn btn-warning"
+                                        <button class="btn btn-outline-warning"
                                                 onclick="this.disabled=true;post('${refuseUrl}')">
                                             <spring:message code="user.action.friends.refuse"/>
                                         </button>
-                                    </td>
-                                    <td>
                                         <spring:url value="/user/friend/${request.userRequest.id}/block"
                                                     var="blockUrl"/>
-                                        <button class="btn btn-danger" onclick="this.disabled=true;post('${blockUrl}')">
+                                        <button class="btn btn-outline-danger"
+                                                onclick="this.disabled=true;post('${blockUrl}')">
                                             <spring:message code="user.action.friends.block"/>
                                         </button>
                                     </td>
@@ -65,24 +63,21 @@
                 <c:choose>
                     <c:when test="${friends.size() > 0}">
                         <div>
-                            <h3><spring:message code="user.action.friends.my"/></h3>
-                            <table class="table table-striped">
+                            <table class="table table-hover">
                                 <c:forEach items="${friends}" var="friend">
                                     <tr>
                                         <td>
                                             <spring:url value="/user/${friend.id}" var="showUrl"/>
                                             <a href="${showUrl}">${friend.username}</a>
                                         </td>
-                                        <td>
+                                        <td class="buttons-column">
                                             <spring:url value="/user/friend/${friend.id}/delete" var="deleteUrl"/>
-                                            <button class="btn btn-warning"
+                                            <button class="btn btn-outline-warning"
                                                     onclick="this.disabled=true;post('${deleteUrl}')">
                                                 <spring:message code="user.action.friends.delete"/>
                                             </button>
-                                        </td>
-                                        <td>
                                             <spring:url value="/user/friend/${friend.id}/block" var="blockUrl"/>
-                                            <button class="btn btn-danger"
+                                            <button class="btn btn-outline-danger"
                                                     onclick="this.disabled=true;post('${blockUrl}')">
                                                 <spring:message code="user.action.friends.block"/>
                                             </button>
@@ -100,17 +95,17 @@
                 </c:choose>
                 <c:if test="${outRequests.size() > 0}">
                     <div>
-                        <h3><spring:message code="user.action.friends.out"/></h3>
-                        <table class="table table-striped">
+                        <h4><spring:message code="user.action.friends.out"/></h4>
+                        <table class="table table-hover">
                             <c:forEach items="${outRequests}" var="request">
                                 <tr>
                                     <td>
                                         <spring:url value="/user/${request.userResponse.id}" var="showUrl"/>
                                         <a href="${showUrl}">${request.userResponse.username}</a>
                                     </td>
-                                    <td>
+                                    <td class="buttons-column">
                                         <spring:url value="/user/request/cancel/${request.id}" var="cancelUrl"/>
-                                        <button class="btn btn-warning"
+                                        <button class="btn btn-outline-warning"
                                                 onclick="this.disabled=true;post('${cancelUrl}')">
                                             <spring:message code="user.action.friends.cancel"/>
                                         </button>

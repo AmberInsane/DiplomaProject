@@ -63,17 +63,21 @@ public class SessionFormValidator implements Validator {
 
                 Optional<Session> nextSession = sessionService.getNextSession(startTime, session.getHall());
                 if (nextSession.isPresent()) {
-                    dateTimeEnd = session.getStartTime().plusMinutes(session.getMovie().getTimeLength());
-                    if (dateTimeEnd.isAfter(nextSession.get().getStartTime())) {
-                        errors.rejectValue("startTime", "Valid.sessionForm.dateTimeSessionNext");
+                    if (!nextSession.get().equals(session)) {
+                        dateTimeEnd = session.getStartTime().plusMinutes(session.getMovie().getTimeLength());
+                        if (dateTimeEnd.isAfter(nextSession.get().getStartTime())) {
+                            errors.rejectValue("startTime", "Valid.sessionForm.dateTimeSessionNext");
+                        }
                     }
                 }
 
                 Optional<Session> prevSession = sessionService.getPrevSession(startTime, session.getHall());
                 if (prevSession.isPresent()) {
-                    dateTimeEnd = prevSession.get().getStartTime().plusMinutes(prevSession.get().getMovie().getTimeLength());
-                    if (dateTimeEnd.plusMinutes(minutesBetween).isAfter(startTime)) {
-                        errors.rejectValue("startTime", "Valid.sessionForm.dateTimeSessionPrev");
+                    if (!prevSession.get().equals(session)) {
+                        dateTimeEnd = prevSession.get().getStartTime().plusMinutes(prevSession.get().getMovie().getTimeLength());
+                        if (dateTimeEnd.plusMinutes(minutesBetween).isAfter(startTime)) {
+                            errors.rejectValue("startTime", "Valid.sessionForm.dateTimeSessionPrev");
+                        }
                     }
                 }
             }

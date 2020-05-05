@@ -8,7 +8,6 @@ import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.TicketReturnTimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -69,8 +68,9 @@ public class TicketServiceImpl implements TicketService {
     public Map<TicketType, List<Ticket>> findUsersTickets(User user) {
         Map<TicketType, List<Ticket>> ticketsMap = new HashMap<>();
 
-        List<Ticket> myTickets = findTicketByUserFor(user);
+        List<Ticket> myTickets = findTicketByAndForUser(user);
         List<Ticket> friendTickets = findTicketByUserForFriends(user);
+        List<Ticket> myTicketsFriends = findTicketByFriendsForUser(user);
 
         Map<Boolean, List<Ticket>> myPartitioned = getPartitioned(myTickets);
         ticketsMap.put(TicketType.MY, myPartitioned.get(true));
@@ -79,6 +79,10 @@ public class TicketServiceImpl implements TicketService {
         Map<Boolean, List<Ticket>> friendPartitioned = getPartitioned(friendTickets);
         ticketsMap.put(TicketType.FOR_FRIEND, friendPartitioned.get(true));
         ticketsMap.put(TicketType.FOR_FRIEND_OLD, friendPartitioned.get(false));
+
+        Map<Boolean, List<Ticket>> myFromFriendPartitioned = getPartitioned(myTicketsFriends);
+        ticketsMap.put(TicketType.BY_FRIEND, myFromFriendPartitioned.get(true));
+        ticketsMap.put(TicketType.BY_FRIEND_OLD, myFromFriendPartitioned.get(false));
 
         return ticketsMap;
     }
@@ -89,13 +93,18 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> findTicketByUserFor(User user) {
-        return ticketRepository.findTicketByUserFor(user);
+    public List<Ticket> findTicketByAndForUser(User user) {
+        return ticketRepository.findTicketByAndForUser(user);
     }
 
     @Override
     public List<Ticket> findTicketByUserForFriends(User user) {
         return ticketRepository.findTicketByUserForFriends(user);
+    }
+
+    @Override
+    public List<Ticket> findTicketByFriendsForUser(User user) {
+        return ticketRepository.findTicketByFriendsForUser(user);
     }
 
     @Override

@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 || user.getBalance().compareTo(BigDecimal.ZERO) > 0
                 || findInFriendRequests(user).size() > 0
                 || findOutFriendRequests(user).size() > 0
-                || ticketService.findTicketByUserFor(user).size() > 0
+                || ticketService.findTicketByAndForUser(user).size() > 0
                 ||  ticketService.findTicketByUserForFriends(user).size() > 0;
     }
 
@@ -299,8 +299,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void plusToBalance(User user, BigDecimal sumNumber) {
-        user.setBalance(user.getBalance().add(sumNumber));
-        userRepository.save(user);
+        User curUser = userRepository.findById(user.getId()).get();
+        curUser.setBalance(curUser.getBalance().add(sumNumber));
+        userRepository.save(curUser);
     }
 
     @Override

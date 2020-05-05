@@ -12,8 +12,10 @@
 <head>
     <title><spring:message code="action.update"/> <spring:message code="user.form1"/></title>
     <spring:url value="/user/my_edit" var="userActionUrl"/>
+    <spring:url value="/resources/core/css/index.css" var="indexCss"/>
+
+    <link href="${indexCss}" rel="stylesheet"/>
 </head>
-<body>
 <body>
 <div class="wrapper">
     <div class="wrapper-inner">

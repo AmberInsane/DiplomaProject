@@ -34,7 +34,7 @@
                     </c:if>
                 </div>
             </c:if>
-            <h2><spring:message code="user.menu.friends"/></h2>
+            <h3><spring:message code="user.menu.friends"/></h3>
             <form:form class="form-horizontal" method="post" action="${findUserUrl}">
                 <div class="form-group ${status.error ? 'has-danger' : ''}">
                     <label class="col-sm-2 form-control-label"><spring:message code="user.username"/></label>

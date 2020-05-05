@@ -64,8 +64,10 @@ public class UserController {
         Map<TicketType, List<Ticket>> ticketMap = ticketService.findUsersTickets(currentUser);
         model.addAttribute("tickets", ticketMap.get(TicketType.MY));
         model.addAttribute("ticketsOld", ticketMap.get(TicketType.MY_OLD));
-        model.addAttribute("ticketsFriends", ticketMap.get(TicketType.FOR_FRIEND));
-        model.addAttribute("ticketsFriendsOld", ticketMap.get(TicketType.FOR_FRIEND_OLD));
+        model.addAttribute("ticketsByFriends", ticketMap.get(TicketType.BY_FRIEND));
+        model.addAttribute("ticketsByFriendsOld", ticketMap.get(TicketType.BY_FRIEND_OLD));
+        model.addAttribute("ticketsForFriends", ticketMap.get(TicketType.FOR_FRIEND));
+        model.addAttribute("ticketsForFriendsOld", ticketMap.get(TicketType.FOR_FRIEND_OLD));
         return "user/tickets";
     }
 

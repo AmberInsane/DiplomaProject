@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.sql.Date;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -62,5 +63,18 @@ public class Session implements Serializable {
 
     public boolean isNew() {
         return (this.id == null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return Objects.equals(id, session.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

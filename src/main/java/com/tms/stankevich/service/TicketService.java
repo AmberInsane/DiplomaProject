@@ -20,11 +20,14 @@ public interface TicketService {
 
     Map<TicketType, List<Ticket>> findUsersTickets(User user);
 
+
     List<Ticket> findUsersTicketsForFriends(User user);
 
-    List<Ticket> findTicketByUserFor(User user);
+    List<Ticket> findTicketByAndForUser(User user);
 
     List<Ticket> findTicketByUserForFriends(User user);
+
+    List<Ticket> findTicketByFriendsForUser(User user);
 
     void returnTicket(Ticket ticket) throws TicketReturnTimeException;
 

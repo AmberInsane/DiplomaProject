@@ -66,6 +66,7 @@
                     <th><spring:message code="hall.form"/></th>
                     <th><spring:message code="session.sold"/></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -91,11 +92,12 @@
                             <security:authorize access="hasRole('ADMIN')">
                                 <td>
                                     <spring:url value="/admin/session/update/${session.id}" var="updateUrl"/>
-                                    <spring:url value="/admin/session/delete/${session.id}" var="deleteUrl"/>
-
                                     <button class="btn btn-outline-primary" onclick="location.href='${updateUrl}'">
                                         <spring:message
                                                 code="action.update"/></button>
+                                </td>
+                                <td>
+                                    <spring:url value="/admin/session/delete/${session.id}" var="deleteUrl"/>
                                     <button class="btn btn-outline-danger"
                                             onclick="this.disabled=true;post('${deleteUrl}')">
                                         <spring:message code="action.delete"/>
@@ -118,6 +120,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
+                                <td></td>
                             </security:authorize>
                         </security:authorize>
                     </tr>

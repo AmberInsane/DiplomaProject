@@ -50,7 +50,7 @@
             </c:if>
             <div class="row">
                 <div class="user-info col-sm-8">
-                    <h2>${user.username}</h2>
+                    <h3>${user.username}</h3>
 
                     <div class="row">
                         <label class="col-sm-4"><spring:message code="user.email"/></label>
