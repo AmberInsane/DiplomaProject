@@ -1,0 +1,5 @@
+INSERT INTO movie_friend_schema.user_info (info_id, about, genres, movies) VALUES (19, null, null, null);
+INSERT INTO movie_friend_schema.user_info (info_id, about, genres, movies) VALUES (20, 'Меня зовут Эмбер и я люблю мультики, особенно которые заставляют задуматься. Давайте ходить в кино вместе', 'Мультики', 'Остров собак, Вверх, Головоломка');
+INSERT INTO movie_friend_schema.user_info (info_id, about, genres, movies) VALUES (21, 'Люблю путешествия и фотографии, у меня много подписчиков в Insagram. Люблю новые места и новые ощущения.', 'Не привязываюсь к жанрам, главное - чтобы фильм был хорошим :)', 'Побег из Шоушенка, Дедпул, Гарри Поттер и философский камень, Бёрдман');
+INSERT INTO movie_friend_schema.user_info (info_id, about, genres, movies) VALUES (22, 'Да просто Борька', 'Люблю глупые комедии. Надо же как-то расслабляться! ', 'Горько, Полицейский с Рублевки');
+INSERT INTO movie_friend_schema.user_info (info_id, about, genres, movies) VALUES (23, 'студэнт хімфаку', 'Я люблю фэнтазі', 'Хобіт, Гары Потар');

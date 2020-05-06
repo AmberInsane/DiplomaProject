@@ -221,6 +221,10 @@
                                             <a href="${userUrl}">${ticket.userBy.username}</a>
                                         </td>
                                         <td>
+                                            <spring:url value="/ticket/rate_movie/${ticket.id}" var="rateMovieUrl"/>
+                                            <button class="btn btn-outline-info pull-right" onclick="location.href=('${rateMovieUrl}')">
+                                                <spring:message code="user.action.movie.rate"/>
+                                            </button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -254,8 +258,8 @@
                                             <a href="${hallUrl}">${ticket.session.hall.name}</a>
                                         </td>
                                         <td>
-                                            <spring:url value="/user/${ticket.userBy.id}" var="userUrl"/>
-                                            <a href="${userUrl}">${ticket.userBy.username}</a>
+                                            <spring:url value="/user/${ticket.userFor.id}" var="userUrl"/>
+                                            <a href="${userUrl}">${ticket.userFor.username}</a>
                                         </td>
                                         <td>
                                         </td>
