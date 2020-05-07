@@ -3,7 +3,6 @@ package com.tms.stankevich.validator;
 import com.tms.stankevich.domain.movie.Hall;
 import com.tms.stankevich.service.SessionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

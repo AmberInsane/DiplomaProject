@@ -4,7 +4,6 @@ import com.tms.stankevich.dao.FriendRequestRepository;
 import com.tms.stankevich.dao.RoleRepository;
 import com.tms.stankevich.dao.UserInfoRepository;
 import com.tms.stankevich.dao.UserRepository;
-import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.user.*;
 
 import com.tms.stankevich.exception.AdminAddException;
@@ -22,13 +21,11 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.prefs.BackingStoreException;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
-    /*@PersistenceContext
-    private EntityManager em;*/
+    private final Logger logger = LogManager.getLogger(UserServiceImpl.class.getName());
+
     @Autowired
     private UserRepository userRepository;
 
@@ -50,11 +47,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public static final String USER_ROLE = "ROLE_USER";
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
 
-    private final Logger logger = LogManager.getLogger(UserServiceImpl.class.getName());
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.debug("loadUserByUsername");
+        logger.debug("loadUserByUsername" + username);
         Optional<User> user = userRepository.findByUsername(username);
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found");
@@ -90,6 +85,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         user.setRoles(Collections.singleton(roleRepository.findByName(USER_ROLE)));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        logger.debug("registration " + user.getUsername());
         return userRepository.save(user);
     }
 
@@ -103,7 +99,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         Role userRole = roleRepository.findByName(USER_ROLE);
         Role adminRole = roleRepository.findByName(ADMIN_ROLE);
         Optional<User> optionalUser = userRepository.findById(userId);
-
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             switch (action) {
@@ -111,6 +106,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     if (isUserAdmin(user)) {
                         user.getRoles().remove(adminRole);
                         user.getRoles().add(userRole);
+                        logger.debug(action + " admin " + user.getUsername());
+                        userRepository.save(user);
                     }
                     break;
                 case "add":
@@ -120,10 +117,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                         }
                         user.getRoles().remove(userRole);
                         user.getRoles().add(adminRole);
+                        logger.debug(action + " admin " + user.getUsername());
+                        userRepository.save(user);
                     }
                     break;
             }
-            userRepository.save(user);
         }
     }
 
@@ -139,10 +137,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User saveOrUpdate(User user) {
-        if (user.isNew())
+        if (user.isNew()) {
             return addUser(user);
-        else
+        }
+        else {
+            logger.debug("update user " + user.getUsername());
             return userRepository.save(user);
+        }
     }
 
     @Override
@@ -153,6 +154,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void sendFriendRequest(User userRequest, User userResponse) throws FriendRequestException {
+        logger.debug("sendFriendRequest from " + userRequest.getUsername() + " to " + userResponse.getUsername());
         if (userRequest.equals(userResponse))
             throw new FriendRequestException("message.request.deny.me");
         FriendRequest friendRequest = checkAndGetFriendRequest(userRequest, userResponse);
@@ -203,6 +205,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 }
             }
             currentUser.getBlackList().add(userToBlock);
+            logger.debug("blockUser " + currentUser.getUsername() + " of " + userToBlock.getUsername());
             userRepository.save(currentUser);
         }
     }
@@ -217,6 +220,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             currentUser.getFriends().add(userRequest);
             userRepository.save(currentUser);
 
+            logger.debug("acceptFriendRequest from " + userRequest.getUsername() + " to " + currentUser.getUsername());
             friendRequest.setStatus(FriendRequestStatus.OK);
             friendRequestRepository.save(friendRequest);
         }
@@ -225,6 +229,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void refuseFriendRequest(User currentUser, FriendRequest friendRequest) {
         if (friendRequest.getUserResponse().equals(currentUser)) {
+            logger.debug("refuseFriendRequest from " + friendRequest.getUserRequest().getUsername() + " to " + currentUser.getUsername());
             friendRequest.setStatus(FriendRequestStatus.NO);
             friendRequestRepository.save(friendRequest);
         }
@@ -246,7 +251,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
             userDelete.getFriends().removeIf(user -> user.equals(userWho));
             userRepository.save(userDelete);
-
+            logger.debug("deleteFromFriends " + userWho.getUsername() + "  of " + userDelete.getUsername());
             return true;
         }
         return false;
@@ -281,6 +286,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public void unblockUser(User currentUser, User userToUnblock) {
         if (isUserBlockedSecond(currentUser, userToUnblock)) {
             currentUser.getBlackList().removeIf(user -> user.equals(userToUnblock));
+            logger.debug("unblockUser " + currentUser.getUsername() + "  of " + userToUnblock.getUsername());
             userRepository.save(currentUser);
         }
     }
@@ -300,12 +306,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void plusToBalance(User user, BigDecimal sumNumber) {
         User curUser = userRepository.findById(user.getId()).get();
+        logger.debug("plusToBalance " + curUser.getUsername() + " " + sumNumber);
         curUser.setBalance(curUser.getBalance().add(sumNumber));
         userRepository.save(curUser);
     }
 
     @Override
     public void minusFromBalance(User user, BigDecimal sumNumber) throws BalanceMinusException {
+        logger.debug("minusFromBalance " + user.getUsername() + " " + sumNumber);
         BigDecimal userBalance = user.getBalance();
         if (userBalance.compareTo(sumNumber) < 0)
             throw new BalanceMinusException();

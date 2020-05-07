@@ -4,9 +4,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
-import org.springframework.format.support.DefaultFormattingConversionService;
-import org.springframework.format.support.FormattingConversionService;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -23,9 +20,6 @@ import java.util.Locale;
 public class MvcConfig implements WebMvcConfigurer {
 
     @Override
-    /*Для страниц, которые никак не обрабатываются сервером, а просто возвращают страницу,
-    маппинг можно настроить в конфигурации.
-    Страница login обрабатывается Spring Security контроллером по умолчанию, поэтому для неё отдельный контроллер не требуется.*/
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
     }
@@ -53,10 +47,6 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-       /* ThemeChangeInterceptor themeChangeInterceptor = new ThemeChangeInterceptor();
-        themeChangeInterceptor.setParamName("theme");
-        registry.addInterceptor(themeChangeInterceptor);*/
-
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 
         localeChangeInterceptor.setParamName("lang");

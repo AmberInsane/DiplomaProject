@@ -1,9 +1,13 @@
 package com.tms.stankevich.service;
 
+import com.tms.stankevich.annotations.Loggable;
 import com.tms.stankevich.domain.movie.Genre;
 import com.tms.stankevich.domain.movie.Movie;
+import com.tms.stankevich.exception.ConnectErrorException;
+import com.tms.stankevich.exception.TimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +33,10 @@ public class MovieLoadServiceKinogo implements MovieLoadService {
     @Value("${kinigo.pages.sample.url}")
     private String URL;
 
+    @Value("${kinigo.connect.timeout}")
+    private int timeout;
+
+
     @Value("${kinigo.page.begin}")
     private int pageBegin;
 
@@ -36,14 +46,15 @@ public class MovieLoadServiceKinogo implements MovieLoadService {
     @Autowired
     private MovieService movieService;
 
+    @Loggable
     @Override
-    public List<Movie> load() {
-        String URL = "https://kinogo.by/film/premie/page/";
-        int numberPfPages = 12;
+    public List<Movie> loadMovies() throws ConnectErrorException, TimeoutException {
+        logger.debug("loadMovies pages from " + pageBegin + " to " + pageEnd);
 
+        String URL = "https://kinogo.by/film/premie/page/";
         List<Movie> newMovies = new ArrayList<>();
 
-        for (int i = 1; i <= numberPfPages; i++) {
+        for (int i = pageBegin; i <= pageEnd; i++) {
             String pageURL = URL + i + "/";
             try {
                 Element content = getContentFromURL(pageURL);
@@ -55,23 +66,35 @@ public class MovieLoadServiceKinogo implements MovieLoadService {
         return newMovies;
     }
 
-    private static Element getContentFromURL(String pageURL) throws IOException {
-        Document doc = Jsoup.connect(pageURL).get();
-        return doc.getElementById("dle-content");
+    private Element getContentFromURL(String pageURL) throws IOException, ConnectErrorException, TimeoutException {
+        try {
+            Connection connect = Jsoup.connect(pageURL);
+            connect.timeout(timeout);
+            Document doc = connect.get();
+            return doc.getElementById("dle-content");
+        } catch (
+                SocketException ex) {
+            throw new ConnectErrorException("Kinogo connect error " + ex.getMessage());
+        } catch (
+                SocketTimeoutException ex) {
+            throw new TimeoutException("Kinogo connect timeout error");
+        }
+
     }
 
-    private List<Movie> getMoviesFromContent(Element content) {
+    public List<Movie> getMoviesFromContent(Element content) throws TimeoutException, ConnectErrorException {
         List<Movie> movies = new ArrayList<>();
         Elements movieElements = content.select("div.shortstory");
-        movieElements.forEach(movieElement -> {
+
+        for (Element movieElement : movieElements) {
             Movie movie = createMovieFromElement(movieElement);
             if (movie != null)
                 movies.add(movie);
-        });
+        }
         return movies;
     }
 
-    private Movie createMovieFromElement(Element movieElement) {
+    private Movie createMovieFromElement(Element movieElement) throws ConnectErrorException, TimeoutException {
         try {
             String title = movieElement.select("h2.zagolovki").text();
             title = title.substring(0, title.indexOf(" ("));

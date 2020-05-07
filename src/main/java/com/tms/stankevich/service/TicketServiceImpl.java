@@ -6,6 +6,8 @@ import com.tms.stankevich.domain.movie.TicketType;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.TicketReturnTimeException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
+    private final Logger logger = LogManager.getLogger(TicketServiceImpl.class.getName());
 
     @Autowired
     private TicketRepository ticketRepository;
@@ -49,6 +52,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void saveTickets(Ticket rawTicket) throws BalanceMinusException {
         userService.minusFromBalance(rawTicket.getUserBy(), rawTicket.getCommonSum());
+        logger.debug("saveTickets " + rawTicket.getUserBy() + " "  + rawTicket.getSession().getId() + " " + rawTicket.getUsersFor().size());
         List<User> usersFor = rawTicket.getUsersFor();
         for (User user : usersFor) {
             Ticket newTicket = new Ticket();
@@ -112,6 +116,7 @@ public class TicketServiceImpl implements TicketService {
         if (LocalDateTime.now(ZoneId.of(timeZone)).plusMinutes(maxTimeReturn).isAfter(ticket.getSession().getStartTime())) {
             throw new TicketReturnTimeException("message.ticket.late");
         }
+        logger.debug("returnTicket " + ticket.getUserBy() + " "  + ticket.getSession().getId() + " " + ticket.getUserFor().getUsername());
         userService.plusToBalance(ticket.getUserBy(), ticket.getSession().getPrice());
         ticketRepository.delete(ticket);
     }

@@ -5,15 +5,11 @@ import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.BalanceMinusException;
 import com.tms.stankevich.exception.TicketReturnTimeException;
-import com.tms.stankevich.service.MovieServiceImpl;
 import com.tms.stankevich.service.SessionServiceImpl;
 import com.tms.stankevich.service.TicketService;
 import com.tms.stankevich.service.UserService;
-import com.tms.stankevich.validator.HallFormValidator;
-import com.tms.stankevich.validator.SessionFormValidator;
 import com.tms.stankevich.validator.TicketFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +61,7 @@ public class TicketController {
         Optional<Session> session = sessionService.findById(sessionId);
         if (session.isPresent()) {
             Ticket ticket = new Ticket();
-            ticket.setUserBy(user);
+            ticket.setUserBy(userService.findUserById(user.getId()).get());
             ticket.setSession(session.get());
             model.addAttribute("ticketForm", ticket);
             populateDefaultTicketModel(model, user);

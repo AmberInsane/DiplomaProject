@@ -11,13 +11,13 @@ import com.tms.stankevich.domain.user.User;
 import com.tms.stankevich.exception.GenreDeleteException;
 import com.tms.stankevich.exception.MovieDeleteException;
 import com.tms.stankevich.exception.MovieRateException;
-import org.jsoup.nodes.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +26,7 @@ import java.util.stream.IntStream;
 @Service
 public class MovieServiceImpl implements MovieService {
 
+    private final Logger logger = LogManager.getLogger(MovieService.class.getName());
     @Autowired
     private MovieRepository movieRepository;
 
@@ -52,7 +53,6 @@ public class MovieServiceImpl implements MovieService {
                 .boxed().collect(Collectors.toList());
     }
 
-
     @Override
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
@@ -65,6 +65,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public void saveOrUpdate(Movie movie) {
+        logger.debug("save movie " + movie.getTitle());
         movieRepository.save(movie);
     }
 
@@ -80,6 +81,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Genre saveOrUpdateGenre(Genre genre) {
+        logger.debug("save genre " + genre.getName());
         return genreRepository.save(genre);
     }
 
@@ -103,6 +105,7 @@ public class MovieServiceImpl implements MovieService {
         List<Movie> movies = movieRepository.findByGenre(genre);
         if (movies.size() > 0)
             throw new GenreDeleteException(movies.size());
+        logger.debug("deleteGenre genre " + genre.getId() + " " + genre.getName());
         genreRepository.delete(genre);
     }
 
@@ -111,6 +114,7 @@ public class MovieServiceImpl implements MovieService {
         List<Session> sessions = sessionService.findByMovie(movie);
         if (sessions.size() > 0)
             throw new MovieDeleteException(sessions.size());
+        logger.debug("deleteMovie movie " + movie.getId() + " " + movie.getTitle() + " " + movie.getYear());
         movieRepository.delete(movie);
     }
 

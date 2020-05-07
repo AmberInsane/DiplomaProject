@@ -13,7 +13,6 @@ import com.tms.stankevich.validator.MovieFormValidator;
 import com.tms.stankevich.validator.SessionFormValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,9 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -380,7 +376,15 @@ public class AdminController {
 
     @GetMapping("/load")
     public String load(RedirectAttributes redirectAttributes) {
-        List<Movie> newMovies = movieLoadService.load();
+        List<Movie> newMovies = null;
+        try {
+            newMovies = movieLoadService.loadMovies();
+        } catch (ConnectErrorException|TimeoutException e) {
+            logger.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("css", "danger");
+            redirectAttributes.addFlashAttribute("msg_code", "error.load.movie");
+            return "redirect:/movie";
+        }
 
         redirectAttributes.addFlashAttribute("css", "success");
         redirectAttributes.addFlashAttribute("msg_code", "messages.found");

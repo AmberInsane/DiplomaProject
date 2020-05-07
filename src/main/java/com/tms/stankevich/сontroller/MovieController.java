@@ -2,7 +2,6 @@ package com.tms.stankevich.сontroller;
 
 import com.tms.stankevich.domain.movie.*;
 import com.tms.stankevich.domain.user.User;
-import com.tms.stankevich.exception.GlobalExceptionHandler;
 import com.tms.stankevich.exception.MovieRateException;
 import com.tms.stankevich.service.MovieService;
 import com.tms.stankevich.service.SessionService;

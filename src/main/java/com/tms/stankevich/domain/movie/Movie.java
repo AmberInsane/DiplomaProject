@@ -3,7 +3,6 @@ package com.tms.stankevich.domain.movie;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 
@@ -12,7 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.util.List;
 
 @Entity

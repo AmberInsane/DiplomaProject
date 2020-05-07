@@ -9,6 +9,8 @@ import com.tms.stankevich.domain.movie.Session;
 import com.tms.stankevich.domain.movie.Ticket;
 import com.tms.stankevich.exception.HallDeleteException;
 import com.tms.stankevich.exception.SessionDeleteException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SessionServiceImpl implements SessionService {
+    private final Logger logger = LogManager.getLogger(SessionServiceImpl.class.getName());
+
     @Autowired
     SessionRepository sessionRepository;
 
@@ -54,11 +58,13 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session saveOrUpdate(Session session) {
+        logger.debug("saveOrUpdate session " + session.getStartTime() + " " + session.getMovie().getTitle() + " " + session.getHall().getName());
         return sessionRepository.save(session);
     }
 
     @Override
     public Hall saveOrUpdateHall(Hall hall) {
+        logger.debug("saveOrUpdate hall " + hall.getName());
         return hallRepository.save(hall);
     }
 
@@ -77,6 +83,7 @@ public class SessionServiceImpl implements SessionService {
         List<Session> session = sessionRepository.findSessionsByHall(hall);
         if (session.size() > 0)
             throw new HallDeleteException(session.size());
+        logger.debug("deleteHall " + hall.getName());
         hallRepository.delete(hall);
     }
 
@@ -107,6 +114,7 @@ public class SessionServiceImpl implements SessionService {
         List<Ticket> tickets = ticketRepository.findTicketsBySession(session);
         if (tickets.size() > 0)
             throw new SessionDeleteException(tickets.size());
+        logger.debug("session " + session.getStartTime() + " " + session.getMovie().getTitle() + " " + session.getHall().getName());
         sessionRepository.delete(session);
     }
 
